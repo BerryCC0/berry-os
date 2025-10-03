@@ -170,14 +170,6 @@ Located in `/lib/iconUtils.ts`:
 - `PLACEHOLDER_ICON` - Placeholder for missing icons
 - `validateIcon(path)` - Check if icon exists
 
-## Migration from Old System
-
-If you have icons in the old location:
-1. Move to `/public/icons/apps/`
-2. Rename to match `{app-id}.svg` convention
-3. Update AppConfig to use `getAppIconPath()`
-4. Delete old icon files
-
 ---
 
 **Maintained by**: Berry  

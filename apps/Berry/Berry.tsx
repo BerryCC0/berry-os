@@ -1,18 +1,18 @@
 'use client';
 
 /**
- * About This Mac
+ * Berry
  * System information dialog
  */
 
 import { useSystemStore } from '../../system/store/systemStore';
-import styles from './AboutThisMac.module.css';
+import styles from './Berry.module.css';
 
-interface AboutThisMacProps {
+interface BerryProps {
   windowId: string;
 }
 
-export default function AboutThisMac({ windowId }: AboutThisMacProps) {
+export default function Berry({ windowId }: BerryProps) {
   const systemVersion = useSystemStore((state) => state.systemVersion);
   const bootTime = useSystemStore((state) => state.bootTime);
   const runningApps = useSystemStore((state) => state.runningApps);

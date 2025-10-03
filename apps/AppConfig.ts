@@ -15,7 +15,7 @@ import { getAppIconPath } from '../app/lib/utils/iconUtils';
  */
 
 // Lazy imports for code splitting
-const AboutThisMac = lazy(() => import('./AboutThisMac/AboutThisMac'));
+const Berry = lazy(() => import('./Berry/Berry'));
 const Calculator = lazy(() => import('./Calculator/Calculator'));
 const Finder = lazy(() => import('./Finder/Finder'));
 const MediaViewer = lazy(() => import('./MediaViewer/MediaViewer'));
@@ -26,10 +26,10 @@ const MediaViewer = lazy(() => import('./MediaViewer/MediaViewer'));
  */
 export const REGISTERED_APPS: AppConfig[] = [
   {
-    id: 'about-this-mac',
-    name: 'About This Mac',
-    component: AboutThisMac,
-    icon: getAppIconPath('about-this-mac', 'svg'),
+    id: 'berry',
+    name: 'Berry',
+    component: Berry,
+    icon: getAppIconPath('berry', 'svg'),
     defaultWindowSize: { width: 400, height: 300 },
     minWindowSize: { width: 400, height: 300 },
     maxWindowSize: { width: 400, height: 300 },
@@ -38,7 +38,7 @@ export const REGISTERED_APPS: AppConfig[] = [
     mobileSupport: 'full',
     mobileLayout: 'modal',
     category: 'system',
-    description: 'Information about this Mac OS system',
+    description: 'Information about Nouns OS',
     version: '1.0.0',
   },
   {
