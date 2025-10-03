@@ -43,12 +43,12 @@ createAppKit({
   },
 });
 
-interface Web3ProviderProps {
+interface AppkitProps {
   children: ReactNode;
   cookies?: string | null;
 }
 
-export function Web3Provider({ children, cookies }: Web3ProviderProps) {
+export function Appkit({ children, cookies }: AppkitProps) {
   return (
     <WagmiProvider config={wagmiAdapter.wagmiConfig as Config}>
       <QueryClientProvider client={queryClient}>

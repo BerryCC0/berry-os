@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { Web3Provider } from "./lib/appkit/appkit";
+
+import { Appkit } from "./lib/appkit/appkit";
+
+import { Analytics } from "@vercel/analytics/next"
+
 import "./styles/globals.css";
 
 export const metadata: Metadata = {
@@ -18,9 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Web3Provider>
+        <Appkit>
           {children}
-        </Web3Provider>
+        </Appkit>
+        <Analytics />
       </body>
     </html>
   );
