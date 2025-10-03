@@ -1,0 +1,201 @@
+/**
+ * Window Component Styles
+ * Mac OS 8 window chrome
+ */
+
+.window {
+  position: absolute;
+  background: var(--mac-white);
+  border: var(--window-border);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+/* ==================== Title Bar ==================== */
+
+.titleBar {
+  height: var(--titlebar-height);
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  user-select: none;
+  cursor: move;
+  flex-shrink: 0;
+  gap: 4px;
+  border-bottom: 1px solid var(--mac-black);
+}
+
+.titleBarActive {
+  /* Active window pinstripes */
+  background: linear-gradient(
+    90deg,
+    var(--mac-black) 0px,
+    var(--mac-black) 1px,
+    var(--mac-white) 1px,
+    var(--mac-white) 2px
+  );
+  background-size: 2px 100%;
+}
+
+.titleBarInactive {
+  background: var(--mac-gray-1);
+}
+
+.title {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--mac-black);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ==================== Window Controls ==================== */
+
+.closeButton,
+.zoomButton {
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--mac-black);
+  background: var(--mac-white);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.closeButton:hover,
+.zoomButton:hover {
+  background: var(--mac-gray-5);
+}
+
+.closeButton:active,
+.zoomButton:active {
+  background: var(--mac-gray-1);
+  border-style: inset;
+}
+
+.closeButtonInner {
+  width: 7px;
+  height: 7px;
+  background: var(--mac-black);
+}
+
+.zoomButtonInner {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--mac-black);
+  background: var(--mac-white);
+}
+
+/* ==================== Content Area ==================== */
+
+.content {
+  flex: 1;
+  overflow: auto;
+  background: var(--mac-white);
+  position: relative;
+}
+
+.loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  color: var(--mac-gray-3);
+}
+
+/* ==================== Resize Handle ==================== */
+
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  z-index: 10;
+}
+
+.resizeHandle::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background-image: 
+    linear-gradient(135deg, transparent 45%, var(--mac-gray-3) 45%, var(--mac-gray-3) 55%, transparent 55%),
+    linear-gradient(135deg, transparent 40%, var(--mac-gray-3) 40%, var(--mac-gray-3) 50%, transparent 50%);
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .window {
+    /* Fullscreen on mobile */
+    position: fixed !important;
+    top: var(--mobile-nav-height) !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: calc(100% - var(--mobile-nav-height)) !important;
+    box-shadow: none;
+    border: none;
+  }
+
+  .titleBar {
+    height: var(--mobile-nav-height);
+    padding: 0 12px;
+    border-bottom: 1px solid var(--mac-black);
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .closeButton,
+  .zoomButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+  }
+
+  .closeButtonInner {
+    width: 16px;
+    height: 16px;
+  }
+
+  .zoomButtonInner {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Hide resize handle on mobile */
+  .resizeHandle {
+    display: none;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+.closeButton:focus-visible,
+.zoomButton:focus-visible {
+  outline: 2px solid var(--mac-black);
+  outline-offset: 2px;
+}
+

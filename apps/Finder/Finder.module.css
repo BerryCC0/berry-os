@@ -1,0 +1,343 @@
+/**
+ * Finder Component Styles
+ * Mac OS 8 Finder interface
+ */
+
+.finder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--mac-white);
+  overflow: hidden;
+}
+
+/* ==================== Toolbar ==================== */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--mac-gray-1);
+  border-bottom: 1px solid var(--mac-black);
+  flex-shrink: 0;
+}
+
+.navButtons {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.navButton {
+  width: 24px;
+  height: 24px;
+  background: var(--mac-white);
+  border: 1px solid var(--mac-black);
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all var(--transition-fast);
+}
+
+.navButton:hover:not(:disabled) {
+  background: var(--mac-gray-5);
+}
+
+.navButton:active:not(:disabled) {
+  background: var(--mac-gray-1);
+  border-style: inset;
+}
+
+.navButton:disabled {
+  color: var(--mac-gray-2);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.breadcrumbs {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.breadcrumb {
+  background: transparent;
+  border: none;
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+
+.breadcrumb:hover {
+  background: var(--mac-gray-4);
+}
+
+.breadcrumbSeparator {
+  font-size: 10px;
+  color: var(--mac-gray-3);
+}
+
+.viewControls {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.viewButton {
+  width: 28px;
+  height: 24px;
+  background: var(--mac-white);
+  border: 1px solid var(--mac-black);
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+}
+
+.viewButton:hover {
+  background: var(--mac-gray-5);
+}
+
+.viewButton.active {
+  background: var(--mac-gray-1);
+  border-style: inset;
+}
+
+/* ==================== Content Area ==================== */
+
+.content {
+  flex: 1;
+  overflow: auto;
+  background: var(--mac-white);
+  position: relative;
+}
+
+/* ==================== Icon View ==================== */
+
+.iconView {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  align-content: start;
+}
+
+.iconItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  user-select: none;
+  padding: var(--spacing-sm);
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+
+.iconItem:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.iconItem.selected {
+  background: var(--mac-black);
+}
+
+.iconItem.selected .iconLabel {
+  color: var(--mac-white);
+}
+
+.iconImage {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.iconLabel {
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  text-align: center;
+  color: var(--mac-black);
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* ==================== List View ==================== */
+
+.listView {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.listHeader {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--mac-gray-1);
+  border-bottom: 1px solid var(--mac-black);
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.listHeaderCell {
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: background var(--transition-fast);
+}
+
+.listHeaderCell:hover {
+  background: var(--mac-gray-4);
+}
+
+.listBody {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.listRow {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--mac-gray-5);
+  transition: background var(--transition-fast);
+}
+
+.listRow:hover {
+  background: var(--mac-gray-5);
+}
+
+.listRow.selected {
+  background: var(--mac-black);
+  color: var(--mac-white);
+}
+
+.listCell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listIcon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+/* ==================== Empty State ==================== */
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--mac-gray-3);
+  font-family: var(--font-geneva);
+  font-size: 12px;
+}
+
+/* ==================== Status Bar ==================== */
+
+.statusBar {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--mac-gray-1);
+  border-top: 1px solid var(--mac-black);
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--mac-gray-3);
+  flex-shrink: 0;
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-wrap: wrap;
+    padding: var(--spacing-md);
+  }
+
+  .breadcrumbs {
+    order: 3;
+    width: 100%;
+    margin-top: var(--spacing-sm);
+  }
+
+  .iconView {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xl);
+  }
+
+  .iconImage {
+    width: 48px;
+    height: 48px;
+  }
+
+  .iconLabel {
+    font-size: 12px;
+  }
+
+  .listView {
+    font-size: 14px;
+  }
+
+  .listHeader {
+    display: none; /* Hide header on mobile for simplicity */
+  }
+
+  .listRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: var(--spacing-md);
+  }
+
+  .listCell:not(:first-child) {
+    display: none; /* Show only name on mobile */
+  }
+
+  .listIcon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+.navButton:focus-visible,
+.breadcrumb:focus-visible,
+.viewButton:focus-visible {
+  outline: 2px solid var(--mac-black);
+  outline-offset: 2px;
+}
+
+.iconItem:focus-visible,
+.listRow:focus-visible {
+  outline: 2px solid var(--mac-black);
+  outline-offset: -2px;
+}
+

@@ -1,0 +1,36 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mac OS 8 style calculator icon -->
+  
+  <!-- Calculator body -->
+  <rect x="6" y="4" width="20" height="24" fill="#DDDDDD" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Display screen -->
+  <rect x="8" y="6" width="16" height="6" fill="#FFFFFF" stroke="#000000" stroke-width="1" stroke-linejoin="miter"/>
+  
+  <!-- Display text (888) -->
+  <text x="22" y="11" font-family="Chicago, Courier, monospace" font-size="4" font-weight="bold" text-anchor="end" fill="#000000">888</text>
+  
+  <!-- Button grid -->
+  <!-- Row 1 -->
+  <rect x="8" y="14" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="12" y="14" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="16" y="14" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="20" y="14" width="3" height="3" fill="#E5F3FF" stroke="#000000" stroke-width="0.5"/>
+  
+  <!-- Row 2 -->
+  <rect x="8" y="18" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="12" y="18" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="16" y="18" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="20" y="18" width="3" height="3" fill="#E5F3FF" stroke="#000000" stroke-width="0.5"/>
+  
+  <!-- Row 3 -->
+  <rect x="8" y="22" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="12" y="22" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="16" y="22" width="3" height="3" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="20" y="22" width="3" height="3" fill="#E5F3FF" stroke="#000000" stroke-width="0.5"/>
+  
+  <!-- Row 4 (bottom - 0 and equals) -->
+  <rect x="8" y="26" width="7" height="2" fill="#FFFFFF" stroke="#000000" stroke-width="0.5"/>
+  <rect x="16" y="26" width="7" height="2" fill="#E5FFE5" stroke="#000000" stroke-width="0.5"/>
+</svg>
+

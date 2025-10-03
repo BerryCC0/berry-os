@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mac OS 8 style hard disk icon -->
+  
+  <!-- Disk body -->
+  <rect x="4" y="8" width="24" height="16" fill="#DDDDDD" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Disk face -->
+  <rect x="5" y="9" width="22" height="14" fill="#FFFFFF" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Disk label area -->
+  <rect x="8" y="12" width="16" height="8" fill="#5d92c0" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Disk label text -->
+  <text x="16" y="18" font-family="Chicago, Arial, sans-serif" font-size="6" font-weight="bold" text-anchor="middle" fill="#FFFFFF">HD</text>
+</svg>
+

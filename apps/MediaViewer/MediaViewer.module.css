@@ -1,0 +1,285 @@
+/**
+ * Media Viewer Styles
+ * Mac OS 8 media player
+ */
+
+.mediaViewer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--mac-black);
+  overflow: hidden;
+}
+
+.mediaViewer.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-modal);
+}
+
+/* ==================== Toolbar ==================== */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--mac-gray-1);
+  border-bottom: 1px solid var(--mac-black);
+  flex-shrink: 0;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.fileName {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--mac-black);
+}
+
+.fileCount {
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--mac-gray-3);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.navButtons,
+.zoomButtons {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.toolbarButton {
+  width: 28px;
+  height: 24px;
+  background: var(--mac-white);
+  border: 1px solid var(--mac-black);
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all var(--transition-fast);
+}
+
+.toolbarButton:hover:not(:disabled) {
+  background: var(--mac-gray-5);
+}
+
+.toolbarButton:active:not(:disabled) {
+  background: var(--mac-gray-1);
+  border-style: inset;
+}
+
+.toolbarButton:disabled {
+  color: var(--mac-gray-2);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.zoomLevel {
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--mac-gray-3);
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ==================== Content Area ==================== */
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background: var(--mac-black);
+  position: relative;
+}
+
+/* ==================== Image Viewer ==================== */
+
+.imageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--transition-normal);
+  cursor: grab;
+}
+
+.imageContainer:active {
+  cursor: grabbing;
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+/* ==================== Video Player ==================== */
+
+.video {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+/* ==================== Audio Player ==================== */
+
+.audioContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  background: var(--mac-white);
+  border-radius: 8px;
+  min-width: 400px;
+}
+
+.audioIcon {
+  font-size: 64px;
+}
+
+.audioInfo {
+  text-align: center;
+}
+
+.audioInfo h3 {
+  font-family: var(--font-geneva);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mac-black);
+  margin-bottom: var(--spacing-sm);
+}
+
+.audioInfo p {
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  color: var(--mac-gray-3);
+}
+
+.audio {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* ==================== Empty/Unsupported States ==================== */
+
+.emptyState,
+.unsupported {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  color: var(--mac-white);
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+.hint {
+  font-size: 10px;
+  color: var(--mac-gray-2);
+}
+
+/* ==================== Status Bar ==================== */
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--mac-gray-1);
+  border-top: 1px solid var(--mac-black);
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--mac-gray-3);
+  flex-shrink: 0;
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+
+  .fileInfo {
+    order: 1;
+    width: 100%;
+  }
+
+  .controls {
+    order: 2;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .toolbarButton {
+    width: 36px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .audioContainer {
+    min-width: unset;
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .statusBar {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: flex-start;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+.toolbarButton:focus-visible {
+  outline: 2px solid var(--mac-black);
+  outline-offset: 2px;
+}
+
+/* ==================== Animations ==================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.content > * {
+  animation: fadeIn 0.2s ease;
+}
+

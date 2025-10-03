@@ -1,0 +1,74 @@
+/**
+ * System Tray Styles
+ * Mac OS 8 aesthetic for menu bar right side
+ */
+
+.systemTray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 8px;
+  height: 100%;
+}
+
+.walletButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: none;
+  border: none;
+  color: var(--mac-black);
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  cursor: pointer;
+  height: 19px;
+  transition: background-color 0.1s;
+}
+
+.walletButton:hover {
+  background-color: var(--mac-gray-1);
+}
+
+.walletButton:active {
+  background-color: var(--mac-black);
+  color: var(--mac-white);
+}
+
+.walletIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.walletAddress,
+.walletText {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.time {
+  padding: 0 8px;
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  color: var(--mac-black);
+  white-space: nowrap;
+  line-height: 19px;
+}
+
+/* Mobile: Hide address text, show only icon */
+@media (max-width: 768px) {
+  .walletAddress,
+  .walletText {
+    display: none;
+  }
+  
+  .systemTray {
+    gap: 8px;
+    padding-right: 4px;
+  }
+  
+  .walletButton {
+    padding: 2px 6px;
+  }
+}
+

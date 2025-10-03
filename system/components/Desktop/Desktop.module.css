@@ -1,0 +1,111 @@
+/**
+ * Desktop Component Styles
+ * Mac OS 8 Desktop
+ */
+
+.desktop {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  z-index: var(--z-desktop);
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  background-color: #5d92c0;
+  /* Classic stippled pattern */
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    );
+  background-size: cover;
+  background-position: center;
+}
+
+.iconContainer {
+  position: absolute;
+  top: 20px; /* Below menu bar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--spacing-lg);
+}
+
+.icon {
+  position: absolute;
+  width: var(--desktop-icon-size);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.icon:hover .iconLabel {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.iconImage {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.iconLabel {
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  text-align: center;
+  color: var(--mac-black);
+  background: var(--mac-white);
+  padding: 2px 6px;
+  border-radius: 2px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Window Container */
+.windowContainer {
+  position: absolute;
+  top: 20px; /* Below menu bar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none; /* Allow clicks to pass through to desktop */
+}
+
+.windowContainer > * {
+  pointer-events: auto; /* Windows themselves are clickable */
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .icon {
+    width: var(--mobile-icon-size);
+  }
+  
+  .iconImage {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .iconLabel {
+    font-size: 12px;
+  }
+  
+  .windowContainer {
+    top: var(--mobile-nav-height);
+  }
+}
+
