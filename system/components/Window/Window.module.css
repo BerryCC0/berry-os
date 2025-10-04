@@ -155,20 +155,21 @@
 
 @media (max-width: 768px) {
   .window {
-    /* Fullscreen on mobile */
+    /* Fullscreen on mobile with safe areas */
     position: fixed !important;
-    top: var(--mobile-nav-height) !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    height: calc(100% - var(--mobile-nav-height)) !important;
+    top: calc(var(--menubar-height-mobile) + var(--safe-area-top)) !important;
+    left: var(--safe-area-left) !important;
+    right: var(--safe-area-right) !important;
+    bottom: var(--safe-area-bottom) !important;
+    width: calc(100% - var(--safe-area-left) - var(--safe-area-right)) !important;
+    height: calc(100% - var(--menubar-height-mobile) - var(--safe-area-top) - var(--safe-area-bottom)) !important;
     box-shadow: none;
     border: none;
+    transition: none; /* Disable transitions during keyboard open/close */
   }
 
   .titleBar {
-    height: var(--mobile-nav-height);
+    height: var(--menubar-height-mobile);
     padding: 0 12px;
     border-bottom: 1px solid var(--mac-black);
   }
@@ -203,6 +204,42 @@
   /* Hide resize handle on mobile */
   .resizeHandle {
     display: none;
+  }
+}
+
+/* ==================== Tablet Adaptations ==================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Tablet: Hybrid mode - windowed but touch-optimized */
+  
+  .closeButton,
+  .minimizeButton,
+  .zoomButton {
+    width: 20px;
+    height: 20px;
+  }
+
+  .closeButtonInner {
+    width: 12px;
+    height: 12px;
+  }
+
+  .minimizeButtonInner {
+    width: 12px;
+    height: 2px;
+  }
+
+  .zoomButtonInner {
+    width: 12px;
+    height: 12px;
+  }
+
+  .titleBar {
+    height: 24px;
+  }
+
+  .title {
+    font-size: 13px;
   }
 }
 

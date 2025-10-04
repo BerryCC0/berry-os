@@ -1,6 +1,6 @@
 /**
  * Dock Component Styles
- * Mac OS 8 style dock at bottom of screen
+ * Mac OS 8 style dock with pinned apps
  */
 
 .dock {
@@ -30,14 +30,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
-  padding: 6px 8px;
+  padding: 6px 8px 10px 8px; /* Extra bottom padding for dot */
   background: var(--mac-white);
   border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
   transition: all var(--transition-fast);
   min-width: 64px;
+  position: relative;
 }
 
 .dockItem:hover {
@@ -50,6 +52,22 @@
   transform: translateY(1px);
 }
 
+/* Running state - slightly inset */
+.dockItem.running {
+  background: var(--mac-gray-1);
+  border-color: var(--mac-gray-2);
+}
+
+.dockItem.running:hover {
+  background: var(--mac-gray-5);
+}
+
+.iconWrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
 .dockIcon {
   width: 24px;
   height: 24px;
@@ -58,15 +76,27 @@
   image-rendering: crisp-edges;
 }
 
-.dockLabel {
-  font-family: var(--font-geneva);
-  font-size: 10px;
-  color: var(--mac-black);
-  text-align: center;
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Running indicator - classic Mac OS dot */
+.runningIndicator {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--mac-black);
+  border-radius: 50%;
+}
+
+/* Minimized indicator - small dash on icon */
+.minimizedIndicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 2px;
+  background: var(--mac-black);
+  border: 1px solid var(--mac-white);
 }
 
 /* ==================== Mobile Adaptations ==================== */
@@ -84,8 +114,13 @@
   }
 
   .dockItem {
-    min-width: 72px;
-    padding: 8px;
+    min-width: 56px;
+    padding: 8px 6px;
+  }
+
+  .iconWrapper {
+    width: 32px;
+    height: 32px;
   }
 
   .dockIcon {
@@ -93,8 +128,14 @@
     height: 32px;
   }
 
-  .dockLabel {
-    font-size: 11px;
+  .runningIndicator {
+    width: 5px;
+    height: 5px;
+  }
+
+  .minimizedIndicator {
+    width: 10px;
+    height: 3px;
   }
 }
 
@@ -104,4 +145,3 @@
   outline: 2px solid var(--mac-black);
   outline-offset: 2px;
 }
-

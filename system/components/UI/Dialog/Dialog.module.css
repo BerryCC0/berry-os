@@ -1,116 +1,168 @@
 /**
  * Dialog Component Styles
- * Mac OS 8 System Dialog
+ * Mac OS 8 modal dialog
  */
 
-.backdrop {
+.overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: var(--z-modal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-lg);
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: var(--mac-white);
-  border: 1px solid var(--mac-black);
+  border: 2px solid var(--mac-black);
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
-  min-width: 300px;
-  max-width: 500px;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
+  animation: slideIn 0.3s ease;
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Title Bar */
 .titleBar {
-  height: var(--titlebar-height);
+  height: 20px;
   background: var(--mac-white);
   border-bottom: 1px solid var(--mac-black);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--spacing-md);
+  padding: 0 24px;
+  position: relative;
+  background-image: repeating-linear-gradient(
+    0deg,
+    var(--mac-black),
+    var(--mac-black) 1px,
+    transparent 1px,
+    transparent 2px
+  );
 }
 
 .title {
   font-family: var(--font-chicago);
   font-size: 12px;
   font-weight: bold;
+  color: var(--mac-white);
   text-align: center;
+  margin: 0;
 }
 
-.content {
-  padding: var(--spacing-xl);
+.closeButton {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--mac-black);
+  background: var(--mac-white);
+  cursor: pointer;
+  padding: 0;
   display: flex;
-  gap: var(--spacing-lg);
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
 }
 
-.iconContainer {
-  flex-shrink: 0;
+.closeButton:hover {
+  background: var(--mac-gray-1);
 }
 
-.icon {
-  font-size: 32px;
-  display: block;
-  line-height: 1;
+.closeButtonInner {
+  width: 8px;
+  height: 8px;
+  background: var(--mac-black);
 }
 
-.message {
+/* Content */
+.content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
   font-family: var(--font-geneva);
   font-size: 12px;
-  line-height: 1.5;
-  flex: 1;
+  color: var(--mac-black);
 }
 
-.buttonContainer {
-  padding: var(--spacing-md) var(--spacing-xl) var(--spacing-xl);
+/* Button Row */
+.buttonRow {
   display: flex;
-  gap: var(--spacing-md);
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--mac-black);
   justify-content: flex-end;
+  background: var(--mac-gray-1);
 }
 
 /* ==================== Mobile Adaptations ==================== */
 
 @media (max-width: 768px) {
-  .backdrop {
-    padding: var(--spacing-md);
-  }
-
   .dialog {
-    max-width: 100%;
-    width: 100%;
+    width: 90% !important;
+    max-width: 400px;
+    max-height: 80vh;
   }
 
   .titleBar {
-    height: var(--mobile-nav-height);
+    height: 32px;
+    padding: 0 32px;
   }
 
   .title {
     font-size: 14px;
   }
 
+  .closeButton {
+    width: 20px;
+    height: 20px;
+    left: 6px;
+  }
+
+  .closeButtonInner {
+    width: 12px;
+    height: 12px;
+  }
+
   .content {
-    padding: var(--spacing-lg);
-  }
-
-  .icon {
-    font-size: 40px;
-  }
-
-  .message {
+    padding: 20px;
     font-size: 14px;
   }
 
-  .buttonContainer {
-    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
-    flex-direction: column-reverse;
-  }
-
-  .buttonContainer > * {
-    width: 100%;
+  .buttonRow {
+    padding: 16px;
+    gap: 12px;
   }
 }
 
+/* ==================== Accessibility ==================== */
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--mac-black);
+  outline-offset: 2px;
+}

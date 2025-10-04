@@ -137,7 +137,31 @@
 
 @media (max-width: 768px) {
   .menuBar {
-    display: none; /* Use mobile nav instead */
+    height: 44px;
+    padding: 0 8px;
+    gap: 6px;
+    font-size: 14px;
+  }
+
+  .menuItem {
+    font-size: 13px;
+    padding: 4px 10px;
+  }
+
+  .appName {
+    font-size: 13px;
+    padding: 4px 8px;
+  }
+
+  /* Hide system info on mobile to save space */
+  .systemInfo {
+    display: none;
+  }
+
+  /* Position dropdowns from top of menu bar */
+  .dropdown {
+    top: 44px;
+    min-width: 200px;
   }
 }
 

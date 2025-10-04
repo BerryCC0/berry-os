@@ -12,9 +12,14 @@ import { getAppById, REGISTERED_APPS } from '../../../apps/AppConfig';
 import { gestureHandler } from '../../lib/gestureHandler';
 import { eventBus } from '../../lib/eventBus';
 import { setupKeyboardShortcuts } from '../../lib/menuActions';
+import { 
+  isMobileDevice, 
+  isTabletDevice, 
+  handleVirtualKeyboard,
+  handleOrientationChange,
+  getOrientation 
+} from '../../lib/mobileUtils';
 import MenuBar from '../MenuBar/MenuBar';
-import MobileNav from '../MobileNav/MobileNav';
-import AppSwitcher from '../AppSwitcher/AppSwitcher';
 import Window from '../Window/Window';
 import Dock from '../Dock/Dock';
 import styles from './Desktop.module.css';
@@ -23,6 +28,7 @@ export default function Desktop() {
   const wallpaper = useSystemStore((state) => state.wallpaper);
   const desktopIcons = useSystemStore((state) => state.desktopIcons);
   const windows = useSystemStore((state) => state.windows);
+  const runningApps = useSystemStore((state) => state.runningApps);
   const launchApp = useSystemStore((state) => state.launchApp);
   const closeWindow = useSystemStore((state) => state.closeWindow);
   const activeWindowId = useSystemStore((state) => state.activeWindowId);
@@ -31,8 +37,10 @@ export default function Desktop() {
   
   const hasLaunchedFromURL = useRef(false);
   const hasInitializedIcons = useRef(false);
-  const [showAppSwitcher, setShowAppSwitcher] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [draggingIconId, setDraggingIconId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -51,16 +59,48 @@ export default function Desktop() {
     return cleanup;
   }, []);
 
-  // Detect mobile
+  // Detect device type and orientation
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const checkDevice = () => {
+      setIsMobile(isMobileDevice());
+      setIsTablet(isTabletDevice());
+      setOrientation(getOrientation());
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
   }, []);
+
+  // Handle virtual keyboard
+  useEffect(() => {
+    const cleanup = handleVirtualKeyboard((isVisible) => {
+      setIsKeyboardVisible(isVisible);
+      
+      // Add class to body when keyboard is visible
+      if (isVisible) {
+        document.body.classList.add('keyboard-visible');
+      } else {
+        document.body.classList.remove('keyboard-visible');
+      }
+    });
+
+    return cleanup;
+  }, []);
+
+  // Handle orientation changes
+  useEffect(() => {
+    const cleanup = handleOrientationChange((newOrientation) => {
+      setOrientation(newOrientation);
+      
+      // Optionally notify user or adjust layout
+      if (isMobile) {
+        console.log('Orientation changed to:', newOrientation);
+      }
+    });
+
+    return cleanup;
+  }, [isMobile]);
 
   // Launch apps from URL on mount (only once)
   useEffect(() => {
@@ -89,22 +129,49 @@ export default function Desktop() {
 
       switch (gestureType) {
         case 'swipeUp':
-          // Open app switcher on swipe up from bottom
-          if (payload.startPosition && payload.startPosition.y > window.innerHeight - 100) {
-            setShowAppSwitcher(true);
-          }
+          // Reserved for future features (could open app overview)
           break;
 
         case 'swipeDown':
-          // Close active window on swipe down
+          // Close active window on swipe down from title bar area
           if (activeWindowId && isMobile) {
-            closeWindow(activeWindowId);
+            const swipeStartY = (payload as any).startPosition?.y || 0;
+            // Only close if swiping from top 100px (title bar area)
+            if (swipeStartY < 100) {
+              closeWindow(activeWindowId);
+            }
           }
           break;
 
         case 'swipeLeft':
         case 'swipeRight':
-          // Could implement app navigation here
+          // Switch between running apps on mobile
+          if (isMobile && Object.keys(runningApps).length > 1) {
+            const runningAppIds = Object.keys(runningApps);
+            const currentIndex = runningAppIds.findIndex(id => {
+              const app = runningApps[id];
+              return app.windows.some((winId: string) => winId === activeWindowId);
+            });
+
+            if (currentIndex !== -1) {
+              const direction = gestureType === 'swipeLeft' ? 1 : -1;
+              const nextIndex = (currentIndex + direction + runningAppIds.length) % runningAppIds.length;
+              const nextAppId = runningAppIds[nextIndex];
+              const nextApp = runningApps[nextAppId];
+              
+              if (nextApp && nextApp.windows[0]) {
+                const focusWindowFn = useSystemStore.getState().focusWindow;
+                focusWindowFn(nextApp.windows[0]);
+              }
+            }
+          }
+          break;
+
+        case 'edgeSwipeLeft':
+        case 'edgeSwipeRight':
+          // Edge swipes could trigger system actions
+          // For now, just log them for potential future use
+          console.log('Edge swipe detected:', gestureType);
           break;
       }
     });
@@ -202,13 +269,8 @@ export default function Desktop() {
 
   return (
     <div className={styles.desktop}>
-      {/* Menu Bar (Desktop only) */}
-      {!isMobile && <MenuBar />}
-
-      {/* Mobile Navigation (Mobile only) */}
-      {isMobile && (
-        <MobileNav onAppSwitcherToggle={() => setShowAppSwitcher(true)} />
-      )}
+      {/* Menu Bar - works on both desktop and mobile */}
+      <MenuBar />
 
       {/* Desktop Background */}
       <div 
@@ -259,16 +321,8 @@ export default function Desktop() {
           ))}
       </div>
 
-      {/* Dock for minimized windows (Desktop only) */}
-      {!isMobile && <Dock />}
-
-      {/* App Switcher (Mobile only) */}
-      {isMobile && (
-        <AppSwitcher
-          isOpen={showAppSwitcher}
-          onClose={() => setShowAppSwitcher(false)}
-        />
-      )}
+      {/* Dock - visible on both desktop and mobile */}
+      <Dock />
     </div>
   );
 }

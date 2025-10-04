@@ -135,7 +135,7 @@ const BASE_APPS: AppConfig[] = [
     id: 'text-editor',
     name: 'Text Editor',
     component: TextEditor,
-    icon: getAppIconPath('file-text', 'svg'),
+    icon: '/icons/system/file-text.svg',
     defaultWindowSize: { width: 600, height: 500 },
     minWindowSize: { width: 400, height: 300 },
     maxWindowSize: { width: 1200, height: 900 },

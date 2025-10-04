@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { Appkit } from "./lib/appkit/appkit";
 
@@ -8,10 +8,25 @@ import "./styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Nouns OS",
-  description: "Nouns OS",
+  description: "Mac OS 8 emulator built with modern web technologies",
   icons: {
     icon: "/favicon.ico",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Nouns OS",
+  },
+  manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover", // For iPhone X+ notch support
+  themeColor: "#FFFFFF",
 };
 
 export default function RootLayout({

@@ -88,6 +88,9 @@ export interface SystemState {
   desktopIcons: DesktopIcon[];
   wallpaper: string;
   
+  // Dock
+  pinnedApps: string[]; // App IDs pinned to dock
+  
   // Menu Bar
   activeMenu: string | null;
   

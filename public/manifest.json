@@ -1,0 +1,18 @@
+{
+  "name": "Nouns OS",
+  "short_name": "Nouns OS",
+  "description": "Mac OS 8 emulator built with modern web technologies",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
+

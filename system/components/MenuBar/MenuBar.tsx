@@ -150,8 +150,8 @@ export default function MenuBar() {
 
       {/* Dynamic App Menus */}
       {hasAppMenus ? (
-        // Render app-specific menus
-        Object.entries(appMenus).map(([menuName, items]) => (
+          // Render app-specific menus
+          Object.entries(appMenus).map(([menuName, items]) => (
           <div key={menuName} className={styles.menuSection}>
             <button
               className={`${styles.menuItem} ${activeMenu === menuName.toLowerCase() ? styles.active : ''}`}
@@ -170,7 +170,7 @@ export default function MenuBar() {
       ) : (
         // Default menus when no app is focused
         <>
-          <div className={styles.menuSection}>
+            <div className={styles.menuSection}>
             <button
               className={`${styles.menuItem} ${activeMenu === 'file' ? styles.active : ''}`}
               onClick={() => toggleMenu('file')}

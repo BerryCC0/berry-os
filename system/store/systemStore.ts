@@ -68,6 +68,7 @@ const INITIAL_STATE: SystemState = {
   runningApps: {},
   desktopIcons: [],
   wallpaper: '/filesystem/System/Desktop Pictures/Classic.png',
+  pinnedApps: ['finder', 'calculator', 'text-editor'], // Finder always first
   activeMenu: null,
   mobile: INITIAL_MOBILE_STATE,
   bootTime: Date.now(),

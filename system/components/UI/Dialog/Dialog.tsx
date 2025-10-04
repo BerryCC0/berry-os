@@ -2,111 +2,106 @@
 
 /**
  * Dialog Component
- * Mac OS 8 system dialog / alert
+ * Universal Mac OS 8 style dialog/modal
+ * Works on both desktop and mobile
  */
 
 import { useEffect } from 'react';
 import Button from '../Button/Button';
 import styles from './Dialog.module.css';
 
-interface DialogProps {
+export interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
-  message: string;
-  icon?: 'info' | 'warning' | 'error' | 'question';
-  buttons?: {
+  title: string;
+  children: React.ReactNode;
+  buttons?: Array<{
     label: string;
     onClick: () => void;
-    variant?: 'default' | 'primary' | 'cancel';
-  }[];
-  preventClose?: boolean; // Prevent closing by clicking outside
+    variant?: 'primary' | 'default' | 'cancel';
+  }>;
+  width?: number;
+  height?: number;
+  showCloseButton?: boolean;
 }
 
 export default function Dialog({
   isOpen,
   onClose,
   title,
-  message,
-  icon = 'info',
-  buttons = [{ label: 'OK', onClick: onClose, variant: 'primary' }],
-  preventClose = false,
+  children,
+  buttons = [],
+  width = 400,
+  height,
+  showCloseButton = true,
 }: DialogProps) {
-  // Handle escape key
+  // Close on Escape key
   useEffect(() => {
     if (!isOpen) return;
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !preventClose) {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose, preventClose]);
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !preventClose) {
-      onClose();
-    }
-  };
-
-  const getIconSymbol = () => {
-    switch (icon) {
-      case 'warning':
-        return '⚠️';
-      case 'error':
-        return '⛔';
-      case 'question':
-        return '❓';
-      case 'info':
-      default:
-        return 'ℹ️';
-    }
-  };
-
   return (
-    <div className={styles.backdrop} onClick={handleBackdropClick}>
-      <div className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <>
+      {/* Overlay */}
+      <div className={styles.overlay} onClick={onClose} />
+
+      {/* Dialog */}
+      <div
+        className={styles.dialog}
+        style={{
+          width: `${width}px`,
+          height: height ? `${height}px` : 'auto',
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dialog-title"
+      >
         {/* Title Bar */}
-        {title && (
-          <div className={styles.titleBar}>
-            <div id="dialog-title" className={styles.title}>
-              {title}
-            </div>
-          </div>
-        )}
+        <div className={styles.titleBar}>
+          <h2 id="dialog-title" className={styles.title}>
+            {title}
+          </h2>
+          {showCloseButton && (
+            <button
+              className={styles.closeButton}
+              onClick={onClose}
+              aria-label="Close dialog"
+            >
+              <div className={styles.closeButtonInner} />
+            </button>
+          )}
+        </div>
 
         {/* Content */}
-        <div className={styles.content}>
-          <div className={styles.iconContainer}>
-            <span className={styles.icon}>{getIconSymbol()}</span>
-          </div>
-          <div className={styles.message}>{message}</div>
-        </div>
+        <div className={styles.content}>{children}</div>
 
         {/* Buttons */}
-        <div className={styles.buttonContainer}>
-          {buttons.map((button, index) => (
-            <Button
-              key={index}
-              variant={button.variant || 'default'}
-              onClick={() => {
-                button.onClick();
-                if (!preventClose) {
-                  onClose();
-                }
-              }}
-            >
-              {button.label}
-            </Button>
-          ))}
-        </div>
+        {buttons.length > 0 && (
+          <div className={styles.buttonRow}>
+            {buttons.map((button, index) => (
+              <Button
+                key={index}
+                onClick={button.onClick}
+                variant={button.variant || 'default'}
+              >
+                {button.label}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }
 
