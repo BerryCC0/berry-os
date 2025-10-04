@@ -1,8 +1,8 @@
 {
-  "name": "Nouns OS",
-  "short_name": "Nouns OS",
-  "description": "A Nounish Web3 operating system with native apps and full onchain functionality",
-  "start_url": "https://nounsos.wtf",
+  "name": "Berry OS",
+  "short_name": "Berry OS",
+  "description": "The operating system for Web3. Browser-native, inspired by Nouns.",
+  "start_url": "https://berryos.xyz",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",

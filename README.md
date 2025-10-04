@@ -1,10 +1,10 @@
-# Nouns OS
+# Berry OS
 
 > **The operating system for Web3.**
 
 A browser-native operating system inspired by Nouns. Built with Mac OS 8's refined design language—classic computing principles brought to the onchain era.
 
-🌐 **Live:** [nounsos.wtf](https://nounsos.wtf)
+🌐 **Live:** [berryos.xyz](https://berryos.xyz)
 
 ---
 
@@ -116,10 +116,10 @@ For development guidelines and architecture principles, see `/claude.md`.
 
 ## Links
 
-- **Live App:** https://nounsos.wtf
-- **Farcaster:** Launch from any Nouns OS cast
-- **GitHub:** [BerryCC0/nouns-os](https://github.com/BerryCC0/nouns-os)
+- **Live App:** https://berryos.xyz
+- **Farcaster:** Launch from any Berry OS cast
+- **GitHub:** [BerryCC0/berry-os](https://github.com/BerryCC0/berry-os)
 
 ---
 
-**Nouns OS** - Your onchain desktop. Nounish vibes only. ⌐◨-◨
+**Berry OS** - The operating system for Web3. ⌐◨-◨

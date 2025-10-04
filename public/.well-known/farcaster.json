@@ -6,23 +6,23 @@
   },
   "miniapp": {
     "version": "1",
-    "name": "Nouns OS",
+    "name": "Berry OS",
     "subtitle": "Onchain Operating System",
     "description": "The first fully onchain operating system, inspired by Nouns. Supports EVM, Solana, and Bitcoin.",
     "tagline": "The operating system for Web3.",
-    "iconUrl": "https://nounsos.wtf/icons/apps/berry.svg",
-    "homeUrl": "https://nounsos.wtf",
-    "imageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
-    "heroImageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
-    "buttonTitle": "Launch Nouns OS",
-    "splashImageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
+    "iconUrl": "https://berryos.xyz/icons/apps/berry.svg",
+    "homeUrl": "https://berryos.xyz",
+    "imageUrl": "https://berryos.xyz/icons/apps/berry.svg",
+    "heroImageUrl": "https://berryos.xyz/icons/apps/berry.svg",
+    "buttonTitle": "Launch Berry OS",
+    "splashImageUrl": "https://berryos.xyz/icons/apps/berry.svg",
     "splashBackgroundColor": "#FFFFFF",
     "primaryCategory": "productivity",
-    "tags": ["nouns", "web3", "onchain", "os", "wallet"],
-    "ogTitle": "Nouns OS - Onchain OS",
-    "ogDescription": "Your Nounish Web3 desktop. Native apps, wallet integration, and full onchain functionality.",
-    "ogImageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
-    "castShareUrl": "https://nounsos.wtf"
+    "tags": ["berry", "nouns", "web3", "os", "onchain"],
+    "ogTitle": "Berry OS - Onchain OS",
+    "ogDescription": "The operating system for Web3. Browser-native, inspired by Nouns, built for Farcaster.",
+    "ogImageUrl": "https://berryos.xyz/icons/apps/berry.svg",
+    "castShareUrl": "https://berryos.xyz"
   }
 }
 

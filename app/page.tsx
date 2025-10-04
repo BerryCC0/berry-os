@@ -1,9 +1,9 @@
 /**
- * Nouns OS - Main Entry Point
- * Mac OS 8 Emulator with Web3 Integration
+ * Berry OS - Main Entry Point
+ * Browser-native operating system for Web3
  */
 
-import Desktop from '../system/components/Desktop/Desktop';
+import Desktop from '../src/OS/components/Desktop/Desktop';
 
 export default function Home() {
   return <Desktop />;

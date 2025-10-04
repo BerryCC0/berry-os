@@ -13,22 +13,22 @@ import "./styles/globals.css";
 // Farcaster Frame metadata for embeds
 const frameMetadata = {
   version: "next",
-  imageUrl: "https://nounsos.wtf/icons/apps/berry.svg",
+  imageUrl: "https://berryos.xyz/icons/apps/berry.svg",
   imageAspectRatio: "1:1",
   button: {
-    title: "Launch Nouns OS",
+    title: "Launch Berry OS",
     action: {
       type: "launch_miniapp",
-      name: "Nouns OS",
-      url: "https://nounsos.wtf",
-      splashImageUrl: "https://nounsos.wtf/icons/apps/berry.svg",
+      name: "Berry OS",
+      url: "https://berryos.xyz",
+      splashImageUrl: "https://berryos.xyz/icons/apps/berry.svg",
       splashBackgroundColor: "#FFFFFF"
     }
   }
 };
 
 export const metadata: Metadata = {
-  title: "Nouns OS",
+  title: "Berry OS",
   description: "The operating system for Web3, inspired by Nouns.",
   icons: {
     icon: "/favicon.ico",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Nouns OS",
+    title: "Berry OS",
   },
   manifest: "/manifest.json",
   other: {

@@ -32,10 +32,10 @@ if (!projectId || projectId === 'YOUR_PROJECT_ID_HERE') {
 
 // Metadata for wallet connection
 export const metadata = {
-  name: 'Nouns OS',
-  description: 'A Nounish Web3 Operating System - EVM, Solana & Bitcoin',
-  url: 'https://nounsos.wtf',
-  icons: ['https://nounsos.wtf/icons/apps/about-this-mac.svg'],
+  name: 'Berry OS',
+  description: 'The operating system for Web3 - EVM, Solana & Bitcoin',
+  url: 'https://berryos.xyz',
+  icons: ['https://berryos.xyz/icons/apps/berry.svg'],
 };
 
 // Determine if we're in development
