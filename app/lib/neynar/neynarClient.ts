@@ -1,9 +1,10 @@
 /**
  * Neynar Client Configuration
- * Farcaster integration via Neynar SDK
+ * ⚠️ SERVER ONLY - For use in API routes and server components only
  * Based on: https://docs.neynar.com/docs/getting-started-with-neynar
  */
 
+import 'server-only';
 import { NeynarAPIClient, Configuration } from '@neynar/nodejs-sdk';
 
 // Get API key from environment variable (server-side only)
@@ -32,6 +33,7 @@ export function isNeynarConfigured(): boolean {
 /**
  * Basic Neynar utility functions
  * For more advanced usage, import neynarClient directly
+ * ⚠️ Only use in server components or API routes
  */
 export const neynar = {
   /**
@@ -74,4 +76,3 @@ export const neynar = {
     return neynarClient.lookupUserByUsername({ username, viewerFid });
   },
 };
-

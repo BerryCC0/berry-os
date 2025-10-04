@@ -11,10 +11,11 @@ All URLs updated to **https://nounsos.wtf** - ready to deploy!
 - ✅ Frame metadata configured
 - ✅ Wallet metadata configured
 - ✅ PWA manifest configured
-- ✅ Mini App SDK integrated
+- ✅ Mini App SDK integrated (`@neynar/react`)
 - ✅ Wagmi connector configured
 - ✅ Solana provider ready
-- ✅ Build successful
+- ✅ Neynar SDK properly isolated (server-only)
+- ✅ Build successful (1.19 MB)
 
 ---
 

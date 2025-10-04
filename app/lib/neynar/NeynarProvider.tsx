@@ -1,16 +1,18 @@
 /**
  * Neynar Provider Component
- * Simple context provider for Farcaster/Neynar functionality
+ * Client-side context for Neynar functionality
+ * 
+ * Note: Direct SDK access via neynarClient is server-only.
+ * For client components, use API routes to interact with Neynar.
  */
 
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
-import { neynar, neynarClient, isNeynarConfigured } from './neynarClient';
 
 interface NeynarContextType {
-  neynar: typeof neynar;
-  client: typeof neynarClient;
+  // Add client-safe Neynar state/methods here
+  // For now, just a placeholder for future client-side Neynar features
   isConfigured: boolean;
 }
 
@@ -21,10 +23,9 @@ interface NeynarProviderProps {
 }
 
 export function NeynarProvider({ children }: NeynarProviderProps) {
+  // Client-safe context - no server-only imports
   const value: NeynarContextType = {
-    neynar,
-    client: neynarClient,
-    isConfigured: isNeynarConfigured(),
+    isConfigured: !!process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID,
   };
 
   return (
@@ -36,6 +37,7 @@ export function NeynarProvider({ children }: NeynarProviderProps) {
 
 /**
  * Hook to use Neynar context
+ * For server-side Neynar operations, use API routes
  */
 export function useNeynar() {
   const context = useContext(NeynarContext);
