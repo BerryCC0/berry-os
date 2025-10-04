@@ -1,4 +1,9 @@
 {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjE1ODk5LCJ0eXBlIjoiYXV0aCIsImtleSI6IjB4MUMzRjc3RGYyMEI4OWJDYzk1MjZFNTM4NjA2MzNjMjJFMjY2YkE4NiJ9",
+    "payload": "eyJkb21haW4iOiJub3Vuc29zLnd0ZiJ9",
+    "signature": "VJm/PtfEesjJoFysblVBStjaEkGUxMIuyMViExbwNIp9jXXGl4td7GHDTm7t2Hf0rOSJzdTatA3aA5+nJ9HngBw="
+  },
   "miniapp": {
     "version": "1",
     "name": "Nouns OS",
