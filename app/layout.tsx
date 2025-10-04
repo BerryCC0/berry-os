@@ -14,6 +14,7 @@ import "./styles/globals.css";
 const frameMetadata = {
   version: "next",
   imageUrl: "https://nounsos.wtf/icons/apps/berry.svg",
+  imageAspectRatio: "1:1",
   button: {
     title: "Launch Nouns OS",
     action: {
@@ -28,7 +29,7 @@ const frameMetadata = {
 
 export const metadata: Metadata = {
   title: "Nouns OS",
-  description: "The operating system for Web3., inspired by Nouns.",
+  description: "The operating system for Web3, inspired by Nouns.",
   icons: {
     icon: "/favicon.ico",
   },
