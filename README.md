@@ -1,47 +1,106 @@
-# Berry OS
+# Berry OS ⌐◨-◨
 
 > **The operating system for Web3.**
 
-A browser-native operating system inspired by Nouns. Built with Mac OS 8's refined design language—classic computing principles brought to the onchain era.
+Browser-native OS inspired by Nouns. Mac OS 8's refined design language meets onchain computing.
 
-🌐 **Live:** [berryos.xyz](https://berryos.xyz)
+🌐 **[berryos.wtf](https://berryos.wtf)**
+
+---
+
+## What is Berry OS?
+
+A full operating system that runs in your browser. Desktop, mobile, or in Farcaster—works anywhere. Built with classic computing principles for the onchain era.
+
+- 🪟 Windows, files, apps—familiar patterns that work
+- 🔗 Multi-chain wallets (EVM, Solana, Bitcoin) at the OS level
+- 🎨 Mac OS 8 design language—refined, proven, timeless
+- ⌐◨-◨ Inspired by Nouns—proliferable, open, community-first
 
 ---
 
 ## Features
 
-- 🌐 **Browser-Native** - Works anywhere: desktop, tablet, mobile
-- 🪟 **Full OS Experience** - Windows, menus, dock, and file system
-- 🔗 **Multi-Chain** - EVM, Solana, and Bitcoin wallet integration
-- 📱 **Touch-Optimized** - Gestures and responsive design
-- 🚀 **Farcaster Mini App** - Built for Farcaster from day one
-- ⚡ **Native Apps** - Calculator, Finder, Media Viewer, Text Editor, and more
-- 🎨 **Refined UX** - Mac OS 8's proven computing patterns
-
----
-
-## Tech Stack
-
-- **Framework:** Next.js 14+ (TypeScript, App Router)
-- **State:** Zustand (System 7 Toolbox pattern)
-- **Styling:** CSS Modules
-- **Web3:** Reown Appkit, Wagmi, Apollo, Neynar
-- **Deployment:** Vercel
-- **Farcaster:** Mini App SDK, Frame v2
+- **Browser-Native** - No downloads, just compute
+- **Full OS Experience** - Windows, menus, dock, file system
+- **Multi-Chain** - EVM, Solana, Bitcoin wallet integration
+- **Touch-Optimized** - Mobile gestures and responsive design
+- **Farcaster Mini App** - Built for Farcaster from day one
+- **Native Apps** - Calculator, Finder, Media Viewer, Text Editor, and more
+- **Refined UX** - Proven computing patterns, modern capabilities
 
 ---
 
 ## Quick Start
 
-### Installation
-
 ```bash
+# Install
 npm install
+
+# Run dev
+npm run dev
+
+# Build
+npm run build
 ```
 
-### Environment Variables
+Open [http://localhost:3000](http://localhost:3000)
 
-Create `.env.local`:
+---
+
+## Apps
+
+### OS Apps (Built-in)
+- **Berry** - About This Berry OS
+- **Calculator** - Computation with shareable state
+- **Finder** - File system browser
+- **Media Viewer** - Images, videos, audio
+- **Text Editor** - Text file editing
+- **Debug** - Testing tools (dev only)
+
+### Nouns Apps (3rd Party Examples)
+- **Camp** - Nouns proposals (coming soon)
+- **Auction** - Daily Nouns auction (coming soon)
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (TypeScript, App Router)
+- **State:** Zustand (System 7 Toolbox pattern)
+- **Styling:** CSS Modules
+- **Web3:** Reown Appkit, Wagmi, Apollo, Neynar
+- **Farcaster:** Mini App SDK
+- **Deployment:** Vercel
+
+---
+
+## Project Structure
+
+```
+berry-os/
+├── app/              # Next.js app (layout, page, lib, styles)
+├── src/
+│   ├── OS/          # Core system (components, lib, store, types)
+│   └── Apps/        # Applications
+│       ├── OS/      # Built-in OS apps
+│       └── Nouns/   # 3rd party Nouns apps
+├── public/          # Static files & virtual filesystem
+└── docs/            # Documentation
+```
+
+---
+
+## Documentation
+
+- **Architecture:** `/claude.md` - Complete system design
+- **Environment:** `/docs/ENV_SETUP.md` - Setup guide
+- **Branding:** `/docs/brand/` - Messaging & brand guidelines
+- **Mini App:** Deploy guide (see `/docs/`)
+
+---
+
+## Environment Variables
 
 ```env
 # Required
@@ -52,74 +111,37 @@ NEYNAR_API_KEY=your_api_key
 NEXT_PUBLIC_NEYNAR_CLIENT_ID=your_client_id
 ```
 
-See `/docs/ENV_SETUP.md` for full setup.
-
-### Development
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-### Build
-
-```bash
-npm run build
-```
-
----
-
-## Project Structure
-
-```
-nouns-os/
-├── app/                    # Next.js app
-├── system/                 # OS core (Finder, Window Manager, etc.)
-├── apps/                   # User applications
-├── components/             # Shared UI components
-├── public/                 # Static files & virtual filesystem
-└── docs/                   # Documentation
-```
-
----
-
-## Documentation
-
-- **Architecture:** `/claude.md` - Complete system design guide
-- **Environment:** `/docs/ENV_SETUP.md` - Setup instructions
-- **Mini App:** `/DEPLOY_NOW.md` - Farcaster deployment guide
+See `/docs/ENV_SETUP.md` for complete setup.
 
 ---
 
 ## Contributing
 
-Built by **Berry** for the Nouns ecosystem.
+Berry OS is Nounish:
+- Fork it, remix it, proliferate it
+- Build apps, themes, forks
+- Share what you build
 
-For development guidelines and architecture principles, see `/claude.md`.
+See `/claude.md` for development guidelines.
 
 ---
 
-## Roadmap
+## License
 
-- [x] Desktop environment
-- [x] Window management
-- [x] Native apps
-- [x] Multi-chain wallets
-- [x] Farcaster Mini App
-- [ ] NFT Gallery
-- [ ] Nouns DAO integration
-- [ ] User customization & persistence
-- [ ] App marketplace
+**WTFPL** - Do What The Fuck You Want To Public License
+
+See [LICENSE](./LICENSE) for full text.
 
 ---
 
 ## Links
 
-- **Live App:** https://berryos.xyz
+- **Live:** [berryos.wtf](https://berryos.wtf)
 - **Farcaster:** Launch from any Berry OS cast
 - **GitHub:** [BerryCC0/berry-os](https://github.com/BerryCC0/berry-os)
 
 ---
 
 **Berry OS** - The operating system for Web3. ⌐◨-◨
+
+Built by [Berry](https://warpcast.com/berry) with ⌐◨-◨

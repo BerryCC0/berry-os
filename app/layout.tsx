@@ -13,15 +13,15 @@ import "./styles/globals.css";
 // Farcaster Frame metadata for embeds
 const frameMetadata = {
   version: "next",
-  imageUrl: "https://berryos.xyz/icons/apps/berry.svg",
+  imageUrl: "https://berryos.wtf/icons/apps/berry.svg",
   imageAspectRatio: "1:1",
   button: {
     title: "Launch Berry OS",
     action: {
       type: "launch_miniapp",
       name: "Berry OS",
-      url: "https://berryos.xyz",
-      splashImageUrl: "https://berryos.xyz/icons/apps/berry.svg",
+      url: "https://berryos.wtf",
+      splashImageUrl: "https://berryos.wtf/icons/apps/berry.svg",
       splashBackgroundColor: "#FFFFFF"
     }
   }

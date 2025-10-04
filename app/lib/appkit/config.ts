@@ -34,8 +34,8 @@ if (!projectId || projectId === 'YOUR_PROJECT_ID_HERE') {
 export const metadata = {
   name: 'Berry OS',
   description: 'The operating system for Web3 - EVM, Solana & Bitcoin',
-  url: 'https://berryos.xyz',
-  icons: ['https://berryos.xyz/icons/apps/berry.svg'],
+  url: 'https://berryos.wtf',
+  icons: ['https://berryos.wtf/icons/apps/berry.svg'],
 };
 
 // Determine if we're in development

@@ -112,7 +112,7 @@ Berry OS is a browser-native operating system inspired by Nouns. We use Mac OS 8
 **Short Version:**
 ```
 The operating system for Web3. ⌐◨-◨
-berryos.xyz
+berryos.wtf
 ```
 
 **Long Version:**
@@ -120,7 +120,7 @@ berryos.xyz
 Berry OS - The operating system for Web3.
 Browser-native, works anywhere.
 Inspired by Nouns. Built for Farcaster.
-berryos.xyz ⌐◨-◨
+berryos.wtf ⌐◨-◨
 ```
 
 ---
@@ -135,7 +135,7 @@ berryos.xyz ⌐◨-◨
 
 This is what computing looks like in the onchain era.
 
-berryos.xyz
+berryos.wtf
 ```
 
 **Example:**
@@ -147,7 +147,7 @@ Multi-chain wallet integration built in.
 
 This is what computing looks like in the onchain era.
 
-berryos.xyz
+berryos.wtf
 ```
 
 ---

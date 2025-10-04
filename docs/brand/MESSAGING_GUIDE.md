@@ -116,7 +116,7 @@ The operating system for Web3.
 
 A full OS in Farcaster. Native apps, refined UX, fully onchain.
 
-berryos.xyz
+berryos.wtf
 ```
 
 **Feature Announcement:**
@@ -128,7 +128,7 @@ Multi-chain wallet integration built in.
 
 This is what computing looks like in the onchain era.
 
-berryos.xyz
+berryos.wtf
 ```
 
 **Community Post:**
@@ -146,7 +146,7 @@ Berry OS brings real computing to the onchain era:
 We're not rebuilding the past.
 We're building the operating system for Web3.
 
-⌐◨-◨ berryos.xyz
+⌐◨-◨ berryos.wtf
 ```
 
 **Positioning Post:**
@@ -266,7 +266,7 @@ The operating system for Web3. ⌐◨-◨
 Berry OS ⌐◨-◨
 The operating system for Web3.
 Built for Farcaster.
-berryos.xyz
+berryos.wtf
 ```
 
 ### Profile Description
