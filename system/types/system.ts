@@ -11,6 +11,19 @@ export type MobileSupport = 'full' | 'limited' | 'desktop-only';
 
 export type MobileLayout = 'fullscreen' | 'bottom-sheet' | 'modal';
 
+export interface MenuItem {
+  label?: string;
+  action?: string;
+  shortcut?: string;
+  divider?: boolean;
+  disabled?: boolean;
+  submenu?: MenuItem[];
+}
+
+export interface AppMenus {
+  [menuName: string]: MenuItem[];
+}
+
 export interface AppConfig {
   id: string;
   name: string;
@@ -26,6 +39,8 @@ export interface AppConfig {
   category: AppCategory;
   description: string;
   version: string;
+  showOnDesktop?: boolean; // Show as desktop icon (default: false)
+  menus?: AppMenus; // Custom menus for this app
 }
 
 export interface RunningApp {

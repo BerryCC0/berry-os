@@ -75,38 +75,80 @@ export function updateURL(params: URLSearchParams): void {
 
 /**
  * Get app state from URL query params
+ * Uses per-app state keys: state_calculator, state_finder, etc.
+ * Falls back to legacy 'state' param for backward compatibility
  * @param appId - The app identifier
  * @returns Deserialized state or null
  */
 export function getStateFromURL<T>(appId: string): T | null {
   const params = getSearchParams();
-  const stateParam = params.get('state');
   
-  if (!stateParam) return null;
+  // Try new per-app state format
+  const appStateParam = params.get(`state_${appId}`);
+  if (appStateParam) {
+    return deserializeState<T>(appStateParam);
+  }
   
-  return deserializeState<T>(stateParam);
+  // Fall back to legacy global state (for backward compatibility)
+  const legacyStateParam = params.get('state');
+  if (legacyStateParam) {
+    return deserializeState<T>(legacyStateParam);
+  }
+  
+  return null;
 }
 
 /**
  * Set app state in URL query params
+ * Uses per-app state keys: state_calculator, state_finder, etc.
  * @param appId - The app identifier
  * @param state - State to serialize and store
+ * @param updateApps - Whether to add app to apps list (default: true)
  */
-export function setStateInURL<T>(appId: string, state: T): void {
+export function setStateInURL<T>(appId: string, state: T, updateApps = true): void {
   const params = getSearchParams();
   const encoded = serializeState(state);
   
   if (encoded) {
-    params.set('state', encoded);
+    // Set per-app state
+    params.set(`state_${appId}`, encoded);
     
-    // Also ensure the app is in the apps list
-    const apps = params.get('apps') || '';
-    if (!apps.split(',').includes(appId)) {
-      params.set('apps', apps ? `${apps},${appId}` : appId);
+    // Clean up legacy global state param if it exists
+    params.delete('state');
+    
+    // Add app to apps list if requested
+    if (updateApps) {
+      const apps = params.get('apps') || '';
+      const appList = apps.split(',').filter(Boolean);
+      if (!appList.includes(appId)) {
+        appList.push(appId);
+        params.set('apps', appList.join(','));
+      }
     }
     
     updateURL(params);
   }
+}
+
+/**
+ * Remove app state from URL
+ * @param appId - The app identifier
+ */
+export function removeStateFromURL(appId: string): void {
+  const params = getSearchParams();
+  params.delete(`state_${appId}`);
+  
+  // Also remove from apps list
+  const apps = params.get('apps') || '';
+  const appList = apps.split(',').filter(Boolean).filter(id => id !== appId);
+  
+  if (appList.length > 0) {
+    params.set('apps', appList.join(','));
+  } else {
+    params.delete('apps');
+  }
+  
+  updateURL(params);
 }
 
 /**
@@ -124,10 +166,42 @@ export function generateShareableURL<T>(appId: string, state: T): string {
   // Set app
   params.set('apps', appId);
   
-  // Set state
+  // Set per-app state
   const encoded = serializeState(state);
   if (encoded) {
-    params.set('state', encoded);
+    params.set(`state_${appId}`, encoded);
+  }
+  
+  url.search = params.toString();
+  return url.toString();
+}
+
+/**
+ * Generate shareable URL with multiple apps and their states
+ * @param appStates - Array of {appId, state} objects
+ * @returns Full URL with encoded states
+ */
+export function generateMultiAppURL(appStates: Array<{ appId: string; state?: any }>): string {
+  if (typeof window === 'undefined') return '';
+
+  const url = new URL(window.location.origin);
+  const params = new URLSearchParams();
+  
+  const appIds: string[] = [];
+  
+  appStates.forEach(({ appId, state }) => {
+    appIds.push(appId);
+    
+    if (state) {
+      const encoded = serializeState(state);
+      if (encoded) {
+        params.set(`state_${appId}`, encoded);
+      }
+    }
+  });
+  
+  if (appIds.length > 0) {
+    params.set('apps', appIds.join(','));
   }
   
   url.search = params.toString();
@@ -180,5 +254,65 @@ export function getAppsFromURL(): string[] {
   if (!apps) return [];
   
   return apps.split(',').filter(Boolean);
+}
+
+/**
+ * Add app to URL apps list (without state)
+ * Updates URL to reflect app being opened
+ * @param appId - The app identifier
+ */
+export function addAppToURL(appId: string): void {
+  const params = getSearchParams();
+  const apps = params.get('apps') || '';
+  const appList = apps.split(',').filter(Boolean);
+  
+  if (!appList.includes(appId)) {
+    appList.push(appId);
+    params.set('apps', appList.join(','));
+    updateURL(params);
+  }
+}
+
+/**
+ * Remove app from URL apps list
+ * Updates URL when app is closed
+ * @param appId - The app identifier
+ */
+export function removeAppFromURL(appId: string): void {
+  const params = getSearchParams();
+  
+  // Remove app from apps list
+  const apps = params.get('apps') || '';
+  const appList = apps.split(',').filter(Boolean).filter(id => id !== appId);
+  
+  if (appList.length > 0) {
+    params.set('apps', appList.join(','));
+  } else {
+    params.delete('apps');
+  }
+  
+  // Remove app state
+  params.delete(`state_${appId}`);
+  
+  updateURL(params);
+}
+
+/**
+ * Sync current running apps to URL
+ * Useful for keeping URL in sync with system state
+ * @param appIds - Array of currently running app IDs
+ */
+export function syncAppsToURL(appIds: string[]): void {
+  if (appIds.length === 0) {
+    // Clear apps from URL
+    const params = getSearchParams();
+    params.delete('apps');
+    updateURL(params);
+    return;
+  }
+  
+  const params = getSearchParams();
+  params.set('apps', appIds.join(','));
+  updateURL(params);
 }
 

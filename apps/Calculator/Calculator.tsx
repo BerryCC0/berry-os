@@ -12,20 +12,13 @@ import {
   generateShareableURL, 
   copyToClipboard 
 } from '../../app/lib/utils/stateUtils';
+import { eventBus } from '../../system/lib/eventBus';
+import * as calc from './utils/helpers/calculate';
+import type { CalculatorState, Operation } from './utils/helpers/calculate';
 import styles from './Calculator.module.css';
 
 interface CalculatorProps {
   windowId: string;
-}
-
-type Operation = '+' | '-' | '×' | '÷' | null;
-
-interface CalculatorState {
-  display: string;
-  previousValue: number | null;
-  operation: Operation;
-  waitingForOperand: boolean;
-  memory: number;
 }
 
 // Serializable state (what we save to URL)
@@ -64,185 +57,19 @@ export default function Calculator({ windowId }: CalculatorProps) {
 
   const [state, setState] = useState<CalculatorState>(getInitialState);
 
-  // Handle number input
-  const inputDigit = (digit: number) => {
-    const { display, waitingForOperand } = state;
-
-    if (waitingForOperand) {
-      setState({
-        ...state,
-        display: String(digit),
-        waitingForOperand: false,
-      });
-    } else {
-      setState({
-        ...state,
-        display: display === '0' ? String(digit) : display + digit,
-      });
-    }
-  };
-
-  // Handle decimal point
-  const inputDecimal = () => {
-    const { display, waitingForOperand } = state;
-
-    if (waitingForOperand) {
-      setState({
-        ...state,
-        display: '0.',
-        waitingForOperand: false,
-      });
-    } else if (display.indexOf('.') === -1) {
-      setState({
-        ...state,
-        display: display + '.',
-      });
-    }
-  };
-
-  // Clear everything
-  const clear = () => {
-    setState({
-      display: '0',
-      previousValue: null,
-      operation: null,
-      waitingForOperand: false,
-      memory: state.memory, // Keep memory
-    });
-  };
-
-  // Clear entry (just the display)
-  const clearEntry = () => {
-    setState({
-      ...state,
-      display: '0',
-    });
-  };
-
-  // Perform calculation
-  const performOperation = (nextOperation: Operation) => {
-    const { display, previousValue, operation } = state;
-    const inputValue = parseFloat(display);
-
-    if (previousValue === null) {
-      setState({
-        ...state,
-        previousValue: inputValue,
-        operation: nextOperation,
-        waitingForOperand: true,
-      });
-    } else if (operation) {
-      const currentValue = previousValue || 0;
-      let newValue = currentValue;
-
-      switch (operation) {
-        case '+':
-          newValue = currentValue + inputValue;
-          break;
-        case '-':
-          newValue = currentValue - inputValue;
-          break;
-        case '×':
-          newValue = currentValue * inputValue;
-          break;
-        case '÷':
-          newValue = currentValue / inputValue;
-          break;
-      }
-
-      setState({
-        ...state,
-        display: String(newValue),
-        previousValue: newValue,
-        operation: nextOperation,
-        waitingForOperand: true,
-      });
-    }
-  };
-
-  // Calculate result
-  const calculate = () => {
-    const { display, previousValue, operation } = state;
-    const inputValue = parseFloat(display);
-
-    if (previousValue !== null && operation) {
-      let result = previousValue;
-
-      switch (operation) {
-        case '+':
-          result = previousValue + inputValue;
-          break;
-        case '-':
-          result = previousValue - inputValue;
-          break;
-        case '×':
-          result = previousValue * inputValue;
-          break;
-        case '÷':
-          result = previousValue / inputValue;
-          break;
-      }
-
-      setState({
-        ...state,
-        display: String(result),
-        previousValue: null,
-        operation: null,
-        waitingForOperand: true,
-      });
-    }
-  };
-
-  // Toggle sign
-  const toggleSign = () => {
-    const { display } = state;
-    const value = parseFloat(display);
-    setState({
-      ...state,
-      display: String(value * -1),
-    });
-  };
-
-  // Percentage
-  const inputPercent = () => {
-    const { display } = state;
-    const value = parseFloat(display);
-    setState({
-      ...state,
-      display: String(value / 100),
-    });
-  };
-
-  // Memory functions
-  const memoryClear = () => {
-    setState({ ...state, memory: 0 });
-  };
-
-  const memoryRecall = () => {
-    setState({
-      ...state,
-      display: String(state.memory),
-      waitingForOperand: true,
-    });
-  };
-
-  const memoryAdd = () => {
-    const value = parseFloat(state.display);
-    setState({
-      ...state,
-      memory: state.memory + value,
-      waitingForOperand: true,
-    });
-  };
-
-  const memorySubtract = () => {
-    const value = parseFloat(state.display);
-    setState({
-      ...state,
-      memory: state.memory - value,
-      waitingForOperand: true,
-    });
-  };
+  // All business logic delegated to pure functions
+  const inputDigit = (digit: number) => setState(calc.inputDigit(state, digit));
+  const inputDecimal = () => setState(calc.inputDecimal(state));
+  const clear = () => setState(calc.clear(state));
+  const clearEntry = () => setState(calc.clearEntry(state));
+  const performOperation = (nextOp: Operation) => setState(calc.performOperation(state, nextOp));
+  const calculate = () => setState(calc.calculate(state));
+  const toggleSign = () => setState(calc.toggleSign(state));
+  const inputPercent = () => setState(calc.inputPercent(state));
+  const memoryClear = () => setState(calc.memoryClear(state));
+  const memoryRecall = () => setState(calc.memoryRecall(state));
+  const memoryAdd = () => setState(calc.memoryAdd(state));
+  const memorySubtract = () => setState(calc.memorySubtract(state));
 
   // Sync state to URL when it changes
   useEffect(() => {
@@ -254,6 +81,37 @@ export default function Calculator({ windowId }: CalculatorProps) {
     };
     
     setStateInURL('calculator', serializableState);
+  }, [state]);
+
+  // Menu action handlers
+  useEffect(() => {
+    const subscription = eventBus.subscribe('MENU_ACTION', (payload) => {
+      const { action } = payload as any;
+      
+      switch (action) {
+        case 'calc:copy-result':
+          // Copy current display value to system clipboard
+          copyToClipboard(state.display);
+          setShowCopyNotification(true);
+          setTimeout(() => setShowCopyNotification(false), 2000);
+          break;
+        
+        case 'calc:paste':
+          // Paste from clipboard (would need clipboard integration)
+          console.log('Paste not yet implemented');
+          break;
+        
+        case 'calc:clear':
+          clear();
+          break;
+        
+        case 'calc:share':
+          handleShare();
+          break;
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [state]);
 
   // Share calculator state

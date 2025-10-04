@@ -1,0 +1,116 @@
+/**
+ * Dialog Component Styles
+ * Mac OS 8 System Dialog
+ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+}
+
+.dialog {
+  background: var(--mac-white);
+  border: 1px solid var(--mac-black);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  min-width: 300px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.titleBar {
+  height: var(--titlebar-height);
+  background: var(--mac-white);
+  border-bottom: 1px solid var(--mac-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--spacing-md);
+}
+
+.title {
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.content {
+  padding: var(--spacing-xl);
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+.iconContainer {
+  flex-shrink: 0;
+}
+
+.icon {
+  font-size: 32px;
+  display: block;
+  line-height: 1;
+}
+
+.message {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.buttonContainer {
+  padding: var(--spacing-md) var(--spacing-xl) var(--spacing-xl);
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .backdrop {
+    padding: var(--spacing-md);
+  }
+
+  .dialog {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .titleBar {
+    height: var(--mobile-nav-height);
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .content {
+    padding: var(--spacing-lg);
+  }
+
+  .icon {
+    font-size: 40px;
+  }
+
+  .message {
+    font-size: 14px;
+  }
+
+  .buttonContainer {
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+    flex-direction: column-reverse;
+  }
+
+  .buttonContainer > * {
+    width: 100%;
+  }
+}
+

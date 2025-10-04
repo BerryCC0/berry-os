@@ -1,0 +1,230 @@
+/**
+ * Debug App Styles
+ */
+
+.debug {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--mac-white);
+}
+
+.container {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* ==================== Header ==================== */
+
+.header {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--mac-black);
+}
+
+.title {
+  font-family: var(--font-chicago);
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  color: var(--mac-gray-3);
+  margin-top: var(--spacing-xs);
+}
+
+/* ==================== Sections ==================== */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--mac-gray-2);
+  border-radius: 4px;
+  background: var(--mac-gray-5);
+}
+
+.sectionTitle {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.warning {
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  color: var(--mac-gray-3);
+  font-style: italic;
+}
+
+/* ==================== Info Grid ==================== */
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.label {
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--mac-gray-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-family: var(--font-chicago);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* ==================== Buttons ==================== */
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+/* ==================== State Display ==================== */
+
+.stateDisplay {
+  padding: var(--spacing-md);
+  background: var(--mac-white);
+  border: 1px solid var(--mac-gray-2);
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* ==================== Event Log ==================== */
+
+.logHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.log {
+  background: var(--mac-black);
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: var(--spacing-md);
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logEmpty {
+  color: var(--mac-gray-3);
+  font-style: italic;
+}
+
+.logEntry {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==================== App List ==================== */
+
+.appList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.appItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--mac-white);
+  border: 1px solid var(--mac-gray-2);
+  border-radius: 4px;
+}
+
+.appIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.appInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.appName {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.appMeta {
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--mac-gray-3);
+}
+
+.appStatus {
+  font-size: 12px;
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .buttonRow {
+    flex-direction: column;
+  }
+
+  .buttonRow > * {
+    width: 100%;
+  }
+
+  .log {
+    font-size: 9px;
+    max-height: 150px;
+  }
+}
+

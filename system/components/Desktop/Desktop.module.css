@@ -46,10 +46,16 @@
   gap: 4px;
   cursor: pointer;
   user-select: none;
+  transition: opacity 0.1s ease;
 }
 
 .icon:hover .iconLabel {
   background: rgba(255, 255, 255, 0.9);
+}
+
+.icon.dragging {
+  opacity: 0.7;
+  cursor: grabbing;
 }
 
 .iconImage {
@@ -91,8 +97,14 @@
 
 /* Mobile adaptations */
 @media (max-width: 768px) {
+  .iconContainer {
+    top: var(--mobile-nav-height); /* Below mobile nav bar */
+    padding: var(--spacing-md);
+  }
+  
   .icon {
     width: var(--mobile-icon-size);
+    touch-action: none; /* Prevent default touch behaviors */
   }
   
   .iconImage {
@@ -102,6 +114,12 @@
   
   .iconLabel {
     font-size: 12px;
+    padding: 4px 8px; /* Larger touch target */
+  }
+  
+  .icon.dragging {
+    opacity: 0.8;
+    transform: scale(1.05); /* Slightly larger when dragging on mobile */
   }
   
   .windowContainer {

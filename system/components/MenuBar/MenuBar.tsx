@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSystemStore } from '../../store/systemStore';
 import { REGISTERED_APPS, getSystemApps } from '../../../apps/AppConfig';
 import SystemTray from '../SystemTray/SystemTray';
+import { executeMenuAction } from '../../lib/menuActions';
 import styles from './MenuBar.module.css';
 
 export default function MenuBar() {
@@ -17,6 +18,15 @@ export default function MenuBar() {
   
   const launchApp = useSystemStore((state) => state.launchApp);
   const runningApps = useSystemStore((state) => state.runningApps);
+  const windows = useSystemStore((state) => state.windows);
+  const activeWindowId = useSystemStore((state) => state.activeWindowId);
+  
+  // Get the active app based on focused window
+  const activeApp = activeWindowId && windows[activeWindowId]
+    ? runningApps[windows[activeWindowId].appId]
+    : null;
+  
+  const activeAppName = activeApp?.config.name || 'Finder';
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -42,6 +52,39 @@ export default function MenuBar() {
       launchApp(appConfig);
       setActiveMenu(null);
     }
+  };
+
+  const handleMenuAction = (action: Parameters<typeof executeMenuAction>[0]) => {
+    executeMenuAction(action);
+    setActiveMenu(null);
+  };
+
+  // Get app-specific menus or use default menus
+  const appMenus = activeApp?.config.menus || {};
+  const hasAppMenus = Object.keys(appMenus).length > 0;
+
+  // Render a menu item
+  const renderMenuItem = (item: any, index: number) => {
+    if (item.divider) {
+      return <div key={`divider-${index}`} className={styles.divider} />;
+    }
+
+    return (
+      <div
+        key={`item-${index}`}
+        className={`${styles.dropdownItem} ${item.disabled ? styles.disabled : ''}`}
+        onClick={() => {
+          if (!item.disabled && item.action) {
+            handleMenuAction(item.action as any);
+          } else if (!item.disabled) {
+            setActiveMenu(null);
+          }
+        }}
+      >
+        {item.label}
+        {item.shortcut && <span className={styles.shortcut}>{item.shortcut}</span>}
+      </div>
+    );
   };
 
   return (
@@ -70,6 +113,18 @@ export default function MenuBar() {
             >
               Berry
             </div>
+            {/* Debug Console - Development only */}
+            {process.env.NODE_ENV === 'development' && (
+              <>
+                <div className={styles.divider} />
+                <div
+                  className={styles.dropdownItem}
+                  onClick={() => handleAppLaunch('debug')}
+                >
+                  Debug Console...
+                </div>
+              </>
+            )}
             <div className={styles.divider} />
             <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
               System Preferences...
@@ -88,137 +143,73 @@ export default function MenuBar() {
         )}
       </div>
 
-      {/* File Menu */}
-      <div className={styles.menuSection}>
-        <button
-          className={`${styles.menuItem} ${activeMenu === 'file' ? styles.active : ''}`}
-          onClick={() => toggleMenu('file')}
-        >
-          File
-        </button>
-        
-        {activeMenu === 'file' && (
-          <div className={styles.dropdown}>
-            <div className={styles.dropdownItem} onClick={() => handleAppLaunch('finder')}>
-              Open Finder
-              <span className={styles.shortcut}>⌘F</span>
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              New Folder
-              <span className={styles.shortcut}>⌘N</span>
-            </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Open...
-              <span className={styles.shortcut}>⌘O</span>
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Close Window
-              <span className={styles.shortcut}>⌘W</span>
-            </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Get Info
-              <span className={styles.shortcut}>⌘I</span>
-            </div>
-          </div>
-        )}
+      {/* Active App Name */}
+      <div className={styles.appName}>
+        {activeAppName}
       </div>
 
-      {/* Edit Menu */}
-      <div className={styles.menuSection}>
-        <button
-          className={`${styles.menuItem} ${activeMenu === 'edit' ? styles.active : ''}`}
-          onClick={() => toggleMenu('edit')}
-        >
-          Edit
-        </button>
-        
-        {activeMenu === 'edit' && (
-          <div className={styles.dropdown}>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Undo
-              <span className={styles.shortcut}>⌘Z</span>
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Cut
-              <span className={styles.shortcut}>⌘X</span>
-            </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Copy
-              <span className={styles.shortcut}>⌘C</span>
-            </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Paste
-              <span className={styles.shortcut}>⌘V</span>
-            </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Clear
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Select All
-              <span className={styles.shortcut}>⌘A</span>
-            </div>
+      {/* Dynamic App Menus */}
+      {hasAppMenus ? (
+        // Render app-specific menus
+        Object.entries(appMenus).map(([menuName, items]) => (
+          <div key={menuName} className={styles.menuSection}>
+            <button
+              className={`${styles.menuItem} ${activeMenu === menuName.toLowerCase() ? styles.active : ''}`}
+              onClick={() => toggleMenu(menuName.toLowerCase())}
+            >
+              {menuName}
+            </button>
+            
+            {activeMenu === menuName.toLowerCase() && (
+              <div className={styles.dropdown}>
+                {items.map((item: any, index: number) => renderMenuItem(item, index))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        ))
+      ) : (
+        // Default menus when no app is focused
+        <>
+          <div className={styles.menuSection}>
+            <button
+              className={`${styles.menuItem} ${activeMenu === 'file' ? styles.active : ''}`}
+              onClick={() => toggleMenu('file')}
+            >
+              File
+            </button>
+            
+            {activeMenu === 'file' && (
+              <div className={styles.dropdown}>
+                <div className={styles.dropdownItem} onClick={() => handleAppLaunch('finder')}>
+                  Open Finder
+                  <span className={styles.shortcut}>⌘F</span>
+                </div>
+              </div>
+            )}
+          </div>
 
-      {/* View Menu */}
-      <div className={styles.menuSection}>
-        <button
-          className={`${styles.menuItem} ${activeMenu === 'view' ? styles.active : ''}`}
-          onClick={() => toggleMenu('view')}
-        >
-          View
-        </button>
-        
-        {activeMenu === 'view' && (
-          <div className={styles.dropdown}>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              as Icons
-            </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              as List
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Clean Up
-            </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Arrange
-            </div>
+          <div className={styles.menuSection}>
+            <button
+              className={`${styles.menuItem} ${activeMenu === 'special' ? styles.active : ''}`}
+              onClick={() => toggleMenu('special')}
+            >
+              Special
+            </button>
+            
+            {activeMenu === 'special' && (
+              <div className={styles.dropdown}>
+                <div className={styles.dropdownItem} onClick={() => handleAppLaunch('calculator')}>
+                  Calculator
+                </div>
+                <div className={styles.divider} />
+                <div className={styles.dropdownItem} onClick={() => handleMenuAction('special:empty-trash')}>
+                  Empty Trash...
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-
-      {/* Special Menu */}
-      <div className={styles.menuSection}>
-        <button
-          className={`${styles.menuItem} ${activeMenu === 'special' ? styles.active : ''}`}
-          onClick={() => toggleMenu('special')}
-        >
-          Special
-        </button>
-        
-        {activeMenu === 'special' && (
-          <div className={styles.dropdown}>
-            <div className={styles.dropdownItem} onClick={() => handleAppLaunch('calculator')}>
-              Calculator
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Empty Trash...
-            </div>
-            <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
-              Eject
-              <span className={styles.shortcut}>⌘E</span>
-            </div>
-          </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Spacer */}
       <div className={styles.spacer} />

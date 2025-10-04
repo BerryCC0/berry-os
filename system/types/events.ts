@@ -17,9 +17,11 @@ export type EventType =
   | 'MENU_OPEN'
   | 'MENU_CLOSE'
   | 'MENU_SELECT'
+  | 'MENU_ACTION'
   | 'DESKTOP_ICON_MOVE'
   | 'DESKTOP_ICON_SELECT'
   | 'KEYBOARD_SHORTCUT'
+  | 'GESTURE'
   | 'GESTURE_TAP'
   | 'GESTURE_LONG_PRESS'
   | 'GESTURE_SWIPE_LEFT'
@@ -59,6 +61,11 @@ export interface MenuEventPayload extends BaseEventPayload {
   itemId?: string;
 }
 
+export interface MenuActionPayload extends BaseEventPayload {
+  action: string;
+  context?: any;
+}
+
 export interface DesktopIconEventPayload extends BaseEventPayload {
   iconId: string;
   x?: number;
@@ -76,9 +83,13 @@ export interface KeyboardEventPayload extends BaseEventPayload {
 }
 
 export interface GestureEventPayload extends BaseEventPayload {
+  gestureType?: string;
   target?: string;
+  targetId?: string;
   position?: { x: number; y: number };
+  startPosition?: { x: number; y: number };
   velocity?: number;
+  distance?: number;
 }
 
 export type EventPayload =
@@ -88,6 +99,7 @@ export type EventPayload =
   | AppEventPayload
   | AppErrorPayload
   | MenuEventPayload
+  | MenuActionPayload
   | DesktopIconEventPayload
   | KeyboardEventPayload
   | GestureEventPayload

@@ -13,6 +13,8 @@ import type {
 } from '../types/system';
 import type { Window, WindowConfig } from '../types/window';
 import { eventBus } from '../lib/eventBus';
+import { addAppToURL, removeAppFromURL } from '../../app/lib/utils/stateUtils';
+import * as screenReader from '../lib/screenReader';
 
 interface SystemActions {
   // Window Management
@@ -36,6 +38,7 @@ interface SystemActions {
   removeDesktopIcon: (iconId: string) => void;
   moveDesktopIcon: (iconId: string, x: number, y: number) => void;
   setWallpaper: (wallpaper: string) => void;
+  initializeDesktopIcons: (apps: AppConfig[]) => void;
   
   // Menu Bar
   openMenu: (menuId: string) => void;
@@ -107,6 +110,9 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
       activeWindowId: windowId,
     }));
 
+    // Announce to screen readers
+    screenReader.announceWindowOpen(config.title);
+
     // Publish event
     eventBus.publish('WINDOW_OPEN', { windowId });
 
@@ -122,6 +128,9 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     const state = get();
     const window = state.windows[windowId];
     if (!window) return;
+
+    // Announce to screen readers
+    screenReader.announceWindowClosed(window.title);
 
     // Remove window
     const newWindows = { ...state.windows };
@@ -157,10 +166,19 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
 
     const newZIndex = nextZIndex++;
     
+    // If window is minimized, restore it to normal state
+    const wasMinimized = window.state === 'minimized';
+    const newState: Window['state'] = wasMinimized ? 'normal' : window.state;
+    
+    // Announce if restoring from minimized
+    if (wasMinimized) {
+      screenReader.announceWindowRestored(window.title);
+    }
+    
     set((state) => ({
       windows: {
         ...state.windows,
-        [windowId]: { ...window, zIndex: newZIndex, isActive: true },
+        [windowId]: { ...window, zIndex: newZIndex, isActive: true, state: newState },
       },
       activeWindowId: windowId,
     }));
@@ -178,6 +196,9 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     const window = get().windows[windowId];
     if (!window) return;
 
+    // Announce to screen readers
+    screenReader.announceWindowMinimized(window.title);
+
     set((state) => ({
       windows: {
         ...state.windows,
@@ -194,6 +215,13 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     if (!window) return;
 
     const newState: Window['state'] = window.state === 'maximized' ? 'normal' : 'maximized';
+
+    // Announce to screen readers
+    if (newState === 'maximized') {
+      screenReader.announceWindowMaximized(window.title);
+    } else {
+      screenReader.announceWindowRestored(window.title);
+    }
 
     set((state) => ({
       windows: {
@@ -310,6 +338,9 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
       },
     }));
 
+    // Update URL to reflect app launch
+    addAppToURL(appConfig.id);
+
     eventBus.publish('APP_LAUNCH', { appId: appConfig.id });
   },
 
@@ -330,6 +361,9 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     delete newRunningApps[appId];
 
     set({ runningApps: newRunningApps });
+
+    // Update URL to reflect app termination
+    removeAppFromURL(appId);
 
     eventBus.publish('APP_TERMINATE', { appId });
   },
@@ -384,6 +418,37 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
 
   setWallpaper: (wallpaper: string) => {
     set({ wallpaper });
+  },
+
+  initializeDesktopIcons: (apps: AppConfig[]) => {
+    const icons: DesktopIcon[] = [];
+    const gridSize = 80; // Space between icons
+    const startX = 20;
+    const startY = 30; // Just below menu bar (20px menu bar + 10px padding)
+    
+    let row = 0;
+    let col = 0;
+    
+    apps.forEach((app) => {
+      if (app.showOnDesktop) {
+        icons.push({
+          id: `desktop-${app.id}`,
+          name: app.name,
+          icon: app.icon,
+          type: 'app',
+          position: {
+            x: startX + (col * gridSize),
+            y: startY + (row * gridSize),
+          },
+          appId: app.id,
+        });
+        
+        // Grid layout: 1 column on right side of screen
+        row++;
+      }
+    });
+    
+    set({ desktopIcons: icons });
   },
 
   // ==================== Menu Bar ====================

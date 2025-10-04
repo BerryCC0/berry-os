@@ -48,6 +48,15 @@
   display: block;
 }
 
+.appName {
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--mac-black);
+  padding: 2px 12px 2px 8px;
+  user-select: none;
+}
+
 .menuItem:hover,
 .menuItem.active {
   background: var(--mac-black);

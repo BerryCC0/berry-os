@@ -60,6 +60,7 @@
 /* ==================== Window Controls ==================== */
 
 .closeButton,
+.minimizeButton,
 .zoomButton {
   width: 13px;
   height: 13px;
@@ -75,11 +76,13 @@
 }
 
 .closeButton:hover,
+.minimizeButton:hover,
 .zoomButton:hover {
   background: var(--mac-gray-5);
 }
 
 .closeButton:active,
+.minimizeButton:active,
 .zoomButton:active {
   background: var(--mac-gray-1);
   border-style: inset;
@@ -88,6 +91,12 @@
 .closeButtonInner {
   width: 7px;
   height: 7px;
+  background: var(--mac-black);
+}
+
+.minimizeButtonInner {
+  width: 7px;
+  height: 1px;
   background: var(--mac-black);
 }
 
@@ -169,6 +178,7 @@
   }
 
   .closeButton,
+  .minimizeButton,
   .zoomButton {
     width: 32px;
     height: 32px;
@@ -178,6 +188,11 @@
   .closeButtonInner {
     width: 16px;
     height: 16px;
+  }
+
+  .minimizeButtonInner {
+    width: 16px;
+    height: 2px;
   }
 
   .zoomButtonInner {
@@ -194,6 +209,7 @@
 /* ==================== Accessibility ==================== */
 
 .closeButton:focus-visible,
+.minimizeButton:focus-visible,
 .zoomButton:focus-visible {
   outline: 2px solid var(--mac-black);
   outline-offset: 2px;

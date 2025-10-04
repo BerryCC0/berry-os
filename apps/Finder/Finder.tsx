@@ -18,6 +18,8 @@ import { getAppById } from '../AppConfig';
 import { useSystemStore } from '../../system/store/systemStore';
 import { getAppForFileType, createFileOpenData } from '../../system/lib/fileOpener';
 import { serializeState } from '../../app/lib/utils/stateUtils';
+import { eventBus } from '../../system/lib/eventBus';
+import { clipboard } from '../../system/lib/clipboard';
 import styles from './Finder.module.css';
 
 interface FinderProps {
@@ -145,6 +147,64 @@ export default function Finder({ windowId }: FinderProps) {
       setSortDirection('asc');
     }
   };
+
+  // Menu action handlers
+  useEffect(() => {
+    const subscription = eventBus.subscribe('MENU_ACTION', (payload) => {
+      const { action } = payload as any;
+      
+      switch (action) {
+        case 'new-folder':
+          alert('New Folder: This would create a new folder (read-only filesystem)');
+          break;
+        
+        case 'cut':
+          if (selectedItems.length > 0) {
+            const items = selectedItems.map(id => {
+              const item = getItemByPath(currentPath)?.children?.find(i => i.id === id);
+              return item;
+            }).filter(Boolean);
+            clipboard.cut('file', items);
+          }
+          break;
+        
+        case 'copy':
+          if (selectedItems.length > 0) {
+            const items = selectedItems.map(id => {
+              const item = getItemByPath(currentPath)?.children?.find(i => i.id === id);
+              return item;
+            }).filter(Boolean);
+            clipboard.copy('file', items);
+          }
+          break;
+        
+        case 'paste':
+          const clipboardData = clipboard.paste();
+          if (clipboardData) {
+            alert(`Paste: Would paste ${clipboardData.data.length} item(s) (read-only filesystem)`);
+          }
+          break;
+        
+        case 'select-all':
+          selectAll();
+          break;
+        
+        case 'view-as-icons':
+          setViewMode('icon');
+          break;
+        
+        case 'view-as-list':
+          setViewMode('list');
+          break;
+        
+        case 'empty-trash':
+          alert('Empty Trash: This would empty the trash');
+          break;
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [selectedItems, currentPath]);
 
   // Keyboard navigation
   useEffect(() => {

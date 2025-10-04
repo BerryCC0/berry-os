@@ -1,0 +1,120 @@
+/**
+ * Button Component Styles
+ * Mac OS 8 Classic Button
+ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geneva);
+  cursor: pointer;
+  user-select: none;
+}
+
+.inner {
+  background: var(--mac-white);
+  border: 1px solid var(--mac-black);
+  border-radius: 4px;
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner:hover:not(:disabled) {
+  background: var(--mac-gray-5);
+}
+
+.inner:active:not(:disabled) {
+  background: var(--mac-gray-1);
+  border-style: inset;
+}
+
+.inner:disabled {
+  color: var(--mac-gray-2);
+  cursor: not-allowed;
+}
+
+/* ==================== Variants ==================== */
+
+.default .inner {
+  background: var(--mac-white);
+}
+
+.primary .inner {
+  background: var(--mac-black);
+  color: var(--mac-white);
+  font-weight: bold;
+}
+
+.primary .inner:hover:not(:disabled) {
+  background: var(--mac-gray-3);
+}
+
+.primary .inner:active:not(:disabled) {
+  background: var(--mac-gray-2);
+}
+
+.cancel .inner {
+  background: var(--mac-gray-1);
+}
+
+/* ==================== Sizes ==================== */
+
+.small .inner {
+  padding: 2px 8px;
+  font-size: 10px;
+}
+
+.medium .inner {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.large .inner {
+  padding: 6px 16px;
+  font-size: 14px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .small .inner {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .medium .inner {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .large .inner {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+.inner:focus-visible {
+  outline: 2px solid var(--mac-black);
+  outline-offset: 2px;
+}
+

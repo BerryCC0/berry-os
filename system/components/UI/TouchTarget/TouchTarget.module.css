@@ -1,0 +1,34 @@
+/**
+ * TouchTarget Component Styles
+ */
+
+.touchTarget {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.touchTarget.pressed {
+  transform: scale(0.95);
+}
+
+.touchTarget.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Ensure touch targets are never smaller than 44x44 on mobile */
+@media (max-width: 768px) {
+  .touchTarget {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+

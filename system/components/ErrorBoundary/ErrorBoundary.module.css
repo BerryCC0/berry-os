@@ -1,0 +1,167 @@
+/**
+ * Error Boundary Component Styles
+ * Mac OS 8 crash dialog aesthetic
+ */
+
+.errorContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mac-gray-1);
+  padding: var(--spacing-xl);
+}
+
+.errorDialog {
+  background: var(--mac-white);
+  border: 2px solid var(--mac-black);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+}
+
+.iconSection {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  padding-top: var(--spacing-sm);
+}
+
+.errorIcon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.title {
+  font-family: var(--font-geneva);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mac-black);
+}
+
+.message {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--mac-black);
+}
+
+.details {
+  margin-top: var(--spacing-sm);
+  border: 1px solid var(--mac-gray-2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.detailsSummary {
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--mac-gray-5);
+  cursor: pointer;
+  user-select: none;
+}
+
+.detailsSummary:hover {
+  background: var(--mac-gray-1);
+}
+
+.errorDetails {
+  padding: var(--spacing-md);
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  line-height: 1.4;
+  background: var(--mac-white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.errorType,
+.errorMessage {
+  word-break: break-word;
+}
+
+.errorStack {
+  margin-top: var(--spacing-sm);
+}
+
+.errorStack pre {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  line-height: 1.3;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--mac-gray-5);
+  padding: var(--spacing-sm);
+  border-radius: 2px;
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: var(--spacing-xs);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .errorContainer {
+    padding: var(--spacing-md);
+  }
+
+  .errorDialog {
+    flex-direction: column;
+    padding: var(--spacing-lg);
+  }
+
+  .iconSection {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .errorIcon {
+    font-size: 64px;
+  }
+
+  .title {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .message {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actions > * {
+    width: 100%;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+.detailsSummary:focus-visible {
+  outline: 2px solid var(--mac-black);
+  outline-offset: -2px;
+}
+
