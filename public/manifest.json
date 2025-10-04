@@ -2,7 +2,7 @@
   "name": "Nouns OS",
   "short_name": "Nouns OS",
   "description": "Mac OS 8 emulator built with modern web technologies",
-  "start_url": "/",
+  "start_url": "https://nounsos.wtf",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",

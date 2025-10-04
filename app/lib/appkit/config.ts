@@ -7,6 +7,7 @@ import { cookieStorage, createStorage } from '@wagmi/core';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana/react';
 import { BitcoinAdapter } from '@reown/appkit-adapter-bitcoin';
+import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
 import { 
   solana, 
   solanaTestnet, 
@@ -33,8 +34,8 @@ if (!projectId || projectId === 'YOUR_PROJECT_ID_HERE') {
 export const metadata = {
   name: 'Nouns OS',
   description: 'Mac OS 8 Emulator with Web3 - EVM, Solana & Bitcoin',
-  url: 'https://nouns-os.vercel.app',
-  icons: ['https://nouns-os.vercel.app/icons/apps/about-this-mac.svg'],
+  url: 'https://nounsos.wtf',
+  icons: ['https://nounsos.wtf/icons/apps/about-this-mac.svg'],
 };
 
 // Determine if we're in development
@@ -58,7 +59,7 @@ export const bitcoinNetworks = isDevelopment
 // All networks combined
 export const networks = [...evmNetworks, ...solanaNetworks, ...bitcoinNetworks];
 
-// Set up the Wagmi Adapter (EVM)
+// Set up the Wagmi Adapter (EVM) with Farcaster Mini App connector
 export const wagmiAdapter = new WagmiAdapter({
   storage: createStorage({
     storage: cookieStorage,
@@ -66,6 +67,9 @@ export const wagmiAdapter = new WagmiAdapter({
   ssr: true,
   projectId,
   networks: evmNetworks,
+  connectors: [
+    farcasterMiniApp(), // Farcaster Mini App wallet connector
+  ],
 });
 
 // Set up the Solana Adapter

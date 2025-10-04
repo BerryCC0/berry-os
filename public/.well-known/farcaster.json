@@ -1,0 +1,13 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "Nouns OS",
+    "iconUrl": "https://nounsos.wtf/icons/apps/berry.svg",
+    "homeUrl": "https://nounsos.wtf",
+    "imageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
+    "buttonTitle": "Launch Nouns OS",
+    "splashImageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
+    "splashBackgroundColor": "#FFFFFF"
+  }
+}
+

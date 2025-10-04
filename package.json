@@ -9,8 +9,12 @@
   },
   "dependencies": {
     "@apollo/client": "^4.0.7",
+    "@farcaster/mini-app-solana": "^1.0.9",
+    "@farcaster/miniapp-sdk": "^0.1.10",
+    "@farcaster/miniapp-wagmi-connector": "^1.0.0",
     "@neondatabase/serverless": "^1.0.2",
     "@neynar/nodejs-sdk": "^3.34.0",
+    "@neynar/react": "^1.2.13",
     "@reown/appkit": "^1.8.8",
     "@reown/appkit-adapter-bitcoin": "^1.8.8",
     "@reown/appkit-adapter-solana": "^1.8.8",
