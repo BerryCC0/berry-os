@@ -1,7 +1,7 @@
 {
   "name": "Nouns OS",
   "short_name": "Nouns OS",
-  "description": "Mac OS 8 emulator built with modern web technologies",
+  "description": "A Nounish Web3 operating system with native apps and full onchain functionality",
   "start_url": "https://nounsos.wtf",
   "display": "standalone",
   "background_color": "#FFFFFF",

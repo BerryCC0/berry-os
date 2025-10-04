@@ -28,7 +28,7 @@ const frameMetadata = {
 
 export const metadata: Metadata = {
   title: "Nouns OS",
-  description: "Mac OS 8 emulator built with modern web technologies",
+  description: "The operating system for Web3., inspired by Nouns.",
   icons: {
     icon: "/favicon.ico",
   },

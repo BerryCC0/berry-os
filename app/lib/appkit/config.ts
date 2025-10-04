@@ -33,7 +33,7 @@ if (!projectId || projectId === 'YOUR_PROJECT_ID_HERE') {
 // Metadata for wallet connection
 export const metadata = {
   name: 'Nouns OS',
-  description: 'Mac OS 8 Emulator with Web3 - EVM, Solana & Bitcoin',
+  description: 'A Nounish Web3 Operating System - EVM, Solana & Bitcoin',
   url: 'https://nounsos.wtf',
   icons: ['https://nounsos.wtf/icons/apps/about-this-mac.svg'],
 };
