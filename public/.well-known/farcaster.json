@@ -7,7 +7,7 @@
   "miniapp": {
     "version": "1",
     "name": "Nouns OS",
-    "subtitle": "A Nounish Web3 Operating System",
+    "subtitle": "Onchain Operating System",
     "description": "The first fully onchain operating system, inspired by Nouns. Supports EVM, Solana, and Bitcoin.",
     "tagline": "The operating system for Web3.",
     "iconUrl": "https://nounsos.wtf/icons/apps/berry.svg",
@@ -18,8 +18,8 @@
     "splashImageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
     "splashBackgroundColor": "#FFFFFF",
     "primaryCategory": "productivity",
-    "tags": ["nouns", "web3", "onchain", "os", "desktop", "dao", "wallet", "farcaster"],
-    "ogTitle": "Nouns OS - The Onchain Operating System",
+    "tags": ["nouns", "web3", "onchain", "os", "wallet"],
+    "ogTitle": "Nouns OS - Onchain OS",
     "ogDescription": "Your Nounish Web3 desktop. Native apps, wallet integration, and full onchain functionality.",
     "ogImageUrl": "https://nounsos.wtf/icons/apps/berry.svg",
     "castShareUrl": "https://nounsos.wtf"
