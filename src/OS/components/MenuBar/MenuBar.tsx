@@ -20,6 +20,9 @@ export default function MenuBar() {
   const runningApps = useSystemStore((state) => state.runningApps);
   const windows = useSystemStore((state) => state.windows);
   const activeWindowId = useSystemStore((state) => state.activeWindowId);
+  const sleep = useSystemStore((state) => state.sleep);
+  const restart = useSystemStore((state) => state.restart);
+  const shutdown = useSystemStore((state) => state.shutdown);
   
   // Get the active app based on focused window
   const activeApp = activeWindowId && windows[activeWindowId]
@@ -133,13 +136,13 @@ export default function MenuBar() {
               System Preferences...
             </div>
             <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
+            <div className={styles.dropdownItem} onClick={() => { sleep(); setActiveMenu(null); }}>
               Sleep
             </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
+            <div className={styles.dropdownItem} onClick={() => { restart(); setActiveMenu(null); }}>
               Restart...
             </div>
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
+            <div className={styles.dropdownItem} onClick={() => { shutdown(); setActiveMenu(null); }}>
               Shut Down...
             </div>
           </div>

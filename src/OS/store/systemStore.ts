@@ -67,6 +67,12 @@ interface SystemActions {
   // Window Position Persistence (Phase 7)
   saveWindowPosition: (windowId: string) => void;
   restoreWindowPosition: (appId: string) => { x: number; y: number; width: number; height: number } | null;
+  
+  // System Actions (QoL)
+  sleep: () => void;
+  restart: () => void;
+  shutdown: () => void;
+  wakeFromSleep: () => void;
 }
 
 type SystemStore = SystemState & UserPreferencesState & SystemActions;
@@ -93,6 +99,7 @@ const INITIAL_STATE: SystemState = {
   activeTheme: 'classic', // Direct theme ID for immediate UI updates
   accentColor: null, // No custom accent by default (use theme default)
   themeCustomization: {}, // No customizations by default
+  isScreensaverActive: false, // Screensaver state
 };
 
 // Extended state for user preferences (Phase 6)
@@ -933,6 +940,31 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
       width: savedState.width || 600,
       height: savedState.height || 400,
     };
+  },
+
+  // ==================== System Actions (QoL) ====================
+
+  sleep: () => {
+    set({ isScreensaverActive: true });
+  },
+
+  restart: () => {
+    // Reload the page at root domain
+    window.location.href = window.location.origin;
+  },
+
+  shutdown: () => {
+    // Close the browser tab
+    window.close();
+    // Fallback if window.close() doesn't work (some browsers block it)
+    setTimeout(() => {
+      // Show a message if we couldn't close
+      alert('Please close this tab manually.');
+    }, 100);
+  },
+
+  wakeFromSleep: () => {
+    set({ isScreensaverActive: false });
   },
 }));
 

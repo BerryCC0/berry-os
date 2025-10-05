@@ -23,6 +23,8 @@ import {
 import MenuBar from '../MenuBar/MenuBar';
 import Window from '../Window/Window';
 import Dock from '../Dock/Dock';
+import Screensaver from '../Screensaver/Screensaver';
+import LoadingScreen from '../LoadingScreen/LoadingScreen';
 import styles from './Desktop.module.css';
 
 export default function Desktop() {
@@ -37,6 +39,12 @@ export default function Desktop() {
   const initializeDesktopIcons = useSystemStore((state) => state.initializeDesktopIcons);
   const saveDesktopIconPositions = useSystemStore((state) => state.saveDesktopIconPositions);
   const connectedWallet = useSystemStore((state) => state.connectedWallet);
+  const isScreensaverActive = useSystemStore((state) => state.isScreensaverActive);
+  const wakeFromSleep = useSystemStore((state) => state.wakeFromSleep);
+  const isPreferencesLoaded = useSystemStore((state) => state.isPreferencesLoaded);
+  
+  // Boot sequence state - starts true, becomes false after initial setup
+  const [isBooting, setIsBooting] = useState(true);
   
   // Wallet sync hook - loads/saves preferences automatically
   useWalletSync();
@@ -64,6 +72,31 @@ export default function Desktop() {
     const cleanup = setupKeyboardShortcuts();
     return cleanup;
   }, []);
+
+  // Boot sequence - fixed to prevent loops
+  useEffect(() => {
+    // Minimum boot time to prevent flash
+    const minBootTime = 800;
+    
+    const bootTimer = setTimeout(() => {
+      // After minimum time, check if we're ready to boot
+      if (!connectedWallet || isPreferencesLoaded) {
+        // No wallet OR preferences are loaded - finish boot
+        setIsBooting(false);
+      }
+      // If wallet exists but preferences not loaded, keep booting
+    }, minBootTime);
+
+    return () => clearTimeout(bootTimer);
+  }, [connectedWallet, isPreferencesLoaded]); // Removed isBooting from deps
+
+  // When preferences finish loading (after min boot time), finish boot
+  useEffect(() => {
+    if (isPreferencesLoaded && isBooting) {
+      const timer = setTimeout(() => setIsBooting(false), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [isPreferencesLoaded, isBooting]);
 
   // Detect device type and orientation
   useEffect(() => {
@@ -277,17 +310,21 @@ export default function Desktop() {
   }, [draggingIconId, dragOffset, isDragging, desktopIcons, moveDesktopIcon, handleIconClick, isMobile, connectedWallet, saveDesktopIconPositions]);
 
   return (
-    <div className={styles.desktop}>
-      {/* Menu Bar - works on both desktop and mobile */}
-      <MenuBar />
+    <>
+      {/* Loading Screen - show during boot sequence */}
+      <LoadingScreen isLoading={isBooting} />
 
-      {/* Desktop Background */}
-      <div 
-        className={styles.background}
-        style={{ 
-          backgroundImage: wallpaper ? `url(${wallpaper})` : undefined 
-        }}
-      />
+      <div className={styles.desktop}>
+        {/* Menu Bar - works on both desktop and mobile */}
+        <MenuBar />
+
+        {/* Desktop Background */}
+        <div 
+          className={styles.background}
+          style={{ 
+            backgroundImage: wallpaper ? `url(${wallpaper})` : undefined 
+          }}
+        />
 
       {/* Desktop Icons (works on both desktop and mobile) */}
       <div className={styles.iconContainer}>
@@ -332,7 +369,11 @@ export default function Desktop() {
 
       {/* Dock - visible on both desktop and mobile */}
       <Dock />
-    </div>
+
+      {/* Screensaver */}
+      {isScreensaverActive && <Screensaver onClose={wakeFromSleep} />}
+      </div>
+    </>
   );
 }
 

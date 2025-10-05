@@ -113,5 +113,8 @@ export interface SystemState {
     menuBarStyle?: 'opaque' | 'translucent';
     fontSize?: 'small' | 'medium' | 'large';
   };
+  
+  // System Actions (QoL)
+  isScreensaverActive: boolean;
 }
 

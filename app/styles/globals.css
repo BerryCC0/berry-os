@@ -16,6 +16,8 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  /* Ensure initial background is gray to prevent flash */
+  background: #DDDDDD;
 }
 
 /* ==================== Mac OS 8 Variables ==================== */
