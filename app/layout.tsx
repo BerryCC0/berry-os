@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
-import { Appkit } from "@/app/lib/Appkit/appkit";
+import { Appkit } from "@/app/lib/Appkit/Appkit";
 import { NounsApolloWrapper } from "@/app/lib/Nouns/Goldsky/NounsApolloWrapper";
 import { NeynarProvider } from "@/app/lib/Neynar/NeynarProvider";
 import { MiniAppProvider } from "@/app/lib/Farcaster/MiniAppProvider";
