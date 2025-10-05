@@ -13,6 +13,7 @@ import { gestureHandler } from '../../lib/gestureHandler';
 import { eventBus } from '../../lib/eventBus';
 import { setupKeyboardShortcuts } from '../../lib/menuActions';
 import { useWalletSync } from '../../lib/useWalletSync';
+import { useFarcasterSync } from '../../lib/useFarcasterSync';
 import { 
   isMobileDevice, 
   isTabletDevice, 
@@ -49,6 +50,9 @@ export default function Desktop() {
   // Wallet sync hook - loads/saves preferences automatically
   useWalletSync();
   
+  // Farcaster Mini App sync - wait for SDK to be ready
+  const { isFarcasterReady, isInFarcaster } = useFarcasterSync();
+  
   const hasLaunchedFromURL = useRef(false);
   const hasInitializedIcons = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -73,8 +77,18 @@ export default function Desktop() {
     return cleanup;
   }, []);
 
-  // Boot sequence - fixed to prevent loops
+  // Boot sequence - wait for Farcaster SDK + preferences
   useEffect(() => {
+    // Don't finish boot until Farcaster is ready (if in Farcaster)
+    if (!isFarcasterReady) {
+      console.log('Waiting for Farcaster SDK...');
+      return;
+    }
+    
+    if (isInFarcaster) {
+      console.log('Farcaster Mini App detected and ready');
+    }
+    
     // Minimum boot time to prevent flash
     const minBootTime = 800;
     
@@ -88,7 +102,7 @@ export default function Desktop() {
     }, minBootTime);
 
     return () => clearTimeout(bootTimer);
-  }, [connectedWallet, isPreferencesLoaded]); // Removed isBooting from deps
+  }, [connectedWallet, isPreferencesLoaded, isFarcasterReady, isInFarcaster]);
 
   // When preferences finish loading (after min boot time), finish boot
   useEffect(() => {
