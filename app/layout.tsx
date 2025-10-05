@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 
-import { Appkit } from "./lib/appkit/appkit";
-import { ApolloProvider } from "./lib/apollo/ApolloProvider";
-import { NeynarProvider } from "./lib/neynar/NeynarProvider";
-import { MiniAppProvider } from "./lib/farcaster/MiniAppProvider";
-import { SolanaProvider } from "./lib/farcaster/SolanaProvider";
+import { Appkit } from "./lib/Appkit/appkit";
+import { NounsApolloWrapper } from "./lib/Nouns/Goldsky/NounsApolloWrapper";
+import { NeynarProvider } from "./lib/Neynar/NeynarProvider";
+import { MiniAppProvider } from "./lib/Farcaster/MiniAppProvider";
+import { SolanaProvider } from "./lib/Farcaster/SolanaProvider";
 
 import { Analytics } from "@vercel/analytics/next"
 
@@ -64,11 +64,11 @@ export default function RootLayout({
         <MiniAppProvider>
           <SolanaProvider>
             <Appkit>
-              <ApolloProvider>
+              <NounsApolloWrapper>
                 <NeynarProvider>
                   {children}
                 </NeynarProvider>
-              </ApolloProvider>
+              </NounsApolloWrapper>
             </Appkit>
           </SolanaProvider>
         </MiniAppProvider>
