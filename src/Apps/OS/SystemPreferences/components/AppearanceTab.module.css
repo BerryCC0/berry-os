@@ -1,0 +1,412 @@
+/**
+ * Appearance Tab Styles
+ * Organized theme and appearance settings
+ */
+
+.appearanceTab {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ==================== Notice ==================== */
+
+.notice {
+  padding: 12px 16px;
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.notice strong {
+  font-weight: bold;
+}
+
+/* ==================== Theme Subcategories ==================== */
+
+.themeSubcategory {
+  margin-bottom: 24px;
+}
+
+.themeSubcategory:last-child {
+  margin-bottom: 0;
+}
+
+.subcategoryTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-gray-2));
+}
+
+.subcategoryIcon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ==================== Theme Grid ==================== */
+
+.themeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.themeCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 2px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.themeCard:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+  border-color: var(--theme-highlight, var(--mac-black));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.themeCard.selected {
+  border-color: var(--theme-highlight, var(--mac-black));
+  border-width: 3px;
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+}
+
+.themePreview {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.previewWindow {
+  width: 90%;
+  height: 70%;
+  border: 1px solid var(--mac-black);
+  display: flex;
+  flex-direction: column;
+  background: var(--mac-white);
+}
+
+.previewTitleBar {
+  height: 12px;
+  background: var(--mac-black);
+  border-bottom: 1px solid var(--mac-black);
+}
+
+.previewContent {
+  flex: 1;
+  background: var(--mac-gray-1);
+}
+
+/* Theme-specific previews */
+.theme-classic .previewTitleBar {
+  background: linear-gradient(90deg, #000 0px, #000 1px, #fff 1px, #fff 2px);
+  background-size: 2px 100%;
+}
+
+.theme-platinum .previewTitleBar {
+  background: linear-gradient(180deg, #8899BB 0%, #6677AA 100%);
+}
+
+.theme-dark .previewWindow {
+  background: #2A2A2A;
+  border-color: #1A1A1A;
+}
+
+.theme-dark .previewTitleBar {
+  background: #1A1A1A;
+}
+
+.theme-dark .previewContent {
+  background: #2A2A2A;
+}
+
+.theme-nounish .previewTitleBar {
+  background: #2a86fd;
+}
+
+.theme-tangerine .previewTitleBar {
+  background: linear-gradient(180deg, #ffc110 0%, #f98f30 100%);
+}
+
+.theme-midnight .previewWindow {
+  background: #000000;
+  border-color: #111111;
+}
+
+.theme-midnight .previewTitleBar {
+  background: #000000;
+}
+
+.theme-midnight .previewContent {
+  background: #000000;
+}
+
+.theme-cottonCandy .previewTitleBar {
+  background: linear-gradient(180deg, #ff638d 0%, #ff9eb5 100%);
+}
+
+.theme-retroTerminal .previewWindow {
+  background: #001100;
+  border-color: #00ff00;
+}
+
+.theme-retroTerminal .previewTitleBar {
+  background: #00ff00;
+}
+
+.theme-retroTerminal .previewContent {
+  background: #001100;
+}
+
+.theme-bondiBlue .previewTitleBar {
+  background: linear-gradient(180deg, #5fb3b3 0%, #4a9999 100%);
+}
+
+.theme-tokyoNight .previewWindow {
+  background: #1a1b26;
+  border-color: #414868;
+}
+
+.theme-tokyoNight .previewTitleBar {
+  background: #7aa2f7;
+}
+
+.theme-tokyoNight .previewContent {
+  background: #1a1b26;
+}
+
+.theme-graphite .previewTitleBar {
+  background: linear-gradient(180deg, #888888 0%, #666666 100%);
+}
+
+.themeName {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.themeDescription {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 10px;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  text-align: center;
+  line-height: 1.2;
+}
+
+.checkmark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ==================== Wallpaper Grid ==================== */
+
+.wallpaperGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.wallpaperCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 2px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  overflow: hidden;
+}
+
+.wallpaperCard:hover {
+  border-color: var(--theme-highlight, var(--mac-black));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wallpaperCard.selected {
+  border-color: var(--theme-highlight, var(--mac-black));
+  border-width: 3px;
+}
+
+.wallpaperPreview {
+  width: 100%;
+  height: 100px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.wallpaperName {
+  padding: 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text, var(--mac-black));
+  text-align: center;
+  background: var(--theme-window-background, var(--mac-white));
+  width: 100%;
+}
+
+/* ==================== Coming Soon ==================== */
+
+.comingSoon {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comingSoonItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--theme-button-face, var(--mac-gray-1));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 4px;
+}
+
+.comingSoonIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.comingSoonItem strong {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 12px;
+  color: var(--theme-text, var(--mac-black));
+  display: block;
+  margin-bottom: 4px;
+}
+
+.comingSoonItem p {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  margin: 0;
+  line-height: 1.3;
+}
+
+.comingSoonHint {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  text-align: center;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .appearanceTab {
+    padding: 12px;
+  }
+
+  .themeSubcategory {
+    margin-bottom: 20px;
+  }
+
+  .subcategoryTitle {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .subcategoryIcon {
+    font-size: 14px;
+  }
+
+  .themeGrid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+  }
+
+  .themeCard {
+    padding: 8px;
+  }
+
+  .themePreview {
+    height: 60px;
+  }
+
+  .themeName {
+    font-size: 10px;
+  }
+
+  .themeDescription {
+    font-size: 9px;
+  }
+
+  .wallpaperGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+
+  .wallpaperPreview {
+    height: 80px;
+  }
+
+  .comingSoonItem {
+    padding: 10px;
+  }
+
+  .comingSoonIcon {
+    font-size: 20px;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+.themeCard:focus-visible,
+.wallpaperCard:focus-visible {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .themeCard,
+  .wallpaperCard {
+    transition: none;
+    transform: none !important;
+  }
+}

@@ -111,3 +111,27 @@ export function isSufficientBid(bidAmount: bigint, minBidAmount: bigint): boolea
   return bidAmount >= minBidAmount;
 }
 
+// ============================================================================
+// STANDARDIZED FUNCTION NAMES (for consistent API)
+// ============================================================================
+
+/**
+ * Create bid (simple interface)
+ * @param nounId Noun ID
+ */
+export function prepareCreateBid(nounId: bigint) {
+  return {
+    address: CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'createBid' as const,
+    args: [nounId, BERRY_OS_CLIENT_ID]
+  };
+}
+
+/**
+ * Settle auction (simple interface)
+ */
+export function prepareSettleAuction() {
+  return prepareSettleAuctionTransaction();
+}
+

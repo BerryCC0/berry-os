@@ -87,3 +87,30 @@ export function isValidTokenId(tokenId: bigint): boolean {
   return tokenId >= BigInt(0);
 }
 
+// ============================================================================
+// STANDARDIZED FUNCTION NAMES (for consistent API)
+// ============================================================================
+
+/**
+ * Delegate votes
+ * @param delegatee Address to delegate to
+ */
+export function prepareDelegateVotes(delegatee: Address) {
+  return prepareDelegateTransaction(delegatee);
+}
+
+/**
+ * Transfer token (simple interface)
+ * @param to Recipient address
+ * @param tokenId Token ID
+ */
+export function prepareTransferToken(to: Address, tokenId: bigint) {
+  // Note: 'from' will be msg.sender in the contract
+  return {
+    address: CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'safeTransferFrom' as const,
+    args: [to, tokenId],
+  };
+}
+

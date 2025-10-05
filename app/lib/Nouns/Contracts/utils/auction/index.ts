@@ -5,6 +5,7 @@
 
 // Read functions
 export {
+  // Utility functions
   isAuctionActive,
   hasAuctionEnded,
   isAuctionSettled,
@@ -18,6 +19,16 @@ export {
   calculateAveragePrice,
   findHighestPrice,
   findLowestPrice,
+  // Contract read functions
+  getCurrentAuction,
+  getReservePrice,
+  getTimeBuffer,
+  getMinBidIncrement,
+  getDuration,
+  isPaused,
+  getSettlement,
+  getSettlements,
+  getPrices,
 } from './read';
 
 // Write functions
@@ -26,6 +37,10 @@ export {
   prepareCreateBidWithClientTransaction,
   prepareCreateBidWithWeiTransaction,
   prepareSettleAuctionTransaction,
+  // Standardized wrappers
+  prepareCreateBid,
+  prepareSettleAuction,
+  // Utilities
   validateBidParams,
   isSufficientBid,
 } from './write';

@@ -38,6 +38,9 @@ CREATE TABLE IF NOT EXISTS theme_preferences (
   corner_style VARCHAR(20) DEFAULT 'sharp', -- 'sharp', 'rounded'
   menu_bar_style VARCHAR(20) DEFAULT 'opaque', -- 'opaque', 'translucent'
   font_size VARCHAR(20) DEFAULT 'medium',  -- 'small', 'medium', 'large'
+  scrollbar_width VARCHAR(20) DEFAULT 'normal', -- 'thin', 'normal', 'thick' (Phase 7.2)
+  scrollbar_arrow_style VARCHAR(20) DEFAULT 'classic', -- 'classic', 'modern', 'none' (Phase 7.2)
+  scrollbar_auto_hide BOOLEAN DEFAULT false, -- Auto-hide scrollbars (Phase 7.2)
   sound_enabled BOOLEAN DEFAULT true,
   animations_enabled BOOLEAN DEFAULT true,
   updated_at TIMESTAMP DEFAULT NOW()

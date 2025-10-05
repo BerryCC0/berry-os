@@ -5,6 +5,8 @@
 
 import { Address } from 'viem';
 import type { ProposalCandidate } from '../types';
+import { NOUNS_CONTRACTS } from '../../addresses';
+import { DataProxyABI } from '../../abis';
 
 /**
  * Parse proposal candidate from contract data
@@ -110,5 +112,77 @@ export function calculateFeedbackSummary(
   }
   
   return summary;
+}
+
+// ============================================================================
+// CONTRACT READ FUNCTIONS (for useReadContract)
+// ============================================================================
+
+/**
+ * Get cost to create a candidate
+ */
+export function getCreateCandidateCost() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
+    abi: DataProxyABI,
+    functionName: 'createCandidateCost'
+  } as const;
+}
+
+/**
+ * Get cost to update a candidate
+ */
+export function getUpdateCandidateCost() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
+    abi: DataProxyABI,
+    functionName: 'updateCandidateCost'
+  } as const;
+}
+
+/**
+ * Get proposal candidate by slug
+ * @param slug Candidate slug
+ */
+export function getCandidate(slug: string) {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
+    abi: DataProxyABI,
+    functionName: 'getCandidate',
+    args: [slug]
+  } as const;
+}
+
+/**
+ * Get fee recipient address
+ */
+export function getFeeRecipient() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
+    abi: DataProxyABI,
+    functionName: 'feeRecipient'
+  } as const;
+}
+
+/**
+ * Get Nouns DAO address
+ */
+export function getNounsDAOAddress() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
+    abi: DataProxyABI,
+    functionName: 'nounsDAO'
+  } as const;
+}
+
+/**
+ * Get Nouns Token address
+ */
+export function getNounsTokenAddress() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
+    abi: DataProxyABI,
+    functionName: 'nounsToken'
+  } as const;
 }
 

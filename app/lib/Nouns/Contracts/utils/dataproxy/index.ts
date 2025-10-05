@@ -5,6 +5,7 @@
 
 // Read functions
 export {
+  // Utility functions
   parseProposalCandidate,
   generateSlug,
   isValidSlug,
@@ -12,6 +13,13 @@ export {
   isUpdateCandidate,
   formatFeedbackSupport,
   calculateFeedbackSummary,
+  // Contract read functions
+  getCreateCandidateCost,
+  getUpdateCandidateCost,
+  getCandidate,
+  getFeeRecipient,
+  getNounsDAOAddress,
+  getNounsTokenAddress,
 } from './read';
 
 // Write functions
@@ -22,6 +30,9 @@ export {
   prepareAddSignatureTransaction,
   prepareSendFeedbackTransaction,
   prepareSendFeedbackBatchTransaction,
+  // Standardized wrapper
+  prepareCreateProposalCandidate,
+  // Utilities
   validateCandidateParams,
   validateFeedbackParams,
 } from './write';

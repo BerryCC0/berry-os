@@ -1,0 +1,126 @@
+/**
+ * Contract Helpers Styles
+ * Theme-aware styling for contract interaction helpers
+ */
+
+.helpers {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--theme-window-background, #f0f0f0);
+  border-top: 1px solid var(--theme-border, #888888);
+  border-radius: 0 0 2px 2px;
+}
+
+/* Section */
+.section {
+  margin-bottom: 16px;
+}
+
+.section:last-of-type {
+  margin-bottom: 8px;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin: 0 0 8px 0;
+  font-family: var(--font-geneva);
+}
+
+/* Function List */
+.functionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Function Buttons */
+.functionButton {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-family: var(--font-geneva);
+  background: var(--theme-button-background, #ffffff);
+  border: 1px solid var(--theme-border, #888888);
+  border-radius: 2px;
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.functionButton:hover {
+  background: var(--theme-button-hover, #e0e0e0);
+  border-color: var(--theme-window-border, var(--mac-black));
+}
+
+.functionButton:active {
+  background: var(--theme-button-active, #c0c0c0);
+  transform: translateY(1px);
+}
+
+/* Write Functions - Distinguished Style */
+.writeButton {
+  background: var(--theme-accent-light, #fff5e6);
+  border-color: var(--theme-accent, #ff9500);
+}
+
+.writeButton:hover {
+  background: var(--theme-accent-lighter, #ffe0b3);
+}
+
+/* No Helpers State */
+.noHelpers {
+  text-align: center;
+  padding: 16px;
+}
+
+.noHelpers p {
+  font-size: 12px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  margin: 4px 0;
+}
+
+/* Footer */
+.footer {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--theme-border-light, #cccccc);
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  margin: 0;
+  text-align: center;
+}
+
+.link {
+  color: var(--theme-link, #0000ee);
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: var(--theme-link-hover, #551a8b);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .helpers {
+    padding: 10px;
+  }
+
+  .functionList {
+    gap: 4px;
+  }
+
+  .functionButton {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+
+  .sectionTitle {
+    font-size: 11px;
+  }
+}
+

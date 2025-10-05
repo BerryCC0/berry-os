@@ -97,6 +97,9 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
         cornerStyle: preferences.theme?.corner_style as any,
         menuBarStyle: preferences.theme?.menu_bar_style as any,
         fontSize: preferences.theme?.font_size as any,
+        scrollbarWidth: preferences.theme?.scrollbar_width as any,
+        scrollbarArrowStyle: preferences.theme?.scrollbar_arrow_style as any,
+        scrollbarAutoHide: preferences.theme?.scrollbar_auto_hide || false,
       };
 
       // Apply desktop icon positions if they exist
@@ -199,6 +202,9 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
             corner_style: systemState.themeCustomization.cornerStyle,
             menu_bar_style: systemState.themeCustomization.menuBarStyle,
             font_size: systemState.themeCustomization.fontSize || 'medium',
+            scrollbar_width: systemState.themeCustomization.scrollbarWidth || 'normal',
+            scrollbar_arrow_style: systemState.themeCustomization.scrollbarArrowStyle || 'classic',
+            scrollbar_auto_hide: systemState.themeCustomization.scrollbarAutoHide || false,
             sound_enabled: userPreferences?.theme?.sound_enabled ?? true,
             animations_enabled: userPreferences?.theme?.animations_enabled ?? true,
           },
@@ -300,6 +306,9 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
       corner_style: systemState.themeCustomization.cornerStyle || currentTheme?.corner_style,
       menu_bar_style: systemState.themeCustomization.menuBarStyle || currentTheme?.menu_bar_style,
       font_size: systemState.themeCustomization.fontSize || currentTheme?.font_size || 'medium',
+      scrollbar_width: systemState.themeCustomization.scrollbarWidth || currentTheme?.scrollbar_width || 'normal',
+      scrollbar_arrow_style: systemState.themeCustomization.scrollbarArrowStyle || currentTheme?.scrollbar_arrow_style || 'classic',
+      scrollbar_auto_hide: systemState.themeCustomization.scrollbarAutoHide ?? currentTheme?.scrollbar_auto_hide ?? false,
       sound_enabled: currentTheme?.sound_enabled ?? true,
       animations_enabled: currentTheme?.animations_enabled ?? true,
     };

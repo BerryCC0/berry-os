@@ -30,6 +30,7 @@ const Debug = lazy(() => import('./OS/Debug/Debug'));
 // Nouns Apps (3rd party)
 const Camp = lazy(() => import('./Nouns/Camp/Camp'));
 const Auction = lazy(() => import('./Nouns/Auction/Auction'));
+const Tabs = lazy(() => import('./Nouns/Tabs/Tabs'));
 
 /**
  * Application Registry
@@ -239,6 +240,22 @@ const BASE_APPS: AppConfig[] = [
     description: 'Participate in the daily Nouns auction',
     version: '1.0.0',
   },
+  {
+    id: 'tabs',
+    name: 'Tabs',
+    component: Tabs,
+    icon: getAppIconPath('berry', 'svg'), // TODO: Create tabs icon
+    defaultWindowSize: { width: 800, height: 600 },
+    minWindowSize: { width: 600, height: 400 },
+    maxWindowSize: { width: 1200, height: 900 },
+    resizable: true,
+    web3Required: true,
+    mobileSupport: 'full',
+    mobileLayout: 'fullscreen',
+    category: 'web3',
+    description: 'Browse and collect Tabs mints',
+    version: '1.0.0',
+  },
 ];
 
 // Debug app - only available in development
@@ -290,5 +307,5 @@ export function getSystemApps(): AppConfig[] {
  * Get all Nouns apps
  */
 export function getNounsApps(): AppConfig[] {
-  return REGISTERED_APPS.filter((app) => ['camp', 'auction'].includes(app.id));
+  return REGISTERED_APPS.filter((app) => ['camp', 'auction', 'tabs'].includes(app.id));
 }

@@ -5,12 +5,23 @@
 
 // Read functions
 export {
+  // Utility functions
   parseSeed,
   hasNouns,
   isDelegatedToSelf,
   formatVotingPower,
   hasVotingPower,
   calculateBaseVotingPower,
+  // Contract read functions
+  getBalance,
+  getOwnerOf,
+  getVotingPower,
+  getDelegate,
+  getPriorVotes,
+  getTotalSupply,
+  getSeed,
+  getDataURI,
+  getTokenURI,
 } from './read';
 
 // Write functions
@@ -19,6 +30,10 @@ export {
   prepareDelegateToSelfTransaction,
   prepareTransferTransaction,
   prepareApproveTransaction,
+  // Standardized wrappers
+  prepareDelegateVotes,
+  prepareTransferToken,
+  // Utilities
   isValidDelegatee,
   isValidTokenId,
 } from './write';

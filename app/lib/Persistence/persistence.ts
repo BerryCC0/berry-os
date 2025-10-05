@@ -30,6 +30,9 @@ export interface ThemePreferences {
   corner_style?: string;    // 'sharp', 'rounded'
   menu_bar_style?: string;  // 'opaque', 'translucent'
   font_size: string;
+  scrollbar_width?: string; // 'thin', 'normal', 'thick' (Phase 7.2)
+  scrollbar_arrow_style?: string; // 'classic', 'modern', 'none' (Phase 7.2)
+  scrollbar_auto_hide?: boolean; // Auto-hide scrollbars (Phase 7.2)
   sound_enabled: boolean;
   animations_enabled: boolean;
 }
@@ -174,6 +177,9 @@ export async function loadUserPreferences(
     corner_style: row.corner_style,
     menu_bar_style: row.menu_bar_style,
     font_size: row.font_size,
+    scrollbar_width: row.scrollbar_width,
+    scrollbar_arrow_style: row.scrollbar_arrow_style,
+    scrollbar_auto_hide: row.scrollbar_auto_hide,
     sound_enabled: row.sound_enabled,
     animations_enabled: row.animations_enabled,
   });
@@ -267,13 +273,17 @@ export async function saveThemePreferences(
   await sql`
     INSERT INTO theme_preferences (
       wallet_address, theme_id, wallpaper_url, accent_color, title_bar_style,
-      window_opacity, corner_style, menu_bar_style, font_size, sound_enabled, animations_enabled
+      window_opacity, corner_style, menu_bar_style, font_size,
+      scrollbar_width, scrollbar_arrow_style, scrollbar_auto_hide,
+      sound_enabled, animations_enabled
     )
     VALUES (
       ${walletAddress}, ${theme.theme_id}, ${theme.wallpaper_url}, ${theme.accent_color || null},
       ${theme.title_bar_style || 'pinstripe'}, ${theme.window_opacity || 1.0}, 
       ${theme.corner_style || 'sharp'}, ${theme.menu_bar_style || 'opaque'},
-      ${theme.font_size}, ${theme.sound_enabled}, ${theme.animations_enabled}
+      ${theme.font_size},
+      ${theme.scrollbar_width || 'normal'}, ${theme.scrollbar_arrow_style || 'classic'}, ${theme.scrollbar_auto_hide || false},
+      ${theme.sound_enabled}, ${theme.animations_enabled}
     )
     ON CONFLICT (wallet_address)
     DO UPDATE SET
@@ -285,6 +295,9 @@ export async function saveThemePreferences(
       corner_style = EXCLUDED.corner_style,
       menu_bar_style = EXCLUDED.menu_bar_style,
       font_size = EXCLUDED.font_size,
+      scrollbar_width = EXCLUDED.scrollbar_width,
+      scrollbar_arrow_style = EXCLUDED.scrollbar_arrow_style,
+      scrollbar_auto_hide = EXCLUDED.scrollbar_auto_hide,
       sound_enabled = EXCLUDED.sound_enabled,
       animations_enabled = EXCLUDED.animations_enabled,
       updated_at = NOW()

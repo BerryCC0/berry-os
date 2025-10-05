@@ -6,6 +6,8 @@
 import { Address } from 'viem';
 import type { NounSeed, VotingPower } from '../types';
 import { formatVotes } from '../formatting';
+import { NOUNS_CONTRACTS } from '../../addresses';
+import { NounsTokenABI } from '../../abis';
 
 /**
  * Parse seed tuple from contract to NounSeed object
@@ -78,5 +80,125 @@ export function hasVotingPower(votes: bigint): boolean {
  */
 export function calculateBaseVotingPower(nounCount: bigint): bigint {
   return nounCount;
+}
+
+// ============================================================================
+// CONTRACT READ FUNCTIONS (for useReadContract)
+// ============================================================================
+
+/**
+ * Get Noun balance of an address
+ * @param owner Address to check
+ */
+export function getBalance(owner: Address) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'balanceOf',
+    args: [owner]
+  } as const;
+}
+
+/**
+ * Get owner of a specific Noun
+ * @param tokenId Noun token ID
+ */
+export function getOwnerOf(tokenId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'ownerOf',
+    args: [tokenId]
+  } as const;
+}
+
+/**
+ * Get voting power (current votes) for an address
+ * @param account Address to check
+ */
+export function getVotingPower(account: Address) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'getCurrentVotes',
+    args: [account]
+  } as const;
+}
+
+/**
+ * Get delegate for an address
+ * @param account Address to check
+ */
+export function getDelegate(account: Address) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'delegates',
+    args: [account]
+  } as const;
+}
+
+/**
+ * Get prior votes (at specific block)
+ * @param account Address to check
+ * @param blockNumber Block number
+ */
+export function getPriorVotes(account: Address, blockNumber: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'getPriorVotes',
+    args: [account, blockNumber]
+  } as const;
+}
+
+/**
+ * Get total supply of Nouns
+ */
+export function getTotalSupply() {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'totalSupply'
+  } as const;
+}
+
+/**
+ * Get seed for a Noun
+ * @param tokenId Noun token ID
+ */
+export function getSeed(tokenId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'seeds',
+    args: [tokenId]
+  } as const;
+}
+
+/**
+ * Get data URI for a Noun
+ * @param tokenId Noun token ID
+ */
+export function getDataURI(tokenId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'dataURI',
+    args: [tokenId]
+  } as const;
+}
+
+/**
+ * Get token URI for a Noun
+ * @param tokenId Noun token ID
+ */
+export function getTokenURI(tokenId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsTokenABI,
+    functionName: 'tokenURI',
+    args: [tokenId]
+  } as const;
 }
 

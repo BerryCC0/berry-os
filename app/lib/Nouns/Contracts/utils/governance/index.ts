@@ -5,6 +5,7 @@
 
 // Read functions
 export {
+  // Utility functions
   getProposalStateName,
   isProposalActive,
   hasProposalSucceeded,
@@ -21,6 +22,20 @@ export {
   isInObjectionPeriod,
   parseVoteReceipt,
   getVoteSupportName,
+  // Contract read functions
+  getProposalState,
+  getProposalDetails,
+  getProposalVotes,
+  getVotingPower,
+  getQuorumVotes,
+  hasVoted,
+  getProposalThreshold,
+  getForkThreshold,
+  getForkEndTimestamp,
+  getDynamicQuorumParams,
+  getVotingDelay,
+  getVotingPeriod,
+  getProposalCount,
 } from './read';
 
 // Write functions
@@ -33,6 +48,12 @@ export {
   prepareCancelTransaction,
   prepareQueueTransaction,
   prepareExecuteTransaction,
+  // Standardized wrappers
+  prepareCastVote,
+  prepareCastVoteWithReason,
+  prepareQueueProposal,
+  prepareExecuteProposal,
+  // Utilities
   isValidVoteSupport,
   validateProposalActions,
   encodeFunctionCall,

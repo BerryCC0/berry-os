@@ -72,7 +72,7 @@ export function categorizeApps(apps: AppConfig[]): AppCategory[] {
   // Categorize each app
   apps.forEach((app) => {
     // Special handling for Nouns apps (by id prefix or explicit category)
-    if (app.id.startsWith('nouns-') || app.id === 'camp' || app.id === 'auction') {
+    if (app.id.startsWith('nouns-') || app.id === 'camp' || app.id === 'auction' || app.id === 'tabs') {
       categories.nouns.apps.push(app);
     }
     // System apps

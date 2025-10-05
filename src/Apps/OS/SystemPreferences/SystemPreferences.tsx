@@ -8,8 +8,7 @@
 import { useState } from 'react';
 import { useSystemStore } from '../../../OS/store/systemStore';
 import { usePreferencesStore } from '../../../OS/store/preferencesStore';
-import AccentColorPicker from './components/AccentColorPicker';
-import AdvancedOptions from './components/AdvancedOptions';
+import AppearanceTab from './components/AppearanceTab';
 import styles from './SystemPreferences.module.css';
 
 interface SystemPreferencesProps {
@@ -36,32 +35,6 @@ export default function SystemPreferences({ windowId }: SystemPreferencesProps) 
   const updateThemePreference = usePreferencesStore((state) => state.updateThemePreference);
   const setAccentColor = usePreferencesStore((state) => state.setAccentColor);
   const updateThemeCustomization = usePreferencesStore((state) => state.updateThemeCustomization);
-
-  // Available themes (Classic + Nouns-themed)
-  const themes = [
-    // Classic Mac OS 8
-    { id: 'classic', name: 'Classic', description: 'Original Mac OS 8 look', category: 'classic' },
-    { id: 'platinum', name: 'Platinum', description: 'Mac OS 8.5+ modern appearance', category: 'classic' },
-    { id: 'dark', name: 'Dark Mode', description: 'Easy on the eyes', category: 'classic' },
-    
-    // Nouns-themed (Phase 7)
-    { id: 'nounish', name: 'Nounish', description: 'Official Nouns DAO colors', category: 'nouns' },
-    { id: 'tangerine', name: 'Tangerine', description: 'Warm Nouns vibes', category: 'nouns' },
-    { id: 'midnight', name: 'Midnight Nouns', description: 'Dark with Nouns accent', category: 'nouns' },
-    { id: 'cottonCandy', name: 'Cotton Candy', description: 'Soft Nouns pastels', category: 'nouns' },
-    { id: 'retroTerminal', name: 'Retro Terminal', description: 'Green phosphor Nouns', category: 'nouns' },
-    { id: 'bondiBlue', name: 'Bondi Blue', description: 'iMac G3 meets Nouns', category: 'nouns' },
-    { id: 'graphite', name: 'Graphite', description: 'Professional grayscale', category: 'classic' },
-    { id: 'tokyoNight', name: 'Tokyo Night', description: 'Cyberpunk Nouns', category: 'nouns' },
-  ];
-
-  // Available wallpapers
-  const wallpapers = [
-    { id: 'classic', name: 'Classic', path: '/filesystem/System/Desktop Pictures/Classic.svg' },
-    { id: 'clouds', name: 'Clouds', path: '/filesystem/System/Desktop Pictures/Clouds.svg' },
-    { id: 'abstract', name: 'Abstract', path: '/filesystem/System/Desktop Pictures/Abstract.svg' },
-    { id: 'gradient', name: 'Gradient', path: '/filesystem/System/Desktop Pictures/Gradient.svg' },
-  ];
 
   // Handle theme change - now fully synchronous!
   const handleThemeChange = (themeId: string) => {
@@ -113,100 +86,17 @@ export default function SystemPreferences({ windowId }: SystemPreferencesProps) 
 
         {/* Appearance Tab */}
         {activeTab === 'appearance' && (
-          <div className={styles.tabContent}>
-            <h2 className={styles.sectionTitle}>Appearance</h2>
-            
-            {/* Theme Selection */}
-            <div className={styles.section}>
-              <h3 className={styles.subsectionTitle}>Theme</h3>
-              <p className={styles.description}>
-                Choose the overall appearance of Berry OS
-              </p>
-              <div className={styles.optionGrid}>
-                {themes.map((theme) => (
-                  <button
-                    key={theme.id}
-                    className={`${styles.themeOption} ${activeTheme === theme.id ? styles.selected : ''}`}
-                    onClick={() => handleThemeChange(theme.id)}
-                  >
-                    <div className={styles.themePreview}>
-                      <div className={`${styles.previewWindow} ${styles[`theme-${theme.id}`]}`}>
-                        <div className={styles.previewTitleBar} />
-                        <div className={styles.previewContent} />
-                      </div>
-                    </div>
-                    <div className={styles.themeName}>{theme.name}</div>
-                    <div className={styles.themeDescription}>{theme.description}</div>
-                    {activeTheme === theme.id && (
-                      <div className={styles.checkmark}>✓</div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Accent Color Picker */}
-            <div className={styles.section}>
-              <h3 className={styles.subsectionTitle}>Accent Color</h3>
-              <p className={styles.description}>
-                Choose a custom accent color from the Nouns palette or create your own
-              </p>
-              <AccentColorPicker
-                currentAccent={accentColor}
-                onAccentChange={setAccentColor}
-              />
-            </div>
-
-            {/* Wallpaper Selection */}
-            <div className={styles.section}>
-              <h3 className={styles.subsectionTitle}>Desktop Wallpaper</h3>
-              <p className={styles.description}>
-                Choose a background for your desktop
-              </p>
-              <div className={styles.wallpaperGrid}>
-                {wallpapers.map((wp) => (
-                  <button
-                    key={wp.id}
-                    className={`${styles.wallpaperOption} ${wallpaper === wp.path ? styles.selected : ''}`}
-                    onClick={() => handleWallpaperChange(wp.path)}
-                  >
-                    <div 
-                      className={styles.wallpaperPreview}
-                      style={{ backgroundImage: `url(${wp.path})` }}
-                    >
-                      {wallpaper === wp.path && (
-                        <div className={styles.checkmark}>✓</div>
-                      )}
-                    </div>
-                    <div className={styles.wallpaperName}>{wp.name}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Advanced Options */}
-            <div className={styles.section}>
-              <h3 className={styles.subsectionTitle}>Advanced Options</h3>
-              <p className={styles.description}>
-                Fine-tune your theme with advanced customization
-              </p>
-              <AdvancedOptions
-                customization={themeCustomization}
-                onCustomizationChange={updateThemeCustomization}
-              />
-            </div>
-            
-            {/* Future features */}
-            <div className={styles.section}>
-              <h3 className={styles.subsectionTitle}>Coming Soon</h3>
-              <div className={styles.comingSoon}>
-                <p>🖼️ Custom Wallpapers (via IPFS)</p>
-                <p>💾 Theme Import/Export</p>
-                <p>🏪 Theme Marketplace</p>
-                <p className={styles.hint}>Phase 8+</p>
-              </div>
-            </div>
-          </div>
+          <AppearanceTab
+            activeTheme={activeTheme}
+            wallpaper={wallpaper}
+            accentColor={accentColor}
+            themeCustomization={themeCustomization}
+            connectedWallet={connectedWallet}
+            onThemeChange={handleThemeChange}
+            onWallpaperChange={handleWallpaperChange}
+            onAccentColorChange={setAccentColor}
+            onCustomizationChange={updateThemeCustomization}
+          />
         )}
 
         {/* Desktop Tab */}

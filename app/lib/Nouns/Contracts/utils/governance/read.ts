@@ -7,6 +7,8 @@ import { Address } from 'viem';
 import type { ProposalData, ProposalInfo, VoteReceipt } from '../types';
 import { PROPOSAL_STATES } from '../constants';
 import { formatPercentage } from '../formatting';
+import { NOUNS_CONTRACTS } from '../../addresses';
+import { NounsDAOLogicV3ABI } from '../../abis';
 
 /**
  * Get proposal state name from state number
@@ -258,5 +260,167 @@ export function getVoteSupportName(support: number): string {
   };
   
   return supportNames[support] || 'Unknown';
+}
+
+// ============================================================================
+// CONTRACT READ FUNCTIONS (for useReadContract)
+// ============================================================================
+
+/**
+ * Get proposal state
+ * @param proposalId Proposal ID
+ */
+export function getProposalState(proposalId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'state',
+    args: [proposalId]
+  } as const;
+}
+
+/**
+ * Get full proposal details
+ * @param proposalId Proposal ID
+ */
+export function getProposalDetails(proposalId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'proposals',
+    args: [proposalId]
+  } as const;
+}
+
+/**
+ * Get proposal votes
+ * @param proposalId Proposal ID
+ */
+export function getProposalVotes(proposalId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'proposalVotes',
+    args: [proposalId]
+  } as const;
+}
+
+/**
+ * Get voting power (current votes) for an address
+ * @param account Address to check
+ */
+export function getVotingPower(account: Address) {
+  return {
+    address: NOUNS_CONTRACTS.NounsToken.address as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'getCurrentVotes',
+    args: [account]
+  } as const;
+}
+
+/**
+ * Get quorum votes required for a proposal
+ * @param proposalId Proposal ID
+ */
+export function getQuorumVotes(proposalId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'quorumVotes',
+    args: [proposalId]
+  } as const;
+}
+
+/**
+ * Check if an address has voted on a proposal
+ * @param proposalId Proposal ID
+ * @param voter Voter address
+ */
+export function hasVoted(proposalId: bigint, voter: Address) {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'getReceipt',
+    args: [proposalId, voter]
+  } as const;
+}
+
+/**
+ * Get proposal threshold (votes needed to propose)
+ */
+export function getProposalThreshold() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'proposalThreshold'
+  } as const;
+}
+
+/**
+ * Get fork threshold (tokens needed to fork)
+ */
+export function getForkThreshold() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'forkThreshold'
+  } as const;
+}
+
+/**
+ * Get fork end timestamp
+ */
+export function getForkEndTimestamp() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'forkEndTimestamp'
+  } as const;
+}
+
+/**
+ * Get dynamic quorum parameters
+ * @param blockNumber Optional block number
+ */
+export function getDynamicQuorumParams(blockNumber?: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'getDynamicQuorumParamsAt',
+    args: blockNumber ? [blockNumber] : undefined
+  } as const;
+}
+
+/**
+ * Get voting delay (blocks before voting starts)
+ */
+export function getVotingDelay() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'votingDelay'
+  } as const;
+}
+
+/**
+ * Get voting period (blocks for voting)
+ */
+export function getVotingPeriod() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'votingPeriod'
+  } as const;
+}
+
+/**
+ * Get proposal count
+ */
+export function getProposalCount() {
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'proposalCount'
+  } as const;
 }
 

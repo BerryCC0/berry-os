@@ -15,6 +15,7 @@ export { NounsAuctionHouseABI } from './NounsAuctionHouse';
 // ============================================================================
 
 export { NounsDAOLogicV3ABI } from './NounsDAOLogicV3';
+export { NounsDAOAdminABI } from './NounsDAOAdmin';
 export { DataProxyABI } from './DataProxy';
 export { ClientRewardsABI } from './ClientRewards';
 

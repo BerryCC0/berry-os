@@ -6,6 +6,8 @@
 import { Address } from 'viem';
 import type { AuctionState, AuctionInfo, AuctionSettlement } from '../types';
 import { formatTimeRemaining } from '../formatting';
+import { NOUNS_CONTRACTS } from '../../addresses';
+import { NounsAuctionHouseABI } from '../../abis';
 
 /**
  * Check if auction is active
@@ -191,5 +193,115 @@ export function findLowestPrice(settlements: AuctionSettlement[]): bigint {
   return settlements.reduce((min, settlement) => 
     settlement.amount < min || min === BigInt(0) ? settlement.amount : min, BigInt(0)
   );
+}
+
+// ============================================================================
+// CONTRACT READ FUNCTIONS (for useReadContract)
+// ============================================================================
+
+/**
+ * Get current auction details
+ */
+export function getCurrentAuction() {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'auction'
+  } as const;
+}
+
+/**
+ * Get reserve price (minimum starting bid)
+ */
+export function getReservePrice() {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'reservePrice'
+  } as const;
+}
+
+/**
+ * Get time buffer (extension time if bid near end)
+ */
+export function getTimeBuffer() {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'timeBuffer'
+  } as const;
+}
+
+/**
+ * Get minimum bid increment percentage
+ */
+export function getMinBidIncrement() {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'minBidIncrementPercentage'
+  } as const;
+}
+
+/**
+ * Get auction duration in seconds
+ */
+export function getDuration() {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'duration'
+  } as const;
+}
+
+/**
+ * Check if auction house is paused
+ */
+export function isPaused() {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'paused'
+  } as const;
+}
+
+/**
+ * Get auction settlement for a specific Noun
+ * @param nounId Noun token ID
+ */
+export function getSettlement(nounId: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'getSettlements',
+    args: [nounId, BigInt(1), false]
+  } as const;
+}
+
+/**
+ * Get multiple auction settlements
+ * @param startId Starting Noun ID
+ * @param count Number of settlements to fetch
+ */
+export function getSettlements(startId: bigint, count: bigint) {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'getSettlements',
+    args: [startId, count, false]
+  } as const;
+}
+
+/**
+ * Get auction prices for specific Nouns
+ * @param nounIds Array of Noun IDs
+ */
+export function getPrices(nounIds: bigint[]) {
+  return {
+    address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
+    abi: NounsAuctionHouseABI,
+    functionName: 'getPrices',
+    args: [nounIds]
+  } as const;
 }
 

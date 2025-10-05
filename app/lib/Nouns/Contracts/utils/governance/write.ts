@@ -227,3 +227,42 @@ export function combineProposalActions(actions: ProposalActions[]): ProposalActi
   };
 }
 
+// ============================================================================
+// STANDARDIZED FUNCTION NAMES (for consistent API)
+// ============================================================================
+
+/**
+ * Cast vote (simple interface)
+ * @param proposalId Proposal ID
+ * @param support Vote support (0=Against, 1=For, 2=Abstain)
+ */
+export function prepareCastVote(proposalId: bigint, support: 0 | 1 | 2) {
+  return prepareVoteTransaction(proposalId, support, '');
+}
+
+/**
+ * Cast vote with reason
+ * @param proposalId Proposal ID
+ * @param support Vote support (0=Against, 1=For, 2=Abstain)
+ * @param reason Vote reason
+ */
+export function prepareCastVoteWithReason(proposalId: bigint, support: 0 | 1 | 2, reason: string) {
+  return prepareVoteTransaction(proposalId, support, reason);
+}
+
+/**
+ * Queue proposal
+ * @param proposalId Proposal ID
+ */
+export function prepareQueueProposal(proposalId: bigint) {
+  return prepareQueueTransaction(proposalId);
+}
+
+/**
+ * Execute proposal
+ * @param proposalId Proposal ID
+ */
+export function prepareExecuteProposal(proposalId: bigint) {
+  return prepareExecuteTransaction(proposalId);
+}
+

@@ -218,3 +218,24 @@ export function validateFeedbackParams(
   return null;
 }
 
+// ============================================================================
+// STANDARDIZED FUNCTION NAMES (for consistent API)
+// ============================================================================
+
+/**
+ * Create proposal candidate (simple interface)
+ * @param description Proposal description
+ * @param slug URL slug
+ */
+export function prepareCreateProposalCandidate(description: string, slug: string) {
+  // For simple interface, create minimal proposal actions
+  const emptyActions: ProposalActions = {
+    targets: [],
+    values: [],
+    signatures: [],
+    calldatas: []
+  };
+  
+  return prepareCreateCandidateTransaction(slug, emptyActions, description);
+}
+
