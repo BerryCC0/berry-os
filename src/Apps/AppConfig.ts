@@ -244,7 +244,7 @@ const BASE_APPS: AppConfig[] = [
     id: 'tabs',
     name: 'Tabs',
     component: Tabs,
-    icon: getAppIconPath('berry', 'svg'), // TODO: Create tabs icon
+    icon: getAppIconPath('tabs', 'svg'),
     defaultWindowSize: { width: 800, height: 600 },
     minWindowSize: { width: 600, height: 400 },
     maxWindowSize: { width: 1200, height: 900 },
@@ -253,7 +253,7 @@ const BASE_APPS: AppConfig[] = [
     mobileSupport: 'full',
     mobileLayout: 'fullscreen',
     category: 'web3',
-    description: 'Browse and collect Tabs mints',
+    description: 'Interact with all Nouns DAO smart contracts',
     version: '1.0.0',
   },
 ];
