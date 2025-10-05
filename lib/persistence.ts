@@ -228,17 +228,18 @@ export async function saveDesktopIcons(
   // Ensure user exists
   await upsertUser(walletAddress, 1); // Default chain ID
 
-  // Delete all existing icons for this user
-  await sql`
-    DELETE FROM desktop_icons WHERE wallet_address = ${walletAddress}
-  `;
-
-  // Insert new positions
+  // Upsert icon positions (insert or update on conflict)
   if (icons.length > 0) {
     for (const icon of icons) {
       await sql`
         INSERT INTO desktop_icons (wallet_address, icon_id, position_x, position_y, grid_snap)
         VALUES (${walletAddress}, ${icon.icon_id}, ${icon.position_x}, ${icon.position_y}, ${icon.grid_snap})
+        ON CONFLICT (wallet_address, icon_id)
+        DO UPDATE SET
+          position_x = EXCLUDED.position_x,
+          position_y = EXCLUDED.position_y,
+          grid_snap = EXCLUDED.grid_snap,
+          updated_at = NOW()
       `;
     }
   }
