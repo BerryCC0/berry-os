@@ -569,6 +569,380 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
   // ==================== System Actions (QoL) ====================
 
   sleep: () => {
+    try {
+      // Fetch preferences from API
+      const response = await fetch(`/api/preferences/load?wallet=${walletAddress}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to load preferences');
+      }
+
+      const { preferences, isFirstTime } = data;
+
+      // Apply preferences to store
+      set({
+        userPreferences: preferences,
+        isPreferencesLoaded: true,
+        connectedWallet: walletAddress,
+        activeTheme: preferences.theme?.theme_id || 'classic', // IMMEDIATE theme update
+        accentColor: preferences.theme?.accent_color || null,
+        themeCustomization: {
+          titleBarStyle: preferences.theme?.title_bar_style as any,
+          windowOpacity: preferences.theme?.window_opacity,
+          cornerStyle: preferences.theme?.corner_style as any,
+          menuBarStyle: preferences.theme?.menu_bar_style as any,
+          fontSize: preferences.theme?.font_size as any,
+        },
+      });
+
+      // Apply desktop icon positions if they exist
+      if (preferences.desktopIcons && preferences.desktopIcons.length > 0) {
+        const currentIcons = get().desktopIcons;
+        const updatedIcons = currentIcons.map((icon) => {
+          const savedPosition = preferences.desktopIcons.find(
+            (saved: any) => saved.icon_id === icon.id
+          );
+          if (savedPosition) {
+            return {
+              ...icon,
+              position: {
+                x: savedPosition.position_x,
+                y: savedPosition.position_y,
+              },
+            };
+          }
+          return icon;
+        });
+        set({ desktopIcons: updatedIcons });
+      }
+
+      // Apply wallpaper
+      if (preferences.theme?.wallpaper_url) {
+        set({ wallpaper: preferences.theme.wallpaper_url });
+      }
+
+      // Apply pinned apps
+      if (preferences.dockPreferences?.pinned_apps) {
+        set({ pinnedApps: preferences.dockPreferences.pinned_apps });
+      }
+
+      console.log(
+        isFirstTime ? 'First-time user - using defaults' : 'Preferences loaded successfully'
+      );
+    } catch (error) {
+      console.error('Error loading user preferences:', error);
+      set({
+        isPreferencesLoaded: true,
+        userPreferences: null,
+      });
+    }
+  },
+
+  saveUserPreferences: () => {
+    // Debounced save - cancel previous timeout
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+    }
+
+    saveTimeout = setTimeout(async () => {
+      // Get fresh state at save time, not at debounce trigger time
+      const state = get();
+      const { connectedWallet, userPreferences, desktopIcons, wallpaper, pinnedApps } = state;
+
+      if (!connectedWallet) {
+        console.log('No wallet connected - skipping save');
+        return;
+      }
+
+      try {
+        set({ isPreferencesSaving: true });
+
+        // Construct preferences object
+        const windowStatesArray = Object.entries(state.windows || {}).map(([windowId, window]) => ({
+          app_id: window.appId,
+          position_x: window.position.x,
+          position_y: window.position.y,
+          width: window.size.width,
+          height: window.size.height,
+          is_minimized: window.state === 'minimized',
+          is_maximized: window.state === 'maximized',
+          z_index: window.zIndex,
+        }));
+        
+        console.log('Saving preferences with windowStates:', {
+          windowCount: Object.keys(state.windows || {}).length,
+          windowStatesArray,
+          isArray: Array.isArray(windowStatesArray),
+        });
+        
+        const preferencesToSave: UserPreferences = {
+          desktopIcons: desktopIcons.map((icon) => ({
+            icon_id: icon.id,
+            position_x: icon.position.x,
+            position_y: icon.position.y,
+            grid_snap: false, // Free-form positioning
+          })),
+          theme: {
+            theme_id: state.activeTheme,
+            wallpaper_url: wallpaper,
+            accent_color: state.accentColor || undefined,
+            title_bar_style: state.themeCustomization.titleBarStyle,
+            window_opacity: state.themeCustomization.windowOpacity,
+            corner_style: state.themeCustomization.cornerStyle,
+            menu_bar_style: state.themeCustomization.menuBarStyle,
+            font_size: state.themeCustomization.fontSize || 'medium',
+            sound_enabled: userPreferences?.theme?.sound_enabled ?? true,
+            animations_enabled: userPreferences?.theme?.animations_enabled ?? true,
+          },
+          windowStates: windowStatesArray,
+          dockPreferences: userPreferences?.dockPreferences || {
+            position: 'bottom',
+            size: 'medium',
+            pinned_apps: pinnedApps,
+            auto_hide: false,
+            magnification_enabled: true,
+          },
+          systemPreferences: userPreferences?.systemPreferences || {
+            double_click_speed: 'medium',
+            scroll_speed: 'medium',
+            menu_blink_enabled: true,
+            show_hidden_files: false,
+            grid_spacing: 80,
+            snap_to_grid: false,
+          },
+        };
+
+        // Save to API
+        const response = await fetch('/api/preferences/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            walletAddress: connectedWallet,
+            preferences: preferencesToSave,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to save preferences');
+        }
+
+        set({
+          isPreferencesSaving: false,
+          lastSavedAt: Date.now(),
+          userPreferences: preferencesToSave,
+        });
+
+        console.log('Preferences saved successfully');
+      } catch (error) {
+        console.error('Error saving preferences:', error);
+        set({ isPreferencesSaving: false });
+      }
+    }, SAVE_DEBOUNCE_MS);
+  },
+
+  saveDesktopIconPositions: () => {
+    // Smart debounce - prevent spam during active dragging, but fast enough to feel instant
+    if (iconSaveTimeout) {
+      clearTimeout(iconSaveTimeout);
+    }
+
+    iconSaveTimeout = setTimeout(() => {
+      const state = get();
+      const { connectedWallet, desktopIcons } = state;
+
+      if (!connectedWallet) return;
+
+      // Fire and forget - don't block UI
+      fetch('/api/preferences/icons', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          walletAddress: connectedWallet,
+          icons: desktopIcons.map((icon) => ({
+            icon_id: icon.id,
+            position_x: icon.position.x,
+            position_y: icon.position.y,
+            grid_snap: false,
+          })),
+        }),
+      }).catch((error) => {
+        console.error('Error saving icon positions:', error);
+      });
+    }, ICON_SAVE_DEBOUNCE_MS); // 300ms - feels instant but prevents spam
+  },
+
+  updateThemePreference: async (themeId: string, wallpaperUrl?: string) => {
+    const state = get();
+    const currentTheme = state.userPreferences?.theme;
+
+    const newTheme = {
+      ...currentTheme,
+      theme_id: themeId,
+      wallpaper_url: wallpaperUrl || currentTheme?.wallpaper_url || state.wallpaper,
+      accent_color: state.accentColor || currentTheme?.accent_color || undefined,
+      title_bar_style: state.themeCustomization.titleBarStyle || currentTheme?.title_bar_style,
+      window_opacity: state.themeCustomization.windowOpacity || currentTheme?.window_opacity || 1.0,
+      corner_style: state.themeCustomization.cornerStyle || currentTheme?.corner_style,
+      menu_bar_style: state.themeCustomization.menuBarStyle || currentTheme?.menu_bar_style,
+      font_size: state.themeCustomization.fontSize || currentTheme?.font_size || 'medium',
+      sound_enabled: currentTheme?.sound_enabled ?? true,
+      animations_enabled: currentTheme?.animations_enabled ?? true,
+    };
+
+    // Update state SYNCHRONOUSLY for immediate UI response
+    set((state) => ({
+      activeTheme: themeId, // IMMEDIATE update - no waiting for DB
+      userPreferences: state.userPreferences
+        ? { ...state.userPreferences, theme: newTheme }
+        : null,
+      wallpaper: newTheme.wallpaper_url,
+    }));
+
+    // Save immediately for theme changes (no debounce)
+    const { connectedWallet } = get();
+    if (connectedWallet) {
+      try {
+        const response = await fetch('/api/preferences/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress: connectedWallet,
+            preferences: {
+              theme: newTheme,
+              desktopIcons: state.desktopIcons.map((icon) => ({
+                icon_id: icon.id,
+                position_x: icon.position.x,
+                position_y: icon.position.y,
+                grid_snap: false,
+              })),
+              windowStates: Object.entries(state.windows || {}).map(([windowId, window]) => ({
+                app_id: window.appId,
+                position_x: window.position.x,
+                position_y: window.position.y,
+                width: window.size.width,
+                height: window.size.height,
+                is_minimized: window.state === 'minimized',
+                is_maximized: window.state === 'maximized',
+                z_index: window.zIndex,
+              })),
+              dockPreferences: state.userPreferences?.dockPreferences,
+              systemPreferences: state.userPreferences?.systemPreferences,
+            },
+          }),
+        });
+        
+        if (response.ok) {
+          console.log('Theme preference saved immediately');
+        }
+      } catch (error) {
+        console.error('Error saving theme preference:', error);
+      }
+    }
+  },
+
+  resetToDefaults: () => {
+    set({
+      connectedWallet: null,
+      userPreferences: null,
+      isPreferencesLoaded: false,
+      isPreferencesSaving: false,
+      lastSavedAt: null,
+      wallpaper: '/filesystem/System/Desktop Pictures/Classic.png',
+      pinnedApps: ['finder', 'calculator', 'text-editor'],
+      activeTheme: 'classic',
+      accentColor: null,
+      themeCustomization: {},
+    });
+  },
+
+  // ==================== Theme Customization (Phase 7.1) ====================
+  
+  setAccentColor: (color: string | null) => {
+    // IMMEDIATE update for instant visual feedback
+    set({ accentColor: color });
+    
+    // Save to database immediately (no debounce for accent color)
+    const { connectedWallet } = get();
+    if (connectedWallet) {
+      // Trigger immediate save with all current theme settings
+      get().saveUserPreferences();
+    }
+  },
+  
+  updateThemeCustomization: (customization: Partial<SystemState['themeCustomization']>) => {
+    // Merge with existing customization
+    set((state) => ({
+      themeCustomization: {
+        ...state.themeCustomization,
+        ...customization,
+      },
+    }));
+    
+    // Save to database
+    const { connectedWallet } = get();
+    if (connectedWallet) {
+      get().saveUserPreferences();
+    }
+  },
+
+  // ==================== Window Position Persistence (Phase 7) ====================
+  
+  saveWindowPosition: (windowId: string) => {
+    const state = get();
+    const { connectedWallet, windows } = state;
+    const window = windows[windowId];
+    
+    if (!connectedWallet || !window) return;
+    
+    // Save this specific window's position (fire and forget)
+    fetch('/api/preferences/window', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        walletAddress: connectedWallet,
+        appId: window.appId,
+        position: window.position,
+        size: window.size,
+        state: window.state,
+      }),
+    }).catch((error) => {
+      console.error('Error saving window position:', error);
+    });
+  },
+
+  restoreWindowPosition: (appId: string) => {
+    const state = get();
+    const { userPreferences } = state;
+    
+    if (!userPreferences?.windowStates) return null;
+    
+    // Find saved window state for this app
+    const savedState = userPreferences.windowStates.find(
+      (ws: any) => ws.app_id === appId
+    );
+    
+    if (!savedState || !savedState.position_x || savedState.position_y === undefined) return null;
+    
+    return {
+      x: savedState.position_x,
+      y: savedState.position_y,
+      width: savedState.width || 600,
+      height: savedState.height || 400,
+    };
+  },
+
+  // ==================== System Actions (QoL) ====================
+
+  sleep: () => {
     set({ isScreensaverActive: true });
   },
 

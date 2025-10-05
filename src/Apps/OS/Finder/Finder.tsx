@@ -27,12 +27,31 @@ interface FinderProps {
 }
 
 export default function Finder({ windowId }: FinderProps) {
-  const [currentPath, setCurrentPath] = useState('/');
+  // Check URL state for initial path
+  const getInitialPath = () => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const stateParam = params.get('state');
+      if (stateParam) {
+        try {
+          const state = JSON.parse(atob(stateParam));
+          if (state.initialPath) {
+            return state.initialPath;
+          }
+        } catch (e) {
+          // Invalid state, ignore
+        }
+      }
+    }
+    return '/';
+  };
+
+  const [currentPath, setCurrentPath] = useState(getInitialPath());
   const [viewMode, setViewMode] = useState<ViewMode>('icon');
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [navigationHistory, setNavigationHistory] = useState<string[]>(['/']);
+  const [navigationHistory, setNavigationHistory] = useState<string[]>([getInitialPath()]);
   const [historyIndex, setHistoryIndex] = useState(0);
 
   const launchApp = useSystemStore((state) => state.launchApp);
@@ -147,6 +166,18 @@ export default function Finder({ windowId }: FinderProps) {
       setSortDirection('asc');
     }
   };
+
+  // Listen for navigation events from Dock/other sources
+  useEffect(() => {
+    const navSubscription = eventBus.subscribe('FINDER_NAVIGATE', (payload) => {
+      const navPayload = payload as any;
+      if (navPayload.path) {
+        navigateTo(navPayload.path);
+      }
+    });
+
+    return () => navSubscription.unsubscribe();
+  }, [navigateTo]);
 
   // Menu action handlers
   useEffect(() => {

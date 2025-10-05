@@ -6,7 +6,7 @@
  */
 
 import { useSystemStore } from '../../store/systemStore';
-import { REGISTERED_APPS } from '../../../Apps/AppConfig';
+import { REGISTERED_APPS, getAppById } from '../../../Apps/AppConfig';
 import styles from './Dock.module.css';
 
 export default function Dock() {
@@ -61,6 +61,36 @@ export default function Dock() {
     );
   };
 
+  // Handler for Apps folder button
+  const handleAppsClick = () => {
+    const finderApp = getAppById('finder');
+    if (!finderApp) return;
+
+    // Check if Finder is already running
+    const finderRunningApp = runningApps['finder'];
+    
+    if (finderRunningApp && finderRunningApp.windows.length > 0) {
+      // Finder is already running - focus it and navigate to Applications
+      const finderWindowId = finderRunningApp.windows[0];
+      focusWindow(finderWindowId);
+      
+      // Publish event to navigate Finder to Applications folder
+      // The Finder component will listen for this event
+      import('../../lib/eventBus').then(({ eventBus }) => {
+        eventBus.publish('FINDER_NAVIGATE', { path: '/Applications' });
+      });
+    } else {
+      // Launch Finder with Applications path in state
+      // This will open Finder directly to the Applications folder
+      const params = new URLSearchParams(window.location.search);
+      params.set('apps', 'finder');
+      params.set('state', btoa(JSON.stringify({ initialPath: '/Applications' })));
+      window.history.pushState({}, '', `?${params.toString()}`);
+      
+      launchApp(finderApp);
+    }
+  };
+
   return (
     <div className={styles.dock}>
       <div className={styles.dockContainer}>
@@ -103,6 +133,26 @@ export default function Dock() {
             </button>
           );
         })}
+        
+        {/* Divider before Apps button */}
+        <div className={styles.dockDivider} aria-hidden="true" />
+        
+        {/* Apps Folder Button (always on far right) */}
+        <button
+          className={styles.appsButton}
+          onClick={handleAppsClick}
+          title="Applications"
+          aria-label="Open Applications folder"
+        >
+          <div className={styles.iconWrapper}>
+            <img
+              src="/icons/system/folder-applications.svg"
+              alt=""
+              className={styles.dockIcon}
+              aria-hidden="true"
+            />
+          </div>
+        </button>
       </div>
     </div>
   );

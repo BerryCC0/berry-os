@@ -6,6 +6,19 @@
 import type { FileSystemItem, FileType } from '../types/filesystem';
 
 /**
+ * Get application items dynamically from registered apps
+ * This allows the filesystem to stay in sync with AppConfig
+ */
+function getApplicationItems(): FileSystemItem[] {
+  // Import here to avoid circular dependency
+  // Dynamic import would be better but filesystem needs to be sync
+  // So we'll use a function that gets called during initialization
+  
+  // This will be populated by initializeApplicationsFolder() after app loads
+  return [];
+}
+
+/**
  * Root filesystem structure
  * This represents the Mac OS 8 hard drive
  */
@@ -60,30 +73,7 @@ export const ROOT_FILESYSTEM: FileSystemItem = {
       dateCreated: new Date('2025-01-01'),
       dateModified: new Date('2025-10-03'),
       icon: '/icons/system/folder-applications.svg',
-      children: [
-        {
-          id: 'app-calculator',
-          name: 'Calculator',
-          type: 'application',
-          path: '/Applications/Calculator',
-          dateCreated: new Date('2025-10-03'),
-          dateModified: new Date('2025-10-03'),
-          icon: '/icons/apps/calculator.svg',
-          appId: 'calculator',
-          size: 128000,
-        },
-        {
-          id: 'app-about',
-          name: 'About This Mac',
-          type: 'application',
-          path: '/Applications/About This Mac',
-          dateCreated: new Date('2025-10-03'),
-          dateModified: new Date('2025-10-03'),
-          icon: '/icons/apps/about-this-mac.svg',
-          appId: 'about-this-mac',
-          size: 64000,
-        },
-      ],
+      children: [], // Will be populated dynamically
     },
     {
       id: 'documents',
@@ -363,5 +353,33 @@ export function sortItems(
   });
   
   return sorted;
+}
+
+/**
+ * Initialize Applications folder with all registered apps
+ * This must be called after AppConfig is loaded to avoid circular dependencies
+ */
+export function initializeApplicationsFolder(apps: Array<{ id: string; name: string; icon: string; description: string; version: string }>) {
+  const applicationsFolder = getItemByPath('/Applications');
+  
+  if (!applicationsFolder) {
+    console.error('Applications folder not found in filesystem');
+    return;
+  }
+  
+  // Clear existing children and populate with registered apps
+  applicationsFolder.children = apps.map((app) => ({
+    id: `app-${app.id}`,
+    name: app.name,
+    type: 'application' as const,
+    path: `/Applications/${app.name}`,
+    dateCreated: new Date('2025-10-03'),
+    dateModified: new Date('2025-10-03'),
+    icon: app.icon,
+    appId: app.id,
+    size: 128000, // Placeholder size
+  }));
+  
+  console.log(`Initialized Applications folder with ${apps.length} apps`);
 }
 

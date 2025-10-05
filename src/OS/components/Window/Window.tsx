@@ -7,6 +7,7 @@
 
 import { useRef, useState, useEffect, Suspense } from 'react';
 import { useSystemStore } from '../../store/systemStore';
+import { usePreferencesStore } from '../../store/preferencesStore';
 import type { Window as WindowType } from '../../types/window';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import styles from './Window.module.css';
@@ -27,7 +28,7 @@ export default function Window({ windowId }: WindowProps) {
   const moveWindow = useSystemStore((state) => state.moveWindow);
   const resizeWindow = useSystemStore((state) => state.resizeWindow);
   const launchApp = useSystemStore((state) => state.launchApp);
-  const saveWindowPosition = useSystemStore((state) => state.saveWindowPosition);
+  const saveWindowPosition = usePreferencesStore((state) => state.saveWindowPosition);
 
   const windowRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);

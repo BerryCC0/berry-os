@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { useSystemStore } from '../../../OS/store/systemStore';
+import { usePreferencesStore } from '../../../OS/store/preferencesStore';
 import AccentColorPicker from './components/AccentColorPicker';
 import AdvancedOptions from './components/AdvancedOptions';
 import styles from './SystemPreferences.module.css';
@@ -26,13 +27,15 @@ export default function SystemPreferences({ windowId }: SystemPreferencesProps) 
   const activeTheme = useSystemStore((state) => state.activeTheme);
   const accentColor = useSystemStore((state) => state.accentColor);
   const themeCustomization = useSystemStore((state) => state.themeCustomization);
-  const connectedWallet = useSystemStore((state) => state.connectedWallet);
+  
+  // Get preferences state
+  const connectedWallet = usePreferencesStore((state) => state.connectedWallet);
   
   // Get actions
   const setWallpaper = useSystemStore((state) => state.setWallpaper);
-  const updateThemePreference = useSystemStore((state) => state.updateThemePreference);
-  const setAccentColor = useSystemStore((state) => state.setAccentColor);
-  const updateThemeCustomization = useSystemStore((state) => state.updateThemeCustomization);
+  const updateThemePreference = usePreferencesStore((state) => state.updateThemePreference);
+  const setAccentColor = usePreferencesStore((state) => state.setAccentColor);
+  const updateThemeCustomization = usePreferencesStore((state) => state.updateThemeCustomization);
 
   // Available themes (Classic + Nouns-themed)
   const themes = [

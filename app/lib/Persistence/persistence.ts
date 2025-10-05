@@ -25,7 +25,10 @@ export interface ThemePreferences {
   theme_id: string;
   wallpaper_url: string;
   accent_color?: string;
-  window_pattern?: string;
+  title_bar_style?: string; // 'pinstripe', 'gradient', 'solid'
+  window_opacity?: number;  // 0.85 - 1.0
+  corner_style?: string;    // 'sharp', 'rounded'
+  menu_bar_style?: string;  // 'opaque', 'translucent'
   font_size: string;
   sound_enabled: boolean;
   animations_enabled: boolean;
@@ -134,7 +137,8 @@ export async function loadUserPreferences(
 
   // Load theme preferences
   const themeResult = await sql`
-    SELECT theme_id, wallpaper_url, accent_color, window_pattern, font_size, sound_enabled, animations_enabled
+    SELECT theme_id, wallpaper_url, accent_color, title_bar_style, window_opacity, 
+           corner_style, menu_bar_style, font_size, sound_enabled, animations_enabled
     FROM theme_preferences
     WHERE wallet_address = ${walletAddress}
   `;
@@ -165,7 +169,10 @@ export async function loadUserPreferences(
     theme_id: row.theme_id,
     wallpaper_url: row.wallpaper_url,
     accent_color: row.accent_color,
-    window_pattern: row.window_pattern,
+    title_bar_style: row.title_bar_style,
+    window_opacity: row.window_opacity ? parseFloat(row.window_opacity) : undefined,
+    corner_style: row.corner_style,
+    menu_bar_style: row.menu_bar_style,
     font_size: row.font_size,
     sound_enabled: row.sound_enabled,
     animations_enabled: row.animations_enabled,
@@ -259,19 +266,24 @@ export async function saveThemePreferences(
 
   await sql`
     INSERT INTO theme_preferences (
-      wallet_address, theme_id, wallpaper_url, accent_color, window_pattern, 
-      font_size, sound_enabled, animations_enabled
+      wallet_address, theme_id, wallpaper_url, accent_color, title_bar_style,
+      window_opacity, corner_style, menu_bar_style, font_size, sound_enabled, animations_enabled
     )
     VALUES (
       ${walletAddress}, ${theme.theme_id}, ${theme.wallpaper_url}, ${theme.accent_color || null},
-      ${theme.window_pattern || null}, ${theme.font_size}, ${theme.sound_enabled}, ${theme.animations_enabled}
+      ${theme.title_bar_style || 'pinstripe'}, ${theme.window_opacity || 1.0}, 
+      ${theme.corner_style || 'sharp'}, ${theme.menu_bar_style || 'opaque'},
+      ${theme.font_size}, ${theme.sound_enabled}, ${theme.animations_enabled}
     )
     ON CONFLICT (wallet_address)
     DO UPDATE SET
       theme_id = EXCLUDED.theme_id,
       wallpaper_url = EXCLUDED.wallpaper_url,
       accent_color = EXCLUDED.accent_color,
-      window_pattern = EXCLUDED.window_pattern,
+      title_bar_style = EXCLUDED.title_bar_style,
+      window_opacity = EXCLUDED.window_opacity,
+      corner_style = EXCLUDED.corner_style,
+      menu_bar_style = EXCLUDED.menu_bar_style,
       font_size = EXCLUDED.font_size,
       sound_enabled = EXCLUDED.sound_enabled,
       animations_enabled = EXCLUDED.animations_enabled,

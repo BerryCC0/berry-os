@@ -100,6 +100,42 @@
   border: 1px solid var(--theme-button-face, var(--mac-white));
 }
 
+/* Divider between regular apps and Apps folder */
+.dockDivider {
+  width: 1px;
+  background: var(--theme-window-border, var(--mac-gray-2));
+  margin: 0 4px;
+  align-self: stretch;
+}
+
+/* Apps folder button - special styling */
+.appsButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 8px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 64px;
+  position: relative;
+}
+
+.appsButton:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+  border-color: var(--theme-highlight, var(--mac-black));
+  box-shadow: 0 0 0 1px var(--theme-highlight, var(--mac-black));
+}
+
+.appsButton:active {
+  background: var(--theme-button-shadow, var(--mac-gray-1));
+  transform: translateY(1px);
+}
+
 /* ==================== Mobile Adaptations ==================== */
 
 @media (max-width: 768px) {
@@ -137,6 +173,15 @@
   .minimizedIndicator {
     width: 10px;
     height: 3px;
+  }
+
+  .dockDivider {
+    margin: 0 6px;
+  }
+
+  .appsButton {
+    min-width: 56px;
+    padding: 8px 6px;
   }
 }
 

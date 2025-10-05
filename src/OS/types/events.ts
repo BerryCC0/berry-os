@@ -22,6 +22,7 @@ export type EventType =
   | 'DESKTOP_ICON_SELECT'
   | 'KEYBOARD_SHORTCUT'
   | 'WALLPAPER_CHANGE'
+  | 'FINDER_NAVIGATE'
   | 'GESTURE'
   | 'GESTURE_TAP'
   | 'GESTURE_LONG_PRESS'
@@ -93,6 +94,10 @@ export interface GestureEventPayload extends BaseEventPayload {
   distance?: number;
 }
 
+export interface FinderNavigatePayload extends BaseEventPayload {
+  path: string;
+}
+
 export type EventPayload =
   | WindowEventPayload
   | WindowMovePayload
@@ -104,6 +109,7 @@ export type EventPayload =
   | DesktopIconEventPayload
   | KeyboardEventPayload
   | GestureEventPayload
+  | FinderNavigatePayload
   | BaseEventPayload;
 
 export type EventHandler<T extends EventPayload = EventPayload> = (payload: T) => void;

@@ -32,8 +32,11 @@ CREATE TABLE IF NOT EXISTS theme_preferences (
   wallet_address VARCHAR(66) PRIMARY KEY REFERENCES users(wallet_address) ON DELETE CASCADE,
   theme_id VARCHAR(50) DEFAULT 'classic',  -- 'classic', 'platinum', 'darkMode', custom
   wallpaper_url VARCHAR(500) DEFAULT '/filesystem/System/Desktop Pictures/Classic.png',
-  accent_color VARCHAR(7),                 -- Hex color for custom themes
-  window_pattern VARCHAR(50),              -- 'pinstripe', 'solid', 'custom'
+  accent_color VARCHAR(7),                 -- Hex color for custom themes (e.g., '#d22209')
+  title_bar_style VARCHAR(20) DEFAULT 'pinstripe', -- 'pinstripe', 'gradient', 'solid'
+  window_opacity NUMERIC(3,2) DEFAULT 1.0, -- 0.85 - 1.0
+  corner_style VARCHAR(20) DEFAULT 'sharp', -- 'sharp', 'rounded'
+  menu_bar_style VARCHAR(20) DEFAULT 'opaque', -- 'opaque', 'translucent'
   font_size VARCHAR(20) DEFAULT 'medium',  -- 'small', 'medium', 'large'
   sound_enabled BOOLEAN DEFAULT true,
   animations_enabled BOOLEAN DEFAULT true,

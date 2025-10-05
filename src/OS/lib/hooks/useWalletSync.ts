@@ -6,16 +6,16 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSystemStore } from '../store/systemStore';
+import { usePreferencesStore } from '../../store/preferencesStore';
 import { useAppKitAccount } from '@reown/appkit/react';
 
 export function useWalletSync() {
   const { address, isConnected } = useAppKitAccount();
-  const loadUserPreferences = useSystemStore((state) => state.loadUserPreferences);
-  const saveUserPreferences = useSystemStore((state) => state.saveUserPreferences);
-  const resetToDefaults = useSystemStore((state) => state.resetToDefaults);
-  const setConnectedWallet = useSystemStore((state) => state.setConnectedWallet);
-  const connectedWallet = useSystemStore((state) => state.connectedWallet);
+  const loadUserPreferences = usePreferencesStore((state) => state.loadUserPreferences);
+  const saveUserPreferences = usePreferencesStore((state) => state.saveUserPreferences);
+  const resetToDefaults = usePreferencesStore((state) => state.resetToDefaults);
+  const setConnectedWallet = usePreferencesStore((state) => state.setConnectedWallet);
+  const connectedWallet = usePreferencesStore((state) => state.connectedWallet);
 
   useEffect(() => {
     if (isConnected && address) {
