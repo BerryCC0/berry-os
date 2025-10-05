@@ -12,6 +12,7 @@ import { getAppById, REGISTERED_APPS } from '../../../Apps/AppConfig';
 import { gestureHandler } from '../../lib/gestureHandler';
 import { eventBus } from '../../lib/eventBus';
 import { setupKeyboardShortcuts } from '../../lib/menuActions';
+import { useWalletSync } from '../../lib/useWalletSync';
 import { 
   isMobileDevice, 
   isTabletDevice, 
@@ -34,6 +35,11 @@ export default function Desktop() {
   const activeWindowId = useSystemStore((state) => state.activeWindowId);
   const moveDesktopIcon = useSystemStore((state) => state.moveDesktopIcon);
   const initializeDesktopIcons = useSystemStore((state) => state.initializeDesktopIcons);
+  const saveDesktopIconPositions = useSystemStore((state) => state.saveDesktopIconPositions);
+  const connectedWallet = useSystemStore((state) => state.connectedWallet);
+  
+  // Wallet sync hook - loads/saves preferences automatically
+  useWalletSync();
   
   const hasLaunchedFromURL = useRef(false);
   const hasInitializedIcons = useRef(false);
@@ -247,6 +253,9 @@ export default function Desktop() {
         if (icon) {
           handleIconClick(icon);
         }
+      } else if (connectedWallet) {
+        // Icon was dragged and wallet is connected - save position IMMEDIATELY (no debounce)
+        saveDesktopIconPositions();
       }
       
       setDraggingIconId(null);
@@ -265,7 +274,7 @@ export default function Desktop() {
       document.removeEventListener('touchmove', handleMove);
       document.removeEventListener('touchend', handleEnd);
     };
-  }, [draggingIconId, dragOffset, isDragging, desktopIcons, moveDesktopIcon, handleIconClick, isMobile]);
+  }, [draggingIconId, dragOffset, isDragging, desktopIcons, moveDesktopIcon, handleIconClick, isMobile, connectedWallet, saveDesktopIconPositions]);
 
   return (
     <div className={styles.desktop}>

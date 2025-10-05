@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 
-import { Appkit } from "./lib/Appkit/appkit";
-import { NounsApolloWrapper } from "./lib/Nouns/Goldsky/NounsApolloWrapper";
-import { NeynarProvider } from "./lib/Neynar/NeynarProvider";
-import { MiniAppProvider } from "./lib/Farcaster/MiniAppProvider";
-import { SolanaProvider } from "./lib/Farcaster/SolanaProvider";
+import { Appkit } from "@/app/lib/Appkit/appkit";
+import { NounsApolloWrapper } from "@/app/lib/Nouns/Goldsky/NounsApolloWrapper";
+import { NeynarProvider } from "@/app/lib/Neynar/NeynarProvider";
+import { MiniAppProvider } from "@/app/lib/Farcaster/MiniAppProvider";
+import { SolanaProvider } from "@/app/lib/Farcaster/SolanaProvider";
 
 import { Analytics } from "@vercel/analytics/next"
 

@@ -21,7 +21,29 @@ body {
 /* ==================== Mac OS 8 Variables ==================== */
 
 :root {
-  /* Classic Mac OS grayscale palette */
+  /* Theme Colors (dynamically set by ThemeProvider) */
+  /* These are overridden based on selected theme */
+  --theme-window-background: #DDDDDD;
+  --theme-window-border: #000000;
+  --theme-window-border-inactive: #888888;
+  --theme-title-bar-active: #000000;
+  --theme-title-bar-inactive: #CCCCCC;
+  --theme-title-bar-text: #FFFFFF;
+  --theme-title-bar-text-inactive: #666666;
+  --theme-text: #000000;
+  --theme-text-secondary: #666666;
+  --theme-highlight: #000080;
+  --theme-highlight-text: #FFFFFF;
+  --theme-shadow: #888888;
+  --theme-button-face: #DDDDDD;
+  --theme-button-highlight: #FFFFFF;
+  --theme-button-shadow: #888888;
+  --theme-menu-background: #FFFFFF;
+  --theme-menu-text: #000000;
+  --theme-menu-highlight: #000080;
+  --theme-desktop-background: #008080;
+  
+  /* Legacy Mac OS grayscale palette (for backward compatibility) */
   --mac-black: #000000;
   --mac-white: #FFFFFF;
   --mac-gray-1: #DDDDDD; /* Window backgrounds */

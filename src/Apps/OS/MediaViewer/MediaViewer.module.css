@@ -1,6 +1,7 @@
 /**
  * Media Viewer Styles
  * Mac OS 8 media player
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .mediaViewer {
@@ -28,8 +29,8 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--mac-gray-1);
-  border-bottom: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
   flex-shrink: 0;
 }
 
@@ -44,13 +45,13 @@
   font-family: var(--font-geneva);
   font-size: 12px;
   font-weight: bold;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
 }
 
 .fileCount {
   font-family: var(--font-geneva);
   font-size: 10px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 .controls {
@@ -69,8 +70,9 @@
 .toolbarButton {
   width: 28px;
   height: 24px;
-  background: var(--mac-white);
-  border: 1px solid var(--mac-black);
+  background: var(--theme-button-face, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
   border-radius: 2px;
   cursor: pointer;
   display: flex;
@@ -81,16 +83,16 @@
 }
 
 .toolbarButton:hover:not(:disabled) {
-  background: var(--mac-gray-5);
+  background: var(--theme-button-highlight, var(--mac-gray-5));
 }
 
 .toolbarButton:active:not(:disabled) {
-  background: var(--mac-gray-1);
+  background: var(--theme-button-shadow, var(--mac-gray-1));
   border-style: inset;
 }
 
 .toolbarButton:disabled {
-  color: var(--mac-gray-2);
+  color: var(--theme-text-secondary, var(--mac-gray-2));
   cursor: not-allowed;
   opacity: 0.5;
 }
@@ -98,7 +100,7 @@
 .zoomLevel {
   font-family: var(--font-geneva);
   font-size: 10px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
   min-width: 40px;
   text-align: center;
 }
@@ -155,13 +157,14 @@
   align-items: center;
   gap: var(--spacing-xl);
   padding: var(--spacing-xl);
-  background: var(--mac-white);
+  background: var(--theme-window-background, var(--mac-white));
   border-radius: 8px;
   min-width: 400px;
 }
 
 .audioIcon {
   font-size: 64px;
+  color: var(--theme-text, var(--mac-black));
 }
 
 .audioInfo {
@@ -172,14 +175,14 @@
   font-family: var(--font-geneva);
   font-size: 14px;
   font-weight: bold;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
   margin-bottom: var(--spacing-sm);
 }
 
 .audioInfo p {
   font-family: var(--font-geneva);
   font-size: 11px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 .audio {
@@ -196,7 +199,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-md);
-  color: var(--mac-white);
+  color: var(--theme-highlight-text, var(--mac-white));
   font-family: var(--font-geneva);
   font-size: 12px;
   text-align: center;
@@ -205,7 +208,7 @@
 
 .hint {
   font-size: 10px;
-  color: var(--mac-gray-2);
+  color: var(--theme-text-secondary, var(--mac-gray-2));
 }
 
 /* ==================== Status Bar ==================== */
@@ -215,11 +218,11 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--mac-gray-1);
-  border-top: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-top: 1px solid var(--theme-window-border, var(--mac-black));
   font-family: var(--font-geneva);
   font-size: 10px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
   flex-shrink: 0;
 }
 
@@ -264,7 +267,7 @@
 /* ==================== Accessibility ==================== */
 
 .toolbarButton:focus-visible {
-  outline: 2px solid var(--mac-black);
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
   outline-offset: 2px;
 }
 
@@ -282,4 +285,3 @@
 .content > * {
   animation: fadeIn 0.2s ease;
 }
-

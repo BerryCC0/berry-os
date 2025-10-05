@@ -35,7 +35,7 @@ FARCASTER_DEVELOPER_MNEMONIC="your twelve word mnemonic phrase here"
 
 ---
 
-### 3. Database URL (OPTIONAL - For Phase 6)
+### 3. Database URL (REQUIRED for Phase 6 - User Customization)
 **What it's for:** User preferences and customization persistence  
 **Get it at:** https://neon.tech (recommended) or any PostgreSQL provider
 
@@ -43,7 +43,27 @@ FARCASTER_DEVELOPER_MNEMONIC="your twelve word mnemonic phrase here"
 DATABASE_URL=postgresql://user:password@host/database?sslmode=require
 ```
 
-ℹ️ **Without this:** App works fine, but user customizations won't persist across sessions.
+⚠️ **Phase 6 - User Customization & Persistence:**  
+Desktop icon positions, themes, wallpapers, and window states are saved per wallet address. Without this, customizations won't persist across sessions.
+
+**Quick Neon Setup (5 minutes):**
+
+1. Go to https://neon.tech and sign up (free tier is generous)
+2. Click "Create Project"
+3. Choose a name (e.g., "Nouns OS")
+4. Select region (closest to your users)
+5. Copy the connection string from the dashboard
+6. Add to `.env.local`:
+   ```env
+   DATABASE_URL=postgresql://[user]:[password]@[host]/[database]?sslmode=require
+   ```
+7. Run the database schema:
+   ```bash
+   # Copy the schema from docs/DATABASE_SCHEMA.sql
+   # Paste into Neon SQL Editor and execute
+   ```
+
+ℹ️ **Without this:** App works fine, but user customizations (icon positions, themes, etc.) won't persist across sessions.
 
 ---
 
@@ -150,14 +170,25 @@ DATABASE_URL=postgresql://user:password@host/database?sslmode=require
      FARCASTER_DEVELOPER_MNEMONIC="paste your twelve word phrase here"
      ```
 
-3. **Database (Optional):**
+3. **Neon Database (for Phase 6 - User Customization):**
    - Go to https://neon.tech
    - Create free account
-   - Create new project
-   - Copy connection string
+   - Create new project (name: "Nouns OS")
+   - Copy connection string from dashboard
    - Add to `.env.local`:
      ```env
      DATABASE_URL=postgresql://...
+     ```
+   - **Run database schema:**
+     1. Open Neon SQL Editor
+     2. Copy contents of `docs/DATABASE_SCHEMA.sql`
+     3. Paste and execute
+     4. Verify tables are created (users, desktop_icons, theme_preferences, etc.)
+   - **Test connection:**
+     ```bash
+     npm run dev
+     # Connect wallet → drag an icon → disconnect → reconnect
+     # Icon position should be restored!
      ```
 
 ---

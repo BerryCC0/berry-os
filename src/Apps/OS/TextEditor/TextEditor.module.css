@@ -1,6 +1,7 @@
 /**
  * Text Editor Component Styles
  * Mac OS 8 SimpleText style
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .editor {
@@ -8,7 +9,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--mac-white);
+  background: var(--theme-button-face, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
   overflow: hidden;
 }
 
@@ -19,8 +21,8 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--mac-gray-1);
-  border-bottom: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
   flex-shrink: 0;
 }
 
@@ -28,13 +30,13 @@
   font-family: var(--font-geneva);
   font-size: 11px;
   font-weight: bold;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
 }
 
 .stats {
   font-family: var(--font-geneva);
   font-size: 10px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 /* ==================== Text Area ==================== */
@@ -49,13 +51,13 @@
   font-family: 'Monaco', 'Courier New', monospace;
   font-size: 12px;
   line-height: 1.6;
-  color: var(--mac-black);
-  background: var(--mac-white);
+  color: var(--theme-text, var(--mac-black));
+  background: var(--theme-button-face, var(--mac-white));
   overflow-y: auto;
 }
 
 .textarea::placeholder {
-  color: var(--mac-gray-2);
+  color: var(--theme-text-secondary, var(--mac-gray-2));
   font-style: italic;
 }
 
@@ -64,17 +66,17 @@
 }
 
 .textarea::-webkit-scrollbar-track {
-  background: var(--mac-gray-1);
-  border-left: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-left: 1px solid var(--theme-window-border, var(--mac-black));
 }
 
 .textarea::-webkit-scrollbar-thumb {
-  background: var(--mac-gray-2);
-  border: 1px solid var(--mac-black);
+  background: var(--theme-text-secondary, var(--mac-gray-2));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
 }
 
 .textarea::-webkit-scrollbar-thumb:hover {
-  background: var(--mac-gray-3);
+  background: var(--theme-button-highlight, var(--mac-gray-3));
 }
 
 /* ==================== Status Bar ==================== */
@@ -84,19 +86,19 @@
   justify-content: space-between;
   align-items: center;
   padding: 4px var(--spacing-md);
-  background: var(--mac-gray-1);
-  border-top: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-top: 1px solid var(--theme-window-border, var(--mac-black));
   flex-shrink: 0;
   font-family: var(--font-geneva);
   font-size: 10px;
 }
 
 .statusLeft {
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 .statusRight {
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 /* ==================== Mobile Adaptations ==================== */
@@ -115,4 +117,3 @@
     display: none; /* Hide on small screens */
   }
 }
-

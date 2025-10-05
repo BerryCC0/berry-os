@@ -100,5 +100,18 @@ export interface SystemState {
   // System Info
   bootTime: number;
   systemVersion: string;
+  
+  // Theme (Phase 6.5)
+  activeTheme: string; // Direct theme ID for immediate synchronous UI updates
+  
+  // Theme Customization (Phase 7.1)
+  accentColor: string | null; // Current accent color (Nouns palette or custom)
+  themeCustomization: {
+    titleBarStyle?: 'pinstripe' | 'gradient' | 'solid';
+    windowOpacity?: number;
+    cornerStyle?: 'sharp' | 'rounded';
+    menuBarStyle?: 'opaque' | 'translucent';
+    fontSize?: 'small' | 'medium' | 'large';
+  };
 }
 

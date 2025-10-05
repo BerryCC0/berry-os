@@ -1,5 +1,6 @@
 /**
  * About This Mac - Styles
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .container {
@@ -7,7 +8,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--mac-white);
+  background: var(--theme-window-background, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
   padding: var(--spacing-lg);
   overflow: auto;
 }
@@ -17,25 +19,25 @@
   justify-content: center;
   align-items: center;
   padding: var(--spacing-xl) 0;
-  border-bottom: 1px solid var(--mac-gray-4);
+  border-bottom: 1px solid var(--theme-button-highlight, var(--mac-gray-4));
   margin-bottom: var(--spacing-lg);
 }
 
 .logo {
   width: 80px;
   height: 80px;
-  background: var(--mac-black);
+  background: var(--theme-highlight, var(--mac-black));
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--mac-black);
+  border: 2px solid var(--theme-window-border, var(--mac-black));
   position: relative;
 }
 
 .logoText {
   font-family: var(--font-chicago);
   font-size: 10px;
-  color: var(--mac-white);
+  color: var(--theme-highlight-text, var(--mac-white));
   font-weight: bold;
   text-align: center;
   line-height: 1.2;
@@ -60,38 +62,38 @@
 
 .label {
   font-weight: bold;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
 }
 
 .value {
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
   text-align: right;
 }
 
 .divider {
   height: 1px;
-  background: var(--mac-gray-4);
+  background: var(--theme-button-highlight, var(--mac-gray-4));
   margin: var(--spacing-sm) 0;
 }
 
 .footer {
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--mac-gray-4);
+  border-top: 1px solid var(--theme-button-highlight, var(--mac-gray-4));
   text-align: center;
 }
 
 .copyright {
   font-family: var(--font-geneva);
   font-size: 10px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
   margin-bottom: var(--spacing-xs);
 }
 
 .tagline {
   font-family: var(--font-geneva);
   font-size: 10px;
-  color: var(--mac-gray-2);
+  color: var(--theme-text-secondary, var(--mac-gray-2));
   font-style: italic;
 }
 
@@ -114,4 +116,3 @@
     font-size: 14px;
   }
 }
-

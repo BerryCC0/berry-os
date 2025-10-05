@@ -1,6 +1,7 @@
 /**
  * Button Component Styles
  * Mac OS 8 Classic Button
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .button {
@@ -13,11 +14,12 @@
 }
 
 .inner {
-  background: var(--mac-white);
-  border: 1px solid var(--mac-black);
-  border-radius: 4px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  border-radius: var(--theme-corner-radius, 4px);
   font-family: var(--font-geneva);
-  font-size: 12px;
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-text, var(--mac-black));
   cursor: pointer;
   user-select: none;
   transition: all var(--transition-fast);
@@ -29,41 +31,41 @@
 }
 
 .inner:hover:not(:disabled) {
-  background: var(--mac-gray-5);
+  background: var(--theme-button-highlight, var(--mac-gray-5));
 }
 
 .inner:active:not(:disabled) {
-  background: var(--mac-gray-1);
+  background: var(--theme-button-shadow, var(--mac-gray-1));
   border-style: inset;
 }
 
 .inner:disabled {
-  color: var(--mac-gray-2);
+  color: var(--theme-text-secondary, var(--mac-gray-2));
   cursor: not-allowed;
 }
 
 /* ==================== Variants ==================== */
 
 .default .inner {
-  background: var(--mac-white);
+  background: var(--theme-button-face, var(--mac-white));
 }
 
 .primary .inner {
-  background: var(--mac-black);
-  color: var(--mac-white);
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
   font-weight: bold;
 }
 
 .primary .inner:hover:not(:disabled) {
-  background: var(--mac-gray-3);
+  background: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 .primary .inner:active:not(:disabled) {
-  background: var(--mac-gray-2);
+  background: var(--theme-text-secondary, var(--mac-gray-2));
 }
 
 .cancel .inner {
-  background: var(--mac-gray-1);
+  background: var(--theme-window-background, var(--mac-gray-1));
 }
 
 /* ==================== Sizes ==================== */
@@ -114,7 +116,6 @@
 /* ==================== Accessibility ==================== */
 
 .inner:focus-visible {
-  outline: 2px solid var(--mac-black);
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
   outline-offset: 2px;
 }
-

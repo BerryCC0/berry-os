@@ -1,6 +1,7 @@
 /**
  * Dialog Component Styles
  * Mac OS 8 modal dialog
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .overlay {
@@ -25,8 +26,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: var(--mac-white);
-  border: 2px solid var(--mac-black);
+  background: var(--theme-button-face, var(--mac-white));
+  border: 2px solid var(--theme-window-border, var(--mac-black));
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
   z-index: 9999;
   display: flex;
@@ -48,13 +49,17 @@
 /* Title Bar */
 .titleBar {
   height: 20px;
-  background: var(--mac-white);
-  border-bottom: 1px solid var(--mac-black);
+  background: var(--theme-title-bar-active, var(--mac-white));
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 24px;
   position: relative;
+}
+
+/* Classic theme pinstripes */
+[data-theme="classic"] .titleBar {
   background-image: repeating-linear-gradient(
     0deg,
     var(--mac-black),
@@ -64,11 +69,21 @@
   );
 }
 
+/* Platinum gradient */
+[data-theme="platinum"] .titleBar {
+  background: linear-gradient(180deg, #99AACC 0%, #7788AA 100%);
+}
+
+/* Dark mode solid */
+[data-theme="dark"] .titleBar {
+  background: var(--theme-title-bar-active);
+}
+
 .title {
   font-family: var(--font-chicago);
   font-size: 12px;
   font-weight: bold;
-  color: var(--mac-white);
+  color: var(--theme-title-bar-text, var(--mac-white));
   text-align: center;
   margin: 0;
 }
@@ -80,8 +95,8 @@
   transform: translateY(-50%);
   width: 12px;
   height: 12px;
-  border: 1px solid var(--mac-black);
-  background: var(--mac-white);
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  background: var(--theme-button-face, var(--mac-white));
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -91,13 +106,13 @@
 }
 
 .closeButton:hover {
-  background: var(--mac-gray-1);
+  background: var(--theme-button-highlight, var(--mac-gray-1));
 }
 
 .closeButtonInner {
   width: 8px;
   height: 8px;
-  background: var(--mac-black);
+  background: var(--theme-text, var(--mac-black));
 }
 
 /* Content */
@@ -107,7 +122,7 @@
   overflow-y: auto;
   font-family: var(--font-geneva);
   font-size: 12px;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
 }
 
 /* Button Row */
@@ -115,9 +130,9 @@
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  border-top: 1px solid var(--mac-black);
+  border-top: 1px solid var(--theme-window-border, var(--mac-black));
   justify-content: flex-end;
-  background: var(--mac-gray-1);
+  background: var(--theme-window-background, var(--mac-gray-1));
 }
 
 /* ==================== Mobile Adaptations ==================== */
@@ -163,6 +178,6 @@
 /* ==================== Accessibility ==================== */
 
 .closeButton:focus-visible {
-  outline: 2px solid var(--mac-black);
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
   outline-offset: 2px;
 }

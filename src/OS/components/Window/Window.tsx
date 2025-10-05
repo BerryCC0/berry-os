@@ -27,6 +27,7 @@ export default function Window({ windowId }: WindowProps) {
   const moveWindow = useSystemStore((state) => state.moveWindow);
   const resizeWindow = useSystemStore((state) => state.resizeWindow);
   const launchApp = useSystemStore((state) => state.launchApp);
+  const saveWindowPosition = useSystemStore((state) => state.saveWindowPosition);
 
   const windowRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -115,6 +116,8 @@ export default function Window({ windowId }: WindowProps) {
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      // Save window position after drag ends
+      saveWindowPosition(windowId);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -142,6 +145,8 @@ export default function Window({ windowId }: WindowProps) {
 
     const handleMouseUp = () => {
       setIsResizing(false);
+      // Save window position after resize ends
+      saveWindowPosition(windowId);
     };
 
     document.addEventListener('mousemove', handleMouseMove);

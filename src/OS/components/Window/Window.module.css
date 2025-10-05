@@ -5,12 +5,16 @@
 
 .window {
   position: absolute;
-  background: var(--mac-white);
-  border: var(--window-border);
+  background: var(--theme-window-background, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Phase 7.2: Apply advanced customizations */
+  border-radius: var(--theme-window-corner-radius, 0px);
+  opacity: var(--theme-window-opacity, 1.0);
+  font-size: var(--theme-font-size, 12px);
 }
 
 
@@ -25,11 +29,40 @@
   cursor: move;
   flex-shrink: 0;
   gap: 4px;
-  border-bottom: 1px solid var(--mac-black);
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
 }
 
 .titleBarActive {
-  /* Active window pinstripes */
+  /* Active window - use theme title bar color */
+  background: var(--theme-title-bar-active, var(--mac-black));
+}
+
+/* Title bar patterns - Phase 7.2 customizable */
+[data-titlebar-pattern="pinstripe"] .titleBarActive {
+  background: linear-gradient(
+    90deg,
+    var(--mac-black) 0px,
+    var(--mac-black) 1px,
+    var(--mac-white) 1px,
+    var(--mac-white) 2px
+  ) !important;
+  background-size: 2px 100%;
+}
+
+[data-titlebar-pattern="gradient"] .titleBarActive {
+  background: linear-gradient(
+    180deg, 
+    var(--theme-title-bar-active, #8899BB) 0%, 
+    var(--theme-title-bar-inactive, #667788) 100%
+  ) !important;
+}
+
+[data-titlebar-pattern="solid"] .titleBarActive {
+  background: var(--theme-title-bar-active, var(--mac-black)) !important;
+}
+
+/* Legacy theme-specific patterns (fallback) */
+[data-theme="classic"] .titleBarActive {
   background: linear-gradient(
     90deg,
     var(--mac-black) 0px,
@@ -40,21 +73,30 @@
   background-size: 2px 100%;
 }
 
+[data-theme="platinum"] .titleBarActive {
+  background: linear-gradient(180deg, #99AACC 0%, #7788AA 100%);
+}
+
 .titleBarInactive {
-  background: var(--mac-gray-1);
+  background: var(--theme-title-bar-inactive, var(--mac-gray-1));
 }
 
 .title {
   flex: 1;
   text-align: center;
   font-family: var(--font-chicago);
-  font-size: 12px;
+  font-size: var(--theme-font-size, 12px);
   font-weight: bold;
-  color: var(--mac-black);
+  color: var(--theme-title-bar-text, var(--mac-black));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
+}
+
+/* Inactive window title color */
+.titleBarInactive .title {
+  color: var(--theme-title-bar-text-inactive, var(--mac-gray-3));
 }
 
 /* ==================== Window Controls ==================== */
@@ -64,8 +106,8 @@
 .zoomButton {
   width: 13px;
   height: 13px;
-  border: 1px solid var(--mac-black);
-  background: var(--mac-white);
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  background: var(--theme-button-face, var(--mac-white));
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -78,33 +120,33 @@
 .closeButton:hover,
 .minimizeButton:hover,
 .zoomButton:hover {
-  background: var(--mac-gray-5);
+  background: var(--theme-button-highlight, var(--mac-gray-5));
 }
 
 .closeButton:active,
 .minimizeButton:active,
 .zoomButton:active {
-  background: var(--mac-gray-1);
+  background: var(--theme-button-shadow, var(--mac-gray-1));
   border-style: inset;
 }
 
 .closeButtonInner {
   width: 7px;
   height: 7px;
-  background: var(--mac-black);
+  background: var(--theme-text, var(--mac-black));
 }
 
 .minimizeButtonInner {
   width: 7px;
   height: 1px;
-  background: var(--mac-black);
+  background: var(--theme-text, var(--mac-black));
 }
 
 .zoomButtonInner {
   width: 7px;
   height: 7px;
-  border: 1px solid var(--mac-black);
-  background: var(--mac-white);
+  border: 1px solid var(--theme-text, var(--mac-black));
+  background: var(--theme-button-face, var(--mac-white));
 }
 
 /* ==================== Content Area ==================== */
@@ -112,7 +154,8 @@
 .content {
   flex: 1;
   overflow: auto;
-  background: var(--mac-white);
+  background: var(--theme-window-background, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
   position: relative;
 }
 

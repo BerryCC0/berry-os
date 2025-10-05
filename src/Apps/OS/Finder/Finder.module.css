@@ -1,6 +1,7 @@
 /**
  * Finder Component Styles
  * Mac OS 8 Finder interface
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .finder {
@@ -8,7 +9,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--mac-white);
+  background: var(--theme-button-face, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
   overflow: hidden;
 }
 
@@ -19,8 +21,8 @@
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--mac-gray-1);
-  border-bottom: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
   flex-shrink: 0;
 }
 
@@ -32,8 +34,9 @@
 .navButton {
   width: 24px;
   height: 24px;
-  background: var(--mac-white);
-  border: 1px solid var(--mac-black);
+  background: var(--theme-button-face, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
   border-radius: 2px;
   cursor: pointer;
   display: flex;
@@ -44,16 +47,16 @@
 }
 
 .navButton:hover:not(:disabled) {
-  background: var(--mac-gray-5);
+  background: var(--theme-button-highlight, var(--mac-gray-5));
 }
 
 .navButton:active:not(:disabled) {
-  background: var(--mac-gray-1);
+  background: var(--theme-button-shadow, var(--mac-gray-1));
   border-style: inset;
 }
 
 .navButton:disabled {
-  color: var(--mac-gray-2);
+  color: var(--theme-text-secondary, var(--mac-gray-2));
   cursor: not-allowed;
   opacity: 0.5;
 }
@@ -72,6 +75,7 @@
   border: none;
   font-family: var(--font-geneva);
   font-size: 11px;
+  color: var(--theme-text, var(--mac-black));
   cursor: pointer;
   padding: 2px 4px;
   border-radius: 2px;
@@ -79,12 +83,12 @@
 }
 
 .breadcrumb:hover {
-  background: var(--mac-gray-4);
+  background: var(--theme-button-highlight, var(--mac-gray-4));
 }
 
 .breadcrumbSeparator {
   font-size: 10px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 .viewControls {
@@ -95,8 +99,9 @@
 .viewButton {
   width: 28px;
   height: 24px;
-  background: var(--mac-white);
-  border: 1px solid var(--mac-black);
+  background: var(--theme-button-face, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
   border-radius: 2px;
   cursor: pointer;
   display: flex;
@@ -107,11 +112,11 @@
 }
 
 .viewButton:hover {
-  background: var(--mac-gray-5);
+  background: var(--theme-button-highlight, var(--mac-gray-5));
 }
 
 .viewButton.active {
-  background: var(--mac-gray-1);
+  background: var(--theme-button-shadow, var(--mac-gray-1));
   border-style: inset;
 }
 
@@ -120,7 +125,7 @@
 .content {
   flex: 1;
   overflow: auto;
-  background: var(--mac-white);
+  background: var(--theme-button-face, var(--mac-white));
   position: relative;
 }
 
@@ -151,11 +156,11 @@
 }
 
 .iconItem.selected {
-  background: var(--mac-black);
+  background: var(--theme-highlight, var(--mac-black));
 }
 
 .iconItem.selected .iconLabel {
-  color: var(--mac-white);
+  color: var(--theme-highlight-text, var(--mac-white));
 }
 
 .iconImage {
@@ -168,7 +173,7 @@
   font-family: var(--font-geneva);
   font-size: 10px;
   text-align: center;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
   word-break: break-word;
   max-width: 100%;
 }
@@ -186,11 +191,12 @@
   grid-template-columns: 2fr 1.5fr 1fr 1fr;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--mac-gray-1);
-  border-bottom: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
   font-family: var(--font-geneva);
   font-size: 11px;
   font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
   flex-shrink: 0;
 }
 
@@ -203,7 +209,7 @@
 }
 
 .listHeaderCell:hover {
-  background: var(--mac-gray-4);
+  background: var(--theme-button-highlight, var(--mac-gray-4));
 }
 
 .listBody {
@@ -218,19 +224,20 @@
   padding: var(--spacing-xs) var(--spacing-md);
   font-family: var(--font-geneva);
   font-size: 11px;
+  color: var(--theme-text, var(--mac-black));
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid var(--mac-gray-5);
+  border-bottom: 1px solid var(--theme-button-highlight, var(--mac-gray-5));
   transition: background var(--transition-fast);
 }
 
 .listRow:hover {
-  background: var(--mac-gray-5);
+  background: var(--theme-button-highlight, var(--mac-gray-5));
 }
 
 .listRow.selected {
-  background: var(--mac-black);
-  color: var(--mac-white);
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
 }
 
 .listCell {
@@ -256,7 +263,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
   font-family: var(--font-geneva);
   font-size: 12px;
 }
@@ -265,11 +272,11 @@
 
 .statusBar {
   padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--mac-gray-1);
-  border-top: 1px solid var(--mac-black);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border-top: 1px solid var(--theme-window-border, var(--mac-black));
   font-family: var(--font-geneva);
   font-size: 10px;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
   flex-shrink: 0;
 }
 
@@ -331,13 +338,13 @@
 .navButton:focus-visible,
 .breadcrumb:focus-visible,
 .viewButton:focus-visible {
-  outline: 2px solid var(--mac-black);
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
   outline-offset: 2px;
 }
 
 .iconItem:focus-visible,
 .listRow:focus-visible {
-  outline: 2px solid var(--mac-black);
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
   outline-offset: -2px;
 }
 

@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "db:init": "node scripts/init-database.js",
+    "db:check": "node scripts/check-database.js"
   },
   "dependencies": {
     "@apollo/client": "^4.0.7",
@@ -39,6 +41,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "typescript": "^5"
   }
 }

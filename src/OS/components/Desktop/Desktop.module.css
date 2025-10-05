@@ -1,6 +1,7 @@
 /**
  * Desktop Component Styles
  * Mac OS 8 Desktop
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .desktop {
@@ -14,7 +15,7 @@
 .background {
   position: absolute;
   inset: 0;
-  background-color: #5d92c0;
+  background-color: var(--theme-desktop-background, #5d92c0);
   /* Classic stippled pattern */
   background-image: 
     repeating-linear-gradient(
@@ -50,7 +51,7 @@
 }
 
 .icon:hover .iconLabel {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--theme-button-highlight, rgba(255, 255, 255, 0.9));
 }
 
 .icon.dragging {
@@ -70,8 +71,8 @@
   font-family: var(--font-geneva);
   font-size: 10px;
   text-align: center;
-  color: var(--mac-black);
-  background: var(--mac-white);
+  color: var(--theme-text, var(--mac-black)) !important;
+  background: var(--theme-button-face, var(--mac-white)) !important;
   padding: 2px 6px;
   border-radius: 2px;
   max-width: 100%;

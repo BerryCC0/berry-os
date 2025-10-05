@@ -1,6 +1,7 @@
 /**
  * System Tray Styles
  * Mac OS 8 aesthetic for menu bar right side
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .systemTray {
@@ -18,7 +19,7 @@
   padding: 2px 8px;
   background: none;
   border: none;
-  color: var(--mac-black);
+  color: var(--theme-menu-text, var(--mac-black));
   font-family: var(--font-geneva);
   font-size: 12px;
   cursor: pointer;
@@ -27,12 +28,12 @@
 }
 
 .walletButton:hover {
-  background-color: var(--mac-gray-1);
+  background-color: var(--theme-menu-highlight, var(--mac-gray-1));
 }
 
 .walletButton:active {
-  background-color: var(--mac-black);
-  color: var(--mac-white);
+  background-color: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
 }
 
 .walletIcon {
@@ -44,13 +45,14 @@
 .walletText {
   font-size: 12px;
   white-space: nowrap;
+  color: inherit;
 }
 
 .time {
   padding: 0 8px;
   font-family: var(--font-geneva);
   font-size: 12px;
-  color: var(--mac-black);
+  color: var(--theme-menu-text, var(--mac-black));
   white-space: nowrap;
   line-height: 19px;
 }

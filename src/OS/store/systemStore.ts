@@ -15,6 +15,7 @@ import type { Window, WindowConfig } from '../types/window';
 import { eventBus } from '../lib/eventBus';
 import { addAppToURL, removeAppFromURL } from '../../../app/lib/utils/stateUtils';
 import * as screenReader from '../lib/screenReader';
+import type { UserPreferences } from '../../../lib/persistence';
 
 interface SystemActions {
   // Window Management
@@ -50,9 +51,25 @@ interface SystemActions {
   goBack: () => void;
   toggleDock: () => void;
   toggleMenu: () => void;
+  
+  // User Preferences (Phase 6)
+  loadUserPreferences: (walletAddress: string) => Promise<void>;
+  saveUserPreferences: () => void;
+  saveDesktopIconPositions: () => void;
+  updateThemePreference: (themeId: string, wallpaperUrl?: string) => Promise<void>;
+  resetToDefaults: () => void;
+  setConnectedWallet: (address: string | null) => void;
+  
+  // Theme Customization (Phase 7.1)
+  setAccentColor: (color: string | null) => void;
+  updateThemeCustomization: (customization: Partial<SystemState['themeCustomization']>) => void;
+  
+  // Window Position Persistence (Phase 7)
+  saveWindowPosition: (windowId: string) => void;
+  restoreWindowPosition: (appId: string) => { x: number; y: number; width: number; height: number } | null;
 }
 
-type SystemStore = SystemState & SystemActions;
+type SystemStore = SystemState & UserPreferencesState & SystemActions;
 
 const INITIAL_MOBILE_STATE: MobileState = {
   activeAppId: null,
@@ -67,21 +84,46 @@ const INITIAL_STATE: SystemState = {
   activeWindowId: null,
   runningApps: {},
   desktopIcons: [],
-  wallpaper: '/filesystem/System/Desktop Pictures/Classic.png',
+  wallpaper: '/filesystem/System/Desktop Pictures/Classic.svg',
   pinnedApps: ['finder', 'calculator', 'text-editor'], // Finder always first
   activeMenu: null,
   mobile: INITIAL_MOBILE_STATE,
   bootTime: Date.now(),
   systemVersion: '8.0.0',
+  activeTheme: 'classic', // Direct theme ID for immediate UI updates
+  accentColor: null, // No custom accent by default (use theme default)
+  themeCustomization: {}, // No customizations by default
 };
+
+// Extended state for user preferences (Phase 6)
+interface UserPreferencesState {
+  connectedWallet: string | null;
+  userPreferences: UserPreferences | null;
+  isPreferencesLoaded: boolean;
+  isPreferencesSaving: boolean;
+  lastSavedAt: number | null;
+}
 
 let nextWindowId = 1;
 let nextZIndex = 1;
 
 const Z_INDEX_NORMALIZE_THRESHOLD = 1000;
 
+// Debounce helpers
+let saveTimeout: NodeJS.Timeout | null = null;
+let iconSaveTimeout: NodeJS.Timeout | null = null;
+const SAVE_DEBOUNCE_MS = 1000; // 1 second debounce for general preferences
+const ICON_SAVE_DEBOUNCE_MS = 300; // 300ms debounce for icon positions (fast but prevents spam)
+
 export const useSystemStore = create<SystemStore>((set, get) => ({
   ...INITIAL_STATE,
+  
+  // User Preferences State (Phase 6)
+  connectedWallet: null,
+  userPreferences: null,
+  isPreferencesLoaded: false,
+  isPreferencesSaving: false,
+  lastSavedAt: null,
 
   // ==================== Window Management ====================
   
@@ -89,15 +131,22 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     const windowId = `window-${nextWindowId++}`;
     const zIndex = nextZIndex++;
     
+    // Try to restore saved window position (Phase 7)
+    const savedPosition = get().restoreWindowPosition(config.appId);
+    
     const window: Window = {
       id: windowId,
       appId: config.appId,
       title: config.title,
-      position: config.initialPosition ?? {
-        x: 100 + (Object.keys(get().windows).length * 30), // Cascade windows
-        y: 100 + (Object.keys(get().windows).length * 30),
-      },
-      size: config.defaultSize,
+      position: savedPosition 
+        ? { x: savedPosition.x, y: savedPosition.y }
+        : config.initialPosition ?? {
+            x: 100 + (Object.keys(get().windows).length * 30), // Cascade windows
+            y: 100 + (Object.keys(get().windows).length * 30),
+          },
+      size: savedPosition
+        ? { width: savedPosition.width, height: savedPosition.height }
+        : config.defaultSize,
       state: 'normal',
       zIndex,
       isActive: true,
@@ -418,7 +467,11 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
   },
 
   setWallpaper: (wallpaper: string) => {
+    // IMMEDIATE update for instant UI feedback
     set({ wallpaper });
+    
+    // Announce change for accessibility
+    eventBus.publish('WALLPAPER_CHANGE', { wallpaper });
   },
 
   initializeDesktopIcons: (apps: AppConfig[]) => {
@@ -520,6 +573,366 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
         isMenuOpen: !state.mobile.isMenuOpen,
       },
     }));
+  },
+
+  // ==================== User Preferences (Phase 6) ====================
+  
+  setConnectedWallet: (address: string | null) => {
+    set({ connectedWallet: address });
+  },
+
+  loadUserPreferences: async (walletAddress: string) => {
+    try {
+      // Fetch preferences from API
+      const response = await fetch(`/api/preferences/load?wallet=${walletAddress}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to load preferences');
+      }
+
+      const { preferences, isFirstTime } = data;
+
+      // Apply preferences to store
+      set({
+        userPreferences: preferences,
+        isPreferencesLoaded: true,
+        connectedWallet: walletAddress,
+        activeTheme: preferences.theme?.theme_id || 'classic', // IMMEDIATE theme update
+      });
+
+      // Apply desktop icon positions if they exist
+      if (preferences.desktopIcons && preferences.desktopIcons.length > 0) {
+        const currentIcons = get().desktopIcons;
+        const updatedIcons = currentIcons.map((icon) => {
+          const savedPosition = preferences.desktopIcons.find(
+            (saved: any) => saved.icon_id === icon.id
+          );
+          if (savedPosition) {
+            return {
+              ...icon,
+              position: {
+                x: savedPosition.position_x,
+                y: savedPosition.position_y,
+              },
+            };
+          }
+          return icon;
+        });
+        set({ desktopIcons: updatedIcons });
+      }
+
+      // Apply wallpaper
+      if (preferences.theme?.wallpaper_url) {
+        set({ wallpaper: preferences.theme.wallpaper_url });
+      }
+
+      // Apply pinned apps
+      if (preferences.dockPreferences?.pinned_apps) {
+        set({ pinnedApps: preferences.dockPreferences.pinned_apps });
+      }
+
+      console.log(
+        isFirstTime ? 'First-time user - using defaults' : 'Preferences loaded successfully'
+      );
+    } catch (error) {
+      console.error('Error loading user preferences:', error);
+      set({
+        isPreferencesLoaded: true,
+        userPreferences: null,
+      });
+    }
+  },
+
+  saveUserPreferences: () => {
+    // Debounced save - cancel previous timeout
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+    }
+
+    saveTimeout = setTimeout(async () => {
+      // Get fresh state at save time, not at debounce trigger time
+      const state = get();
+      const { connectedWallet, userPreferences, desktopIcons, wallpaper, pinnedApps } = state;
+
+      if (!connectedWallet) {
+        console.log('No wallet connected - skipping save');
+        return;
+      }
+
+      try {
+        set({ isPreferencesSaving: true });
+
+        // Construct preferences object
+        const windowStatesArray = Object.entries(state.windows || {}).map(([windowId, window]) => ({
+          app_id: window.appId,
+          position_x: window.position.x,
+          position_y: window.position.y,
+          width: window.size.width,
+          height: window.size.height,
+          is_minimized: window.state === 'minimized',
+          is_maximized: window.state === 'maximized',
+          z_index: window.zIndex,
+        }));
+        
+        console.log('Saving preferences with windowStates:', {
+          windowCount: Object.keys(state.windows || {}).length,
+          windowStatesArray,
+          isArray: Array.isArray(windowStatesArray),
+        });
+        
+        const preferencesToSave: UserPreferences = {
+          desktopIcons: desktopIcons.map((icon) => ({
+            icon_id: icon.id,
+            position_x: icon.position.x,
+            position_y: icon.position.y,
+            grid_snap: false, // Free-form positioning
+          })),
+          theme: userPreferences?.theme || {
+            theme_id: 'classic',
+            wallpaper_url: wallpaper,
+            font_size: 'medium',
+            sound_enabled: true,
+            animations_enabled: true,
+          },
+          windowStates: windowStatesArray,
+          dockPreferences: userPreferences?.dockPreferences || {
+            position: 'bottom',
+            size: 'medium',
+            pinned_apps: pinnedApps,
+            auto_hide: false,
+            magnification_enabled: true,
+          },
+          systemPreferences: userPreferences?.systemPreferences || {
+            double_click_speed: 'medium',
+            scroll_speed: 'medium',
+            menu_blink_enabled: true,
+            show_hidden_files: false,
+            grid_spacing: 80,
+            snap_to_grid: false,
+          },
+        };
+
+        // Save to API
+        const response = await fetch('/api/preferences/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            walletAddress: connectedWallet,
+            preferences: preferencesToSave,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to save preferences');
+        }
+
+        set({
+          isPreferencesSaving: false,
+          lastSavedAt: Date.now(),
+          userPreferences: preferencesToSave,
+        });
+
+        console.log('Preferences saved successfully');
+      } catch (error) {
+        console.error('Error saving preferences:', error);
+        set({ isPreferencesSaving: false });
+      }
+    }, SAVE_DEBOUNCE_MS);
+  },
+
+  saveDesktopIconPositions: () => {
+    // Smart debounce - prevent spam during active dragging, but fast enough to feel instant
+    if (iconSaveTimeout) {
+      clearTimeout(iconSaveTimeout);
+    }
+
+    iconSaveTimeout = setTimeout(() => {
+      const state = get();
+      const { connectedWallet, desktopIcons } = state;
+
+      if (!connectedWallet) return;
+
+      // Fire and forget - don't block UI
+      fetch('/api/preferences/icons', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          walletAddress: connectedWallet,
+          icons: desktopIcons.map((icon) => ({
+            icon_id: icon.id,
+            position_x: icon.position.x,
+            position_y: icon.position.y,
+            grid_snap: false,
+          })),
+        }),
+      }).catch((error) => {
+        console.error('Error saving icon positions:', error);
+      });
+    }, ICON_SAVE_DEBOUNCE_MS); // 300ms - feels instant but prevents spam
+  },
+
+  updateThemePreference: async (themeId: string, wallpaperUrl?: string) => {
+    const state = get();
+    const currentTheme = state.userPreferences?.theme;
+
+    const newTheme = {
+      ...currentTheme,
+      theme_id: themeId,
+      wallpaper_url: wallpaperUrl || currentTheme?.wallpaper_url || state.wallpaper,
+      font_size: currentTheme?.font_size || 'medium',
+      sound_enabled: currentTheme?.sound_enabled ?? true,
+      animations_enabled: currentTheme?.animations_enabled ?? true,
+    };
+
+    // Update state SYNCHRONOUSLY for immediate UI response
+    set((state) => ({
+      activeTheme: themeId, // IMMEDIATE update - no waiting for DB
+      userPreferences: state.userPreferences
+        ? { ...state.userPreferences, theme: newTheme }
+        : null,
+      wallpaper: newTheme.wallpaper_url,
+    }));
+
+    // Save immediately for theme changes (no debounce)
+    const { connectedWallet } = get();
+    if (connectedWallet) {
+      try {
+        const response = await fetch('/api/preferences/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress: connectedWallet,
+            preferences: {
+              theme: newTheme,
+              desktopIcons: state.desktopIcons.map((icon) => ({
+                icon_id: icon.id,
+                position_x: icon.position.x,
+                position_y: icon.position.y,
+                grid_snap: false,
+              })),
+              windowStates: Object.entries(state.windows || {}).map(([windowId, window]) => ({
+                app_id: window.appId,
+                position_x: window.position.x,
+                position_y: window.position.y,
+                width: window.size.width,
+                height: window.size.height,
+                is_minimized: window.state === 'minimized',
+                is_maximized: window.state === 'maximized',
+                z_index: window.zIndex,
+              })),
+              dockPreferences: state.userPreferences?.dockPreferences,
+              systemPreferences: state.userPreferences?.systemPreferences,
+            },
+          }),
+        });
+        
+        if (response.ok) {
+          console.log('Theme preference saved immediately');
+        }
+      } catch (error) {
+        console.error('Error saving theme preference:', error);
+      }
+    }
+  },
+
+  resetToDefaults: () => {
+    set({
+      connectedWallet: null,
+      userPreferences: null,
+      isPreferencesLoaded: false,
+      isPreferencesSaving: false,
+      lastSavedAt: null,
+      wallpaper: '/filesystem/System/Desktop Pictures/Classic.png',
+      pinnedApps: ['finder', 'calculator', 'text-editor'],
+      activeTheme: 'classic',
+      accentColor: null,
+      themeCustomization: {},
+    });
+  },
+
+  // ==================== Theme Customization (Phase 7.1) ====================
+  
+  setAccentColor: (color: string | null) => {
+    // IMMEDIATE update for instant visual feedback
+    set({ accentColor: color });
+    
+    // Save to database immediately (no debounce for accent color)
+    const { connectedWallet, activeTheme, wallpaper } = get();
+    if (connectedWallet) {
+      // Piggyback on theme save with accent color included
+      get().updateThemePreference(activeTheme, wallpaper);
+    }
+  },
+  
+  updateThemeCustomization: (customization: Partial<SystemState['themeCustomization']>) => {
+    // Merge with existing customization
+    set((state) => ({
+      themeCustomization: {
+        ...state.themeCustomization,
+        ...customization,
+      },
+    }));
+    
+    // Save to database
+    const { connectedWallet } = get();
+    if (connectedWallet) {
+      get().saveUserPreferences();
+    }
+  },
+
+  // ==================== Window Position Persistence (Phase 7) ====================
+  
+  saveWindowPosition: (windowId: string) => {
+    const state = get();
+    const { connectedWallet, windows } = state;
+    const window = windows[windowId];
+    
+    if (!connectedWallet || !window) return;
+    
+    // Save this specific window's position (fire and forget)
+    fetch('/api/preferences/window', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        walletAddress: connectedWallet,
+        appId: window.appId,
+        position: window.position,
+        size: window.size,
+        state: window.state,
+      }),
+    }).catch((error) => {
+      console.error('Error saving window position:', error);
+    });
+  },
+
+  restoreWindowPosition: (appId: string) => {
+    const state = get();
+    const { userPreferences } = state;
+    
+    if (!userPreferences?.windowStates) return null;
+    
+    // Find saved window state for this app
+    const savedState = userPreferences.windowStates.find(
+      (ws: any) => ws.app_id === appId
+    );
+    
+    if (!savedState || !savedState.position_x || savedState.position_y === undefined) return null;
+    
+    return {
+      x: savedState.position_x,
+      y: savedState.position_y,
+      width: savedState.width || 600,
+      height: savedState.height || 400,
+    };
   },
 }));
 

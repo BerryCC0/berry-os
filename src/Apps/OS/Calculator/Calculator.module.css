@@ -1,6 +1,7 @@
 /**
  * Calculator App Styles
  * Classic Mac OS 8 calculator design
+ * Theme-aware: Supports Classic, Platinum, and Dark Mode
  */
 
 .calculator {
@@ -8,7 +9,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--mac-gray-1);
+  background: var(--theme-window-background, var(--mac-gray-1));
+  color: var(--theme-text, var(--mac-black));
   padding: var(--spacing-md);
   gap: var(--spacing-md);
 }
@@ -16,8 +18,8 @@
 /* ==================== Display ==================== */
 
 .display {
-  background: var(--mac-white);
-  border: 1px solid var(--mac-black);
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
   border-style: inset;
   padding: var(--spacing-md);
   min-height: 40px;
@@ -31,7 +33,7 @@
   font-family: var(--font-geneva);
   font-size: 24px;
   font-weight: bold;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
   text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -46,7 +48,7 @@
   font-family: var(--font-geneva);
   font-size: 10px;
   font-weight: bold;
-  color: var(--mac-gray-3);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
 }
 
 /* ==================== Button Grid ==================== */
@@ -59,13 +61,13 @@
 }
 
 .button {
-  background: var(--mac-white);
-  border: 1px solid var(--mac-black);
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
   border-radius: 2px;
   font-family: var(--font-geneva);
   font-size: 16px;
   font-weight: bold;
-  color: var(--mac-black);
+  color: var(--theme-text, var(--mac-black));
   cursor: pointer;
   user-select: none;
   transition: all var(--transition-fast);
@@ -77,11 +79,11 @@
 }
 
 .button:hover {
-  background: var(--mac-gray-5);
+  background: var(--theme-button-highlight, var(--mac-gray-5));
 }
 
 .button:active {
-  background: var(--mac-gray-1);
+  background: var(--theme-button-shadow, var(--mac-gray-1));
   border-style: inset;
   transform: translateY(1px);
 }

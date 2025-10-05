@@ -126,7 +126,10 @@ export default function MenuBar() {
               </>
             )}
             <div className={styles.divider} />
-            <div className={styles.dropdownItem} onClick={() => setActiveMenu(null)}>
+            <div
+              className={styles.dropdownItem}
+              onClick={() => handleAppLaunch('system-preferences')}
+            >
               System Preferences...
             </div>
             <div className={styles.divider} />
