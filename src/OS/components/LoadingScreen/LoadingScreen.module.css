@@ -19,19 +19,6 @@
   .loadingScreen {
     background: #1a1a1a;
   }
-  
-  .name,
-  .loading {
-    color: #FFFFFF;
-  }
-  
-  .version {
-    color: #999999;
-  }
-  
-  .logo img {
-    filter: brightness(0.9);
-  }
 }
 
 .loadingScreen.fadeOut {
@@ -63,23 +50,44 @@
   font-family: var(--font-chicago);
   font-size: 24px;
   font-weight: bold;
-  color: #000000;
+  color: #000000; /* Light mode */
+}
+
+/* Dark mode override */
+@media (prefers-color-scheme: dark) {
+  .name {
+    color: #DDDDDD !important; /* Mac OS 8 gray for dark mode */
+  }
 }
 
 .version {
   font-family: var(--font-geneva);
   font-size: 12px;
-  color: #666666;
+  color: #666666; /* Light mode */
   margin-top: -10px;
+}
+
+/* Dark mode override */
+@media (prefers-color-scheme: dark) {
+  .version {
+    color: #999999 !important;
+  }
 }
 
 .loading {
   font-family: var(--font-geneva);
   font-size: 14px;
-  color: #000000;
+  color: #000000; /* Light mode */
   margin-top: 20px;
   min-width: 100px;
   text-align: center;
+}
+
+/* Dark mode override */
+@media (prefers-color-scheme: dark) {
+  .loading {
+    color: #DDDDDD !important; /* Mac OS 8 gray for dark mode */
+  }
 }
 
 /* Mobile */
