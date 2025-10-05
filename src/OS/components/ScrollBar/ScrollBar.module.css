@@ -1,0 +1,280 @@
+/**
+ * ScrollBar Styles
+ * Mac OS 8 authentic scrollbar styling
+ */
+
+.scrollbarContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.scrollContent {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  /* Hide native scrollbars */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scrollContent::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* ==================== Scrollbar Track ==================== */
+
+.scrollbar {
+  position: absolute;
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  transition: opacity var(--transition-normal);
+  z-index: 10;
+}
+
+.scrollbar.vertical {
+  right: 0;
+  top: 0;
+  width: 15px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollbar.horizontal {
+  bottom: 0;
+  left: 0;
+  height: 15px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.scrollbar.visible {
+  opacity: 1;
+}
+
+.scrollbar:not(.visible) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==================== Arrow Buttons ==================== */
+
+.scrollArrow {
+  width: 15px;
+  height: 15px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: none;
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--theme-text, var(--mac-black));
+  padding: 0;
+  flex-shrink: 0;
+  user-select: none;
+  transition: background var(--transition-fast);
+}
+
+.horizontal .scrollArrow {
+  border-bottom: none;
+  border-right: 1px solid var(--theme-window-border, var(--mac-black));
+}
+
+.scrollArrow:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+}
+
+.scrollArrow:active {
+  background: var(--theme-button-shadow, var(--mac-gray-2));
+}
+
+.scrollArrow:focus-visible {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: -2px;
+}
+
+/* ==================== Scroll Track ==================== */
+
+.scrollTrack {
+  flex: 1;
+  position: relative;
+  background: var(--theme-window-background, var(--mac-gray-1));
+  /* Classic Mac OS 8 stippled pattern */
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+/* ==================== Scroll Thumb ==================== */
+
+.scrollThumb {
+  position: absolute;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  /* Mac OS 8 thumb pattern (subtle lines) */
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 1px,
+    rgba(0, 0, 0, 0.05) 1px,
+    rgba(0, 0, 0, 0.05) 2px
+  );
+}
+
+.vertical .scrollThumb {
+  width: 13px;
+  left: 1px;
+  min-height: 20px;
+}
+
+.horizontal .scrollThumb {
+  height: 13px;
+  top: 1px;
+  min-width: 20px;
+}
+
+.scrollThumb:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+}
+
+.scrollThumb:active {
+  background: var(--theme-button-shadow, var(--mac-gray-2));
+  cursor: grabbing;
+}
+
+/* ==================== Theme Variations ==================== */
+
+/* Dark Mode */
+[data-theme="dark"] .scrollbar {
+  background: #2a2a2a;
+  border-color: #000000;
+}
+
+[data-theme="dark"] .scrollArrow,
+[data-theme="dark"] .scrollThumb {
+  background: #3a3a3a;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .scrollArrow:hover,
+[data-theme="dark"] .scrollThumb:hover {
+  background: #4a4a4a;
+}
+
+[data-theme="dark"] .scrollTrack {
+  background: #1a1a1a;
+}
+
+/* Platinum Theme */
+[data-theme="platinum"] .scrollbar {
+  background: #E8E8E8;
+}
+
+[data-theme="platinum"] .scrollArrow,
+[data-theme="platinum"] .scrollThumb {
+  background: #F0F0F0;
+}
+
+[data-theme="platinum"] .scrollTrack {
+  background: #E0E0E0;
+}
+
+/* Nouns Themes */
+[data-theme="nounish"] .scrollThumb {
+  border-color: var(--theme-highlight, #d22209);
+}
+
+[data-theme="tangerine"] .scrollThumb {
+  border-color: var(--theme-highlight, #ff6b35);
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .scrollbar.vertical {
+    width: 12px;
+  }
+  
+  .scrollbar.horizontal {
+    height: 12px;
+  }
+  
+  .scrollArrow {
+    width: 12px;
+    height: 12px;
+    font-size: 7px;
+  }
+  
+  .vertical .scrollThumb {
+    width: 10px;
+  }
+  
+  .horizontal .scrollThumb {
+    height: 10px;
+  }
+  
+  /* Touch-friendly: slightly thicker thumbs */
+  .scrollThumb {
+    min-height: 30px;
+    min-width: 30px;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+/* Keyboard focus for thumb (when dragging) */
+.scrollThumb:focus-visible {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: -2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .scrollbar,
+  .scrollThumb,
+  .scrollArrow {
+    transition: none;
+  }
+}
+
+/* ==================== Scrollbar Width Customization ==================== */
+
+/* These can be controlled via SystemPreferences */
+.scrollbarContainer[data-scrollbar-width="thin"] .scrollbar.vertical {
+  width: 12px;
+}
+
+.scrollbarContainer[data-scrollbar-width="thin"] .scrollbar.horizontal {
+  height: 12px;
+}
+
+.scrollbarContainer[data-scrollbar-width="thick"] .scrollbar.vertical {
+  width: 18px;
+}
+
+.scrollbarContainer[data-scrollbar-width="thick"] .scrollbar.horizontal {
+  height: 18px;
+}
+
+/* ==================== Arrow Style Customization ==================== */
+
+.scrollbarContainer[data-arrow-style="modern"] .scrollArrow {
+  border-radius: 2px;
+}
+
+.scrollbarContainer[data-arrow-style="none"] .scrollArrow {
+  display: none;
+}
+

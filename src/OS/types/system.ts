@@ -112,6 +112,9 @@ export interface SystemState {
     cornerStyle?: 'sharp' | 'rounded';
     menuBarStyle?: 'opaque' | 'translucent';
     fontSize?: 'small' | 'medium' | 'large';
+    scrollbarWidth?: 'thin' | 'normal' | 'thick';
+    scrollbarArrowStyle?: 'classic' | 'modern' | 'none';
+    scrollbarAutoHide?: boolean;
   };
   
   // System Actions (QoL)

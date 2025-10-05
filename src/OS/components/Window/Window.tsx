@@ -10,6 +10,7 @@ import { useSystemStore } from '../../store/systemStore';
 import { usePreferencesStore } from '../../store/preferencesStore';
 import type { Window as WindowType } from '../../types/window';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import ScrollBar from '../ScrollBar/ScrollBar';
 import styles from './Window.module.css';
 
 interface WindowProps {
@@ -20,6 +21,7 @@ export default function Window({ windowId }: WindowProps) {
   const window = useSystemStore((state) => state.windows[windowId]);
   const activeWindowId = useSystemStore((state) => state.activeWindowId);
   const runningApps = useSystemStore((state) => state.runningApps);
+  const themeCustomization = useSystemStore((state) => state.themeCustomization);
   
   const closeWindow = useSystemStore((state) => state.closeWindow);
   const focusWindow = useSystemStore((state) => state.focusWindow);
@@ -276,13 +278,19 @@ export default function Window({ windowId }: WindowProps) {
         </button>
       </div>
 
-      {/* Content Area */}
+      {/* Content Area with ScrollBar */}
       <main 
         className={styles.content}
         role="main"
         aria-labelledby={`window-title-${windowId}`}
       >
-        {renderAppContent()}
+        <ScrollBar
+          showArrows={themeCustomization?.scrollbarArrowStyle !== 'none'}
+          direction="both"
+          autoHide={themeCustomization?.scrollbarAutoHide || false}
+        >
+          {renderAppContent()}
+        </ScrollBar>
       </main>
 
       {/* Resize Handle (if resizable) */}

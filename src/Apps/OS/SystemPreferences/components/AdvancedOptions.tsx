@@ -14,6 +14,9 @@ interface AdvancedOptionsProps {
     cornerStyle?: 'sharp' | 'rounded';
     menuBarStyle?: 'opaque' | 'translucent';
     fontSize?: 'small' | 'medium' | 'large';
+    scrollbarWidth?: 'thin' | 'normal' | 'thick';
+    scrollbarArrowStyle?: 'classic' | 'modern' | 'none';
+    scrollbarAutoHide?: boolean;
   };
   onCustomizationChange: (customization: any) => void;
 }
@@ -176,6 +179,98 @@ export default function AdvancedOptions({ customization, onCustomizationChange }
             <span style={{ fontSize: '14px' }}>Aa</span>
             <span>Large</span>
             <span className={styles.buttonHint}>14px</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollbar Width Selector */}
+      <div className={styles.optionGroup}>
+        <label className={styles.optionLabel}>
+          Scrollbar Width
+          <span className={styles.optionHint}>Adjust scrollbar thickness</span>
+        </label>
+        <div className={styles.buttonGroup}>
+          <button
+            className={`${styles.optionButton} ${customization.scrollbarWidth === 'thin' ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarWidth', 'thin')}
+          >
+            <div className={styles.scrollbarPreview} data-width="thin" />
+            <span>Thin</span>
+            <span className={styles.buttonHint}>12px</span>
+          </button>
+          <button
+            className={`${styles.optionButton} ${(!customization.scrollbarWidth || customization.scrollbarWidth === 'normal') ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarWidth', 'normal')}
+          >
+            <div className={styles.scrollbarPreview} data-width="normal" />
+            <span>Normal</span>
+            <span className={styles.buttonHint}>15px (default)</span>
+          </button>
+          <button
+            className={`${styles.optionButton} ${customization.scrollbarWidth === 'thick' ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarWidth', 'thick')}
+          >
+            <div className={styles.scrollbarPreview} data-width="thick" />
+            <span>Thick</span>
+            <span className={styles.buttonHint}>18px</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollbar Arrow Style */}
+      <div className={styles.optionGroup}>
+        <label className={styles.optionLabel}>
+          Scrollbar Arrows
+          <span className={styles.optionHint}>Show/hide scroll arrows</span>
+        </label>
+        <div className={styles.buttonGroup}>
+          <button
+            className={`${styles.optionButton} ${(!customization.scrollbarArrowStyle || customization.scrollbarArrowStyle === 'classic') ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarArrowStyle', 'classic')}
+          >
+            <div className={styles.arrowPreview} data-style="classic">▲▼</div>
+            <span>Classic</span>
+            <span className={styles.buttonHint}>Mac OS 8 style</span>
+          </button>
+          <button
+            className={`${styles.optionButton} ${customization.scrollbarArrowStyle === 'modern' ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarArrowStyle', 'modern')}
+          >
+            <div className={styles.arrowPreview} data-style="modern">◂▸</div>
+            <span>Modern</span>
+            <span className={styles.buttonHint}>Rounded arrows</span>
+          </button>
+          <button
+            className={`${styles.optionButton} ${customization.scrollbarArrowStyle === 'none' ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarArrowStyle', 'none')}
+          >
+            <div className={styles.arrowPreview} data-style="none">—</div>
+            <span>None</span>
+            <span className={styles.buttonHint}>No arrows</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollbar Auto-Hide Toggle */}
+      <div className={styles.optionGroup}>
+        <label className={styles.optionLabel}>
+          Scrollbar Behavior
+          <span className={styles.optionHint}>Auto-hide when not scrolling</span>
+        </label>
+        <div className={styles.toggleGroup}>
+          <button
+            className={`${styles.toggleButton} ${!customization.scrollbarAutoHide ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarAutoHide', false)}
+          >
+            <span>Always Visible</span>
+            <span className={styles.buttonHint}>Classic Mac OS 8</span>
+          </button>
+          <button
+            className={`${styles.toggleButton} ${customization.scrollbarAutoHide ? styles.active : ''}`}
+            onClick={() => updateOption('scrollbarAutoHide', true)}
+          >
+            <span>Auto-Hide</span>
+            <span className={styles.buttonHint}>Modern style</span>
           </button>
         </div>
       </div>

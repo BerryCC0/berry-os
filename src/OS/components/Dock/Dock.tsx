@@ -13,20 +13,26 @@ export default function Dock() {
   const pinnedApps = useSystemStore((state) => state.pinnedApps);
   const runningApps = useSystemStore((state) => state.runningApps);
   const windows = useSystemStore((state) => state.windows);
+  const activeWindowId = useSystemStore((state) => state.activeWindowId);
   const launchApp = useSystemStore((state) => state.launchApp);
   const focusWindow = useSystemStore((state) => state.focusWindow);
+  const closeWindow = useSystemStore((state) => state.closeWindow);
 
   // Get all dock items (pinned apps + running non-pinned apps)
+  // Exclude 'apps' since it has its own dedicated button
   const dockItems = [
     // Pinned apps (Finder always first)
-    ...pinnedApps.map(appId => {
-      const appConfig = REGISTERED_APPS.find(app => app.id === appId);
-      return appConfig ? { appId, config: appConfig, isPinned: true } : null;
-    }).filter(Boolean),
+    ...pinnedApps
+      .filter(appId => appId !== 'apps') // Don't show Apps in dock items
+      .map(appId => {
+        const appConfig = REGISTERED_APPS.find(app => app.id === appId);
+        return appConfig ? { appId, config: appConfig, isPinned: true } : null;
+      })
+      .filter(Boolean),
     
     // Running apps not in pinned list
     ...Object.values(runningApps)
-      .filter(app => !pinnedApps.includes(app.id))
+      .filter(app => !pinnedApps.includes(app.id) && app.id !== 'apps') // Don't show Apps in dock items
       .map(app => ({ appId: app.id, config: app.config, isPinned: false }))
   ];
 
@@ -61,33 +67,27 @@ export default function Dock() {
     );
   };
 
-  // Handler for Apps folder button
+  // Handler for Apps button - toggles Launchpad-style Apps window
   const handleAppsClick = () => {
-    const finderApp = getAppById('finder');
-    if (!finderApp) return;
+    const appsApp = getAppById('apps');
+    if (!appsApp) return;
 
-    // Check if Finder is already running
-    const finderRunningApp = runningApps['finder'];
+    // Check if Apps is already running
+    const appsRunningApp = runningApps['apps'];
     
-    if (finderRunningApp && finderRunningApp.windows.length > 0) {
-      // Finder is already running - focus it and navigate to Applications
-      const finderWindowId = finderRunningApp.windows[0];
-      focusWindow(finderWindowId);
+    if (appsRunningApp && appsRunningApp.windows.length > 0) {
+      const appsWindowId = appsRunningApp.windows[0];
       
-      // Publish event to navigate Finder to Applications folder
-      // The Finder component will listen for this event
-      import('../../lib/eventBus').then(({ eventBus }) => {
-        eventBus.publish('FINDER_NAVIGATE', { path: '/Applications' });
-      });
+      // If the Apps window is currently active, close it (toggle off)
+      if (activeWindowId === appsWindowId) {
+        closeWindow(appsWindowId);
+      } else {
+        // If it's open but not active, focus it
+        focusWindow(appsWindowId);
+      }
     } else {
-      // Launch Finder with Applications path in state
-      // This will open Finder directly to the Applications folder
-      const params = new URLSearchParams(window.location.search);
-      params.set('apps', 'finder');
-      params.set('state', btoa(JSON.stringify({ initialPath: '/Applications' })));
-      window.history.pushState({}, '', `?${params.toString()}`);
-      
-      launchApp(finderApp);
+      // Launch Apps window
+      launchApp(appsApp);
     }
   };
 

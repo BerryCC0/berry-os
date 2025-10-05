@@ -9,12 +9,16 @@ import { lazy } from 'react';
 import type { AppConfig } from '../OS/types/system';
 import { getAppIconPath } from '../../app/lib/utils/iconUtils';
 
+// Re-export AppConfig type for convenience
+export type { AppConfig } from '../OS/types/system';
+
 /**
  * Registered Applications
  * Add your app here to make it available in the system
  */
 
 // OS Apps (built-in to Berry OS)
+const Apps = lazy(() => import('./OS/Apps/Apps'));
 const Berry = lazy(() => import('./OS/Berry/Berry'));
 const Calculator = lazy(() => import('./OS/Calculator/Calculator'));
 const Finder = lazy(() => import('./OS/Finder/Finder'));
@@ -33,6 +37,22 @@ const Auction = lazy(() => import('./Nouns/Auction/Auction'));
  */
 const BASE_APPS: AppConfig[] = [
   // OS Apps
+  {
+    id: 'apps',
+    name: 'Apps',
+    component: Apps,
+    icon: '/icons/system/folder-applications.svg',
+    defaultWindowSize: { width: 600, height: 500 },
+    minWindowSize: { width: 400, height: 350 },
+    maxWindowSize: { width: 900, height: 700 },
+    resizable: true,
+    web3Required: false,
+    mobileSupport: 'full',
+    mobileLayout: 'fullscreen',
+    category: 'system',
+    description: 'Browse and launch all installed applications',
+    version: '1.0.0',
+  },
   {
     id: 'berry',
     name: 'About This Berry OS',
