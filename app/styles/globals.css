@@ -16,8 +16,16 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  /* Ensure initial background is gray to prevent flash */
+  /* Default: Classic Mac OS 8 light gray */
   background: #DDDDDD;
+}
+
+/* Dark mode: Match Dark Mode theme background */
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background: #1a1a1a;
+  }
 }
 
 /* ==================== Mac OS 8 Variables ==================== */

@@ -406,8 +406,17 @@ export async function saveAllPreferences(
 // ==================== Default Preferences ====================
 
 export function getDefaultThemePreferences(): ThemePreferences {
+  // Detect system color scheme preference
+  // If on server-side, default to 'classic'
+  let defaultTheme = 'classic';
+  
+  if (typeof window !== 'undefined') {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    defaultTheme = prefersDark ? 'darkMode' : 'classic';
+  }
+  
   return {
-    theme_id: 'classic',
+    theme_id: defaultTheme,
     wallpaper_url: '/filesystem/System/Desktop Pictures/Classic.svg',
     font_size: 'medium',
     sound_enabled: true,

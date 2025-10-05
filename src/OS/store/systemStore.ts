@@ -85,6 +85,13 @@ const INITIAL_MOBILE_STATE: MobileState = {
   isMenuOpen: false,
 };
 
+// Detect system color scheme for initial theme
+function getInitialTheme(): string {
+  if (typeof window === 'undefined') return 'classic';
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'darkMode' : 'classic';
+}
+
 const INITIAL_STATE: SystemState = {
   windows: {},
   activeWindowId: null,
@@ -96,7 +103,7 @@ const INITIAL_STATE: SystemState = {
   mobile: INITIAL_MOBILE_STATE,
   bootTime: Date.now(),
   systemVersion: '8.0.0',
-  activeTheme: 'classic', // Direct theme ID for immediate UI updates
+  activeTheme: getInitialTheme(), // Auto-detect system color scheme
   accentColor: null, // No custom accent by default (use theme default)
   themeCustomization: {}, // No customizations by default
   isScreensaverActive: false, // Screensaver state

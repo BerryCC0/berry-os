@@ -6,12 +6,32 @@
 .loadingScreen {
   position: fixed;
   inset: 0;
-  background: #DDDDDD;
+  background: #DDDDDD; /* Light mode: Classic Mac OS 8 gray */
   z-index: 999998;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 1 !important; /* Force immediate visibility */
+}
+
+/* Dark mode: Match system preference */
+@media (prefers-color-scheme: dark) {
+  .loadingScreen {
+    background: #1a1a1a;
+  }
+  
+  .name,
+  .loading {
+    color: #FFFFFF;
+  }
+  
+  .version {
+    color: #999999;
+  }
+  
+  .logo img {
+    filter: brightness(0.9);
+  }
 }
 
 .loadingScreen.fadeOut {
