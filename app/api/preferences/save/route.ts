@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { saveAllPreferences, type UserPreferences } from '@/lib/persistence';
+import { saveAllPreferences, type UserPreferences } from '@/app/lib/Persistence/persistence';
 
 export async function POST(request: NextRequest) {
   try {

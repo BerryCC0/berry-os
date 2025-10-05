@@ -15,7 +15,7 @@ import type { Window, WindowConfig } from '../types/window';
 import { eventBus } from '../lib/eventBus';
 import { addAppToURL, removeAppFromURL } from '../../../app/lib/utils/stateUtils';
 import * as screenReader from '../lib/screenReader';
-import type { UserPreferences } from '../../../lib/persistence';
+import type { UserPreferences } from '../../../app/lib/Persistence/persistence';
 
 interface SystemActions {
   // Window Management

@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { loadUserPreferences, getDefaultUserPreferences } from '@/lib/persistence';
+import { loadUserPreferences, getDefaultUserPreferences } from '@/app/lib/Persistence/persistence';
 
 export async function GET(request: NextRequest) {
   try {

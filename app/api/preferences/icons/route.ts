@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { saveDesktopIcons, type DesktopIconPosition } from '@/lib/persistence';
+import { saveDesktopIcons, type DesktopIconPosition } from '@/app/lib/Persistence/persistence';
 
 export async function POST(request: NextRequest) {
   try {

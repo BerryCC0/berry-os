@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { saveWindowState } from '@/lib/persistence';
+import { saveWindowState } from '@/app/lib/Persistence/persistence';
 
 export async function POST(request: NextRequest) {
   try {
