@@ -287,6 +287,49 @@
   width: 100%;
 }
 
+/* ==================== Custom Theme Card ==================== */
+
+.customCard .themePreview {
+  background: linear-gradient(135deg, var(--theme-window-background) 0%, var(--theme-button-background) 100%);
+}
+
+.customPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 8px;
+}
+
+.customIcon {
+  font-size: 32px;
+  opacity: 0.9;
+}
+
+.customLabel {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--theme-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.customCard:hover .customIcon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.customCard.selected .customPreview {
+  background: linear-gradient(135deg, var(--theme-highlight) 0%, var(--theme-button-primary-background) 100%);
+}
+
+.customCard.selected .customLabel {
+  color: var(--theme-highlight-text);
+}
+
 /* ==================== Coming Soon ==================== */
 
 .comingSoon {

@@ -1,0 +1,221 @@
+/**
+ * MobileKeyboard Styles
+ * Mac OS 8 classic keyboard appearance
+ */
+
+.keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--theme-dialog-background);
+  border-top: 2px solid var(--theme-dialog-border);
+  padding: 8px;
+  z-index: 10005;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  box-shadow: var(--theme-shadow-medium);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.languageSelector {
+  padding: 4px 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  background: var(--theme-input-background);
+  border: 1px solid var(--theme-input-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  color: var(--theme-input-text);
+}
+
+.closeButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-button-background);
+  border: 2px solid var(--theme-button-border);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  color: var(--theme-button-text);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.closeButton:active {
+  background: var(--theme-button-background-active);
+  color: var(--theme-text-inverted);
+}
+
+.keys {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.key {
+  min-width: 32px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-button-background);
+  border: 2px solid var(--theme-button-border);
+  box-shadow: var(--theme-shadow-light);
+  cursor: pointer;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--theme-button-text);
+  user-select: none;
+  transition: all var(--transition-fast);
+  flex: 1;
+  max-width: 48px;
+}
+
+.key:active {
+  background: var(--theme-button-background-active);
+  color: var(--theme-text-inverted);
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.space {
+  flex: 3;
+  max-width: none;
+  font-size: 12px;
+  text-transform: lowercase;
+}
+
+.return {
+  flex: 1.5;
+  max-width: 72px;
+  background: var(--theme-button-primary-background);
+  border-color: var(--theme-button-primary-border);
+  color: var(--theme-button-primary-text);
+  font-size: 20px;
+}
+
+.return:active {
+  background: var(--theme-button-primary-background-active);
+}
+
+.backspace {
+  flex: 1.5;
+  max-width: 72px;
+  background: var(--theme-error-color);
+  border-color: var(--theme-error-color);
+  color: var(--theme-text-inverted);
+  font-size: 20px;
+}
+
+.backspace:active {
+  filter: brightness(0.8);
+}
+
+.shift {
+  flex: 1.5;
+  max-width: 72px;
+  font-size: 20px;
+}
+
+.shift.shiftLocked {
+  background: var(--theme-selection-background);
+  color: var(--theme-selection-text);
+}
+
+.mode {
+  flex: 1.5;
+  max-width: 72px;
+  background: var(--theme-button-background-hover);
+  color: var(--theme-text-primary);
+  font-size: 12px;
+}
+
+.mode:active {
+  background: var(--theme-button-background-active);
+  color: var(--theme-text-inverted);
+}
+
+/* Tablet adaptations */
+@media (min-width: 600px) {
+  .keyboard {
+    padding: 12px;
+  }
+
+  .keys {
+    gap: 8px;
+  }
+
+  .row {
+    gap: 6px;
+  }
+
+  .key {
+    min-width: 40px;
+    height: 52px;
+    font-size: 18px;
+    max-width: 60px;
+  }
+
+  .space {
+    max-width: none;
+  }
+
+  .return,
+  .backspace,
+  .shift,
+  .mode {
+    max-width: 90px;
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 500px) {
+  .keyboard {
+    padding: 4px;
+  }
+
+  .header {
+    margin-bottom: 4px;
+  }
+
+  .keys {
+    gap: 3px;
+  }
+
+  .row {
+    gap: 3px;
+  }
+
+  .key {
+    height: 36px;
+    font-size: 14px;
+  }
+}
+

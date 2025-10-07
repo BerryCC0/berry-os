@@ -42,6 +42,10 @@ interface SystemActions {
   setWallpaper: (wallpaper: string) => void;
   initializeDesktopIcons: (apps: AppConfig[]) => void;
   
+  // Theme Management
+  setCustomTheme: (theme: import('../types/theme').Theme | null) => void;
+  clearCustomTheme: () => void;
+  
   // Menu Bar
   openMenu: (menuId: string) => void;
   closeMenu: () => void;
@@ -89,6 +93,7 @@ const INITIAL_STATE: SystemState = {
   bootTime: Date.now(),
   systemVersion: '8.0.0',
   activeTheme: getInitialTheme(), // Auto-detect system color scheme
+  customTheme: null, // Custom theme being edited (overrides activeTheme when set)
   accentColor: null, // No custom accent by default (use theme default)
   themeCustomization: {}, // No customizations by default
   isScreensaverActive: false, // Screensaver state
@@ -193,6 +198,11 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     const window = state.windows[windowId];
     if (!window) return;
 
+    // If already active, do nothing
+    if (state.activeWindowId === windowId && window.state !== 'minimized') {
+      return;
+    }
+
     const newZIndex = nextZIndex++;
     
     // If window is minimized, restore it to normal state
@@ -204,13 +214,21 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
       screenReader.announceWindowRestored(window.title);
     }
     
-    set((state) => ({
-      windows: {
-        ...state.windows,
-        [windowId]: { ...window, zIndex: newZIndex, isActive: true, state: newState },
-      },
+    // Update all windows: deactivate others, activate this one
+    const updatedWindows: Record<string, Window> = {};
+    Object.keys(state.windows).forEach((id) => {
+      const win = state.windows[id];
+      if (id === windowId) {
+        updatedWindows[id] = { ...win, zIndex: newZIndex, isActive: true, state: newState };
+      } else {
+        updatedWindows[id] = { ...win, isActive: false };
+      }
+    });
+    
+    set({
+      windows: updatedWindows,
       activeWindowId: windowId,
-    }));
+    });
 
     // Publish event
     eventBus.publish('WINDOW_FOCUS', { windowId });
@@ -243,7 +261,48 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     const window = get().windows[windowId];
     if (!window) return;
 
-    const newState: Window['state'] = window.state === 'maximized' ? 'normal' : 'maximized';
+    const isCurrentlyMaximized = window.state === 'maximized';
+    const newState: Window['state'] = isCurrentlyMaximized ? 'normal' : 'maximized';
+
+    // Store or restore original size/position for smart zoom
+    let updatedWindow = { ...window, state: newState };
+
+    if (!isCurrentlyMaximized) {
+      // Going to maximized - store current position and size
+      updatedWindow.metadata = {
+        ...window.metadata,
+        originalPosition: { ...window.position },
+        originalSize: { ...window.size },
+      };
+
+      // Use smart zoom calculation
+      const viewportWidth = typeof globalThis.window !== 'undefined' ? globalThis.window.innerWidth : 1920;
+      const viewportHeight = typeof globalThis.window !== 'undefined' ? globalThis.window.innerHeight : 1080;
+      const menuBarHeight = 20;
+      // Windows are positioned relative to Desktop container (top: 20px)
+      const desktopHeight = viewportHeight - menuBarHeight;
+
+      // Calculate optimal size (90% of desktop area, respecting max size constraints)
+      const maxWidth = window.maxSize?.width || viewportWidth - 40;
+      const maxHeight = window.maxSize?.height || (desktopHeight - 40);
+      
+      updatedWindow.size = {
+        width: Math.min(maxWidth, viewportWidth - 40),
+        height: Math.min(maxHeight, desktopHeight - 40),
+      };
+      
+      // Position relative to desktop container (not viewport)
+      updatedWindow.position = {
+        x: (viewportWidth - updatedWindow.size.width) / 2,
+        y: (desktopHeight - updatedWindow.size.height) / 2,
+      };
+    } else {
+      // Restore original position and size
+      if (window.metadata?.originalPosition && window.metadata?.originalSize) {
+        updatedWindow.position = { ...window.metadata.originalPosition };
+        updatedWindow.size = { ...window.metadata.originalSize };
+      }
+    }
 
     // Announce to screen readers
     if (newState === 'maximized') {
@@ -255,7 +314,7 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     set((state) => ({
       windows: {
         ...state.windows,
-        [windowId]: { ...window, state: newState },
+        [windowId]: updatedWindow,
       },
     }));
 
@@ -284,15 +343,30 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     let finalWidth = width;
     let finalHeight = height;
 
+    // Get viewport dimensions for max constraints
+    const viewportWidth = typeof globalThis.window !== 'undefined' ? globalThis.window.innerWidth : 1920;
+    const viewportHeight = typeof globalThis.window !== 'undefined' ? globalThis.window.innerHeight : 1080;
+    const menuBarHeight = 20;
+
+    // Enforce minimum size
     if (window.minSize) {
       finalWidth = Math.max(finalWidth, window.minSize.width);
       finalHeight = Math.max(finalHeight, window.minSize.height);
     }
 
+    // Enforce maximum size (but allow up to viewport size if no maxSize is set)
     if (window.maxSize) {
       finalWidth = Math.min(finalWidth, window.maxSize.width);
       finalHeight = Math.min(finalHeight, window.maxSize.height);
+    } else {
+      // No maxSize set - allow resizing up to viewport edges
+      finalWidth = Math.min(finalWidth, viewportWidth);
+      finalHeight = Math.min(finalHeight, viewportHeight - menuBarHeight);
     }
+
+    // Ensure minimum practical size (50x50)
+    finalWidth = Math.max(finalWidth, 50);
+    finalHeight = Math.max(finalHeight, 50);
 
     set((state) => ({
       windows: {
@@ -451,6 +525,20 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     
     // Announce change for accessibility
     eventBus.publish('WALLPAPER_CHANGE', { wallpaper });
+  },
+
+  // ==================== Theme Management ====================
+  
+  setCustomTheme: (theme) => {
+    set({ customTheme: theme });
+    if (theme) {
+      console.log(`✨ Custom theme applied: ${theme.name}`);
+    }
+  },
+
+  clearCustomTheme: () => {
+    set({ customTheme: null });
+    console.log(`✨ Custom theme cleared, reverting to preset`);
   },
 
   initializeDesktopIcons: (apps: AppConfig[]) => {

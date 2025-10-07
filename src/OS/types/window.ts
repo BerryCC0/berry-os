@@ -17,6 +17,12 @@ export interface WindowBounds extends WindowPosition, WindowSize {}
 
 export type WindowState = 'normal' | 'minimized' | 'maximized';
 
+export interface WindowMetadata {
+  originalPosition?: WindowPosition;
+  originalSize?: WindowSize;
+  [key: string]: unknown;
+}
+
 export interface Window {
   id: string;
   appId: string;
@@ -29,7 +35,7 @@ export interface Window {
   isResizable: boolean;
   minSize?: WindowSize;
   maxSize?: WindowSize;
-  metadata?: Record<string, unknown>;
+  metadata?: WindowMetadata;
 }
 
 export interface WindowConfig {

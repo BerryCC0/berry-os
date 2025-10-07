@@ -1,0 +1,87 @@
+/**
+ * VolumeControl Styles
+ * Mac OS 8 volume/brightness overlay
+ */
+
+.overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10010;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.overlay.fadeOut {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--mac-gray-1, #DDDDDD);
+  border: 2px solid var(--mac-black, #000000);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  min-width: 300px;
+}
+
+.icon {
+  font-size: 48px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sliderContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--mac-black, #000000);
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .control {
+    min-width: 280px;
+    padding: 16px;
+  }
+
+  .icon {
+    font-size: 40px;
+  }
+
+  .label {
+    font-size: 16px;
+  }
+}
+

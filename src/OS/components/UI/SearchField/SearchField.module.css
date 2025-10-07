@@ -1,0 +1,92 @@
+/**
+ * SearchField Styles
+ * Mac OS 8 classic search field with magnifying glass
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.searchField {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--theme-input-background);
+  border: 1px solid var(--theme-input-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  border-radius: 12px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+  transition: border-color var(--transition-fast);
+}
+
+.searchField:focus-within {
+  border: 2px solid var(--theme-input-border-focused);
+  outline: 2px solid var(--theme-focus-outline);
+  outline-offset: var(--theme-focus-outline-offset);
+}
+
+.icon {
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+  color: var(--theme-text-secondary);
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--theme-input-text);
+  min-width: 0; /* Allow shrinking */
+}
+
+.input::placeholder {
+  color: var(--theme-input-placeholder);
+}
+
+.clearButton {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-button-background);
+  border: 1px solid var(--theme-button-border);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  color: var(--theme-button-text);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.clearButton:hover {
+  background: var(--theme-button-background-hover);
+  color: var(--theme-text-inverted);
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .searchField {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 8px 12px;
+    border-radius: 16px;
+  }
+
+  .icon {
+    font-size: 16px;
+  }
+
+  .clearButton {
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+  }
+}
+

@@ -9,8 +9,9 @@ import { useRef, useState, useEffect, Suspense } from 'react';
 import { useSystemStore } from '../../store/systemStore';
 import { usePreferencesStore } from '../../store/preferencesStore';
 import type { Window as WindowType } from '../../types/window';
-import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
-import ScrollBar from '../ScrollBar/ScrollBar';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import ScrollBar from '../UI/ScrollBar/ScrollBar';
+import * as windowManager from '../../lib/windowManager';
 import styles from './Window.module.css';
 
 interface WindowProps {
@@ -37,6 +38,8 @@ export default function Window({ windowId }: WindowProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [isShaded, setIsShaded] = useState(false); // Window shade (collapse to title bar)
+  const titleBarClickTime = useRef<number>(0);
 
   if (!window) return null;
 
@@ -50,12 +53,28 @@ export default function Window({ windowId }: WindowProps) {
     }
   };
 
+  // Handle double-click on title bar to shade/unshade window (Mac OS 8 feature)
+  const handleTitleBarDoubleClick = () => {
+    const now = Date.now();
+    const timeSinceLastClick = now - titleBarClickTime.current;
+    
+    if (timeSinceLastClick < 300) {
+      // Double-click detected - toggle window shade
+      setIsShaded(!isShaded);
+    }
+    
+    titleBarClickTime.current = now;
+  };
+
   // Handle title bar drag start
   const handleTitleBarMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return; // Only left click
     
     e.preventDefault();
     e.stopPropagation();
+    
+    // Track click for double-click detection
+    handleTitleBarDoubleClick();
     
     focusWindow(windowId);
     setIsDragging(true);
@@ -82,13 +101,13 @@ export default function Window({ windowId }: WindowProps) {
     });
   };
 
-  // Handle dragging
+  // Handle dragging with snap-to-edge support
   useEffect(() => {
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const newX = e.clientX - dragOffset.x;
-      const newY = e.clientY - dragOffset.y;
+      let newX = e.clientX - dragOffset.x;
+      let newY = e.clientY - dragOffset.y;
       
       // Keep window within viewport bounds
       const viewportWidth = typeof globalThis.window !== 'undefined' ? globalThis.window.innerWidth : 1920;
@@ -97,24 +116,33 @@ export default function Window({ windowId }: WindowProps) {
       // Menu bar height (20px on desktop, 44px on mobile)
       const menuBarHeight = viewportWidth <= 768 ? 44 : 20;
       
-      // Minimum visible area - keep title bar and edge visible for dragging
-      const minVisibleWidth = Math.min(200, window.size.width); // At least 200px of window visible
-      const minVisibleHeight = 40; // At least title bar + some content visible
+      // Check for Option/Alt key for snap-to-edge (Mac OS 8 inspired)
+      if (e.altKey || e.metaKey) {
+        const snapPosition = windowManager.calculateSnapPosition(
+          { x: newX, y: newY },
+          window.size,
+          viewportWidth,
+          viewportHeight,
+          menuBarHeight,
+          30 // Snap threshold in pixels
+        );
+        
+        if (snapPosition) {
+          newX = snapPosition.x;
+          newY = snapPosition.y;
+        }
+      }
       
-      // Calculate bounds
-      // Left: Don't let window go more than (width - minVisible) off the left edge
-      const minX = -(window.size.width - minVisibleWidth);
-      // Right: Don't let window go more than minVisible off the right edge
-      const maxX = viewportWidth - minVisibleWidth;
-      // Top: Keep below menu bar
-      const minY = menuBarHeight;
-      // Bottom: Don't let window go more than (height - minVisible) off the bottom
-      const maxY = viewportHeight - minVisibleHeight;
+      // Clamp to valid bounds
+      const clamped = windowManager.clampWindowPosition(
+        { x: newX, y: newY },
+        window.size,
+        viewportWidth,
+        viewportHeight,
+        menuBarHeight
+      );
 
-      const clampedX = Math.max(minX, Math.min(maxX, newX));
-      const clampedY = Math.max(minY, Math.min(maxY, newY));
-
-      moveWindow(windowId, clampedX, clampedY);
+      moveWindow(windowId, clamped.x, clamped.y);
     };
 
     const handleMouseUp = () => {
@@ -130,7 +158,7 @@ export default function Window({ windowId }: WindowProps) {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragOffset, windowId, window.size, moveWindow]);
+  }, [isDragging, dragOffset, windowId, window.size, moveWindow, saveWindowPosition]);
 
   // Handle resizing
   useEffect(() => {
@@ -159,7 +187,49 @@ export default function Window({ windowId }: WindowProps) {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizing, resizeStart, windowId, resizeWindow]);
+  }, [isResizing, resizeStart, windowId, resizeWindow, saveWindowPosition]);
+
+  // Keyboard shortcuts for window management
+  useEffect(() => {
+    // Only handle shortcuts for active window
+    if (!isActive) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl modifier required for all shortcuts
+      const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const modifierKey = isMac ? e.metaKey : e.ctrlKey;
+
+      if (!modifierKey) return;
+
+      switch (e.key.toLowerCase()) {
+        case 'w':
+          // Cmd+W: Close window
+          e.preventDefault();
+          closeWindow(windowId);
+          break;
+
+        case 'm':
+          // Cmd+M: Minimize window
+          e.preventDefault();
+          minimizeWindow(windowId);
+          break;
+
+        case 'z':
+          // Cmd+Z with Shift: Zoom/Maximize window
+          if (e.shiftKey) {
+            e.preventDefault();
+            zoomWindow(windowId);
+          }
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isActive, windowId, closeWindow, minimizeWindow, zoomWindow]);
 
   // Get window style based on state
   const getWindowStyle = (): React.CSSProperties => {
@@ -171,6 +241,16 @@ export default function Window({ windowId }: WindowProps) {
 
     if (window.state === 'minimized') {
       return { ...baseStyle, display: 'none' };
+    }
+
+    // Window shading (collapsed to title bar only)
+    if (isShaded) {
+      return {
+        ...baseStyle,
+        width: window.size.width,
+        height: '21px', // Just the title bar height
+        overflow: 'hidden',
+      };
     }
 
     if (window.state === 'maximized') {

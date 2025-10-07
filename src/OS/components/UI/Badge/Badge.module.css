@@ -1,0 +1,80 @@
+/**
+ * Badge Styles
+ * Mac OS 8 classic notification badge
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.badgeContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.badge {
+  position: absolute;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-badge-background);
+  color: var(--theme-badge-text);
+  border: 1px solid var(--theme-badge-border);
+  border-radius: 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.badge.top-right {
+  top: -4px;
+  right: -4px;
+}
+
+.badge.top-left {
+  top: -4px;
+  left: -4px;
+}
+
+.badge.bottom-right {
+  bottom: -4px;
+  right: -4px;
+}
+
+.badge.bottom-left {
+  bottom: -4px;
+  left: -4px;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .badge {
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+    border-radius: 10px;
+  }
+
+  .badge.top-right {
+    top: -6px;
+    right: -6px;
+  }
+
+  .badge.top-left {
+    top: -6px;
+    left: -6px;
+  }
+
+  .badge.bottom-right {
+    bottom: -6px;
+    right: -6px;
+  }
+
+  .badge.bottom-left {
+    bottom: -6px;
+    left: -6px;
+  }
+}
+

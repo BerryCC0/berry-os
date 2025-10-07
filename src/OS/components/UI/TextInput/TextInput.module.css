@@ -1,0 +1,45 @@
+/**
+ * TextInput Styles
+ * Mac OS 8 classic text input appearance
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.textInput {
+  width: 100%;
+  padding: 4px 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+  background: var(--theme-input-background);
+  border: 1px solid var(--theme-input-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  color: var(--theme-input-text);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.textInput:focus {
+  border: 2px solid var(--theme-input-border-focused);
+  outline: 2px solid var(--theme-focus-outline);
+  outline-offset: var(--theme-focus-outline-offset);
+}
+
+.textInput.disabled {
+  background: var(--theme-input-background-disabled);
+  border-color: var(--theme-input-border-disabled);
+  color: var(--theme-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.textInput::placeholder {
+  color: var(--theme-input-placeholder);
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .textInput {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 8px 12px;
+  }
+}
+

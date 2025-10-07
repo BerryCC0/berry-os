@@ -1,0 +1,115 @@
+/**
+ * Select Styles
+ * Mac OS 8 classic select/dropdown appearance
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.select {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+}
+
+.selectButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 24px 4px 8px;
+  background: var(--theme-input-background);
+  border: 1px solid var(--theme-input-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  color: var(--theme-input-text);
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.selectButton:hover:not(:disabled) {
+  background: var(--theme-input-background-focused);
+  border-color: var(--theme-input-border-focused);
+}
+
+.selectButton:disabled {
+  background: var(--theme-input-background-disabled);
+  border-color: var(--theme-input-border-disabled);
+  color: var(--theme-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.placeholder {
+  color: var(--theme-input-placeholder);
+}
+
+.arrow {
+  position: absolute;
+  right: 8px;
+  font-size: 10px;
+  color: var(--theme-input-text);
+  pointer-events: none;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 2px;
+  background: var(--theme-menu-background);
+  border: 1px solid var(--theme-menu-border);
+  box-shadow: 2px 2px 0 var(--theme-menu-shadow);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  color: var(--theme-menu-text);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.option:hover {
+  background: var(--theme-menu-highlight);
+  color: var(--theme-menu-highlight-text);
+}
+
+.option.selected {
+  background: var(--theme-selection-background);
+  font-weight: bold;
+}
+
+.option.selected:hover {
+  background: var(--theme-menu-highlight);
+  color: var(--theme-menu-highlight-text);
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .select {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .selectButton {
+    padding: 8px 32px 8px 12px;
+  }
+
+  .option {
+    padding: 12px;
+  }
+}
+

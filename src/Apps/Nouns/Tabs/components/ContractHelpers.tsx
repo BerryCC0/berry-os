@@ -319,37 +319,37 @@ const CONTRACT_HELPERS: Record<string, { read: string[]; write: string[] }> = {
   'Client Rewards': {
     read: [
       'Get client balance',
-      'Calculate total claimable',
-      'Is client registered',
-      'Calculate reward percentage',
-      'Get reward stats',
-      'Parse reward stats'
+      'Get Berry OS balance',
+      'Get client metadata',
+      'Get Berry OS metadata',
+      'Get voting client IDs',
+      'Get next auction to reward',
+      'Get next proposal to reward'
     ],
     write: [
       'Register client',
-      'Update client description',
-      'Update client metadata',
-      'Claim rewards',
-      'Update rewards for proposal',
-      'Update rewards for auction'
+      'Withdraw client rewards',
+      'Withdraw Berry OS rewards',
+      'Update proposal rewards',
+      'Update auction rewards'
     ]
   },
   'Client Rewards Proxy': {
     read: [
       'Get client balance',
-      'Calculate total claimable',
-      'Is client registered',
-      'Calculate reward percentage',
-      'Get reward stats',
-      'Parse reward stats'
+      'Get Berry OS balance',
+      'Get client metadata',
+      'Get Berry OS metadata',
+      'Get voting client IDs',
+      'Get next auction to reward',
+      'Get next proposal to reward'
     ],
     write: [
       'Register client',
-      'Update client description',
-      'Update client metadata',
-      'Claim rewards',
-      'Update rewards for proposal',
-      'Update rewards for auction'
+      'Withdraw client rewards',
+      'Withdraw Berry OS rewards',
+      'Update proposal rewards',
+      'Update auction rewards'
     ]
   },
   'Fork Escrow': {

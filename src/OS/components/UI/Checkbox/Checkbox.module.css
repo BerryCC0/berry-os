@@ -1,0 +1,85 @@
+/**
+ * Checkbox Styles
+ * Mac OS 8 classic checkbox appearance
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+  user-select: none;
+  color: var(--theme-text-primary);
+}
+
+.checkboxLabel.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--theme-text-disabled);
+}
+
+.checkboxInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  background: var(--theme-checkbox-background);
+  border: 1px solid var(--theme-checkbox-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.checkboxInput:checked + .checkbox {
+  background: var(--theme-checkbox-background-checked);
+  border-color: var(--theme-checkbox-border-checked);
+}
+
+.checkboxInput:focus + .checkbox {
+  outline: 2px solid var(--theme-focus-outline);
+  outline-offset: var(--theme-focus-outline-offset);
+}
+
+.checkboxInput:disabled + .checkbox {
+  background: var(--theme-checkbox-background-disabled);
+  border-color: var(--theme-checkbox-border);
+}
+
+.check {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  color: var(--theme-checkbox-check);
+}
+
+.labelText {
+  line-height: 1.5;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .checkboxLabel {
+    font-size: 14px;
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+  }
+
+  .check {
+    font-size: 16px;
+  }
+}
+

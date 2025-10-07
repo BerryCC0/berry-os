@@ -1,0 +1,103 @@
+/**
+ * ColorPicker Styles
+ * Mac OS 8 classic color picker
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.colorPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+}
+
+.presets {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--theme-window-border);
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  transition: transform var(--transition-fast);
+}
+
+.swatch:hover {
+  transform: scale(1.1);
+}
+
+.swatch.selected {
+  border-width: 3px;
+  box-shadow: 0 0 0 2px var(--theme-window-background),
+              0 0 0 4px var(--theme-window-border);
+}
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--theme-text-inverted);
+  font-size: 18px;
+  text-shadow: 0 0 2px var(--theme-window-border);
+  font-weight: bold;
+}
+
+.custom {
+  padding-top: 8px;
+  border-top: 1px solid var(--theme-divider-color);
+}
+
+.customLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--theme-text-primary);
+}
+
+.customInput {
+  width: 40px;
+  height: 32px;
+  border: 1px solid var(--theme-input-border);
+  cursor: pointer;
+}
+
+.hexInput {
+  flex: 1;
+  padding: 4px 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+  background: var(--theme-input-background);
+  border: 1px solid var(--theme-input-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  color: var(--theme-input-text);
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .colorPicker {
+    font-size: 14px;
+  }
+
+  .presets {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .swatch {
+    width: 40px;
+    height: 40px;
+  }
+
+  .hexInput {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+

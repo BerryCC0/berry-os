@@ -15,6 +15,13 @@
   border-radius: var(--theme-window-corner-radius, 0px);
   opacity: var(--theme-window-opacity, 1.0);
   font-size: var(--theme-font-size, 12px);
+  /* Smooth transitions for shading */
+  transition: height 0.15s ease-out, box-shadow 0.1s ease;
+}
+
+.window:active {
+  /* Enhanced shadow when dragging */
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.4);
 }
 
 
@@ -30,6 +37,17 @@
   flex-shrink: 0;
   gap: 4px;
   border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
+  position: relative;
+}
+
+.titleBar:hover {
+  /* Subtle visual feedback on hover */
+  opacity: 0.95;
+}
+
+.titleBar:active {
+  /* Visual feedback when dragging */
+  cursor: grabbing;
 }
 
 .titleBarActive {

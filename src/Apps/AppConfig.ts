@@ -19,7 +19,6 @@ export type { AppConfig } from '../OS/types/system';
 
 // OS Apps (built-in to Berry OS)
 const Apps = lazy(() => import('./OS/Apps/Apps'));
-const Berry = lazy(() => import('./OS/Berry/Berry'));
 const Calculator = lazy(() => import('./OS/Calculator/Calculator'));
 const Finder = lazy(() => import('./OS/Finder/Finder'));
 const MediaViewer = lazy(() => import('./OS/MediaViewer/MediaViewer'));
@@ -45,29 +44,13 @@ const BASE_APPS: AppConfig[] = [
     icon: '/icons/system/folder-applications.svg',
     defaultWindowSize: { width: 600, height: 500 },
     minWindowSize: { width: 400, height: 350 },
-    maxWindowSize: { width: 900, height: 700 },
+    // No maxWindowSize - allow full screen resizing
     resizable: true,
     web3Required: false,
     mobileSupport: 'full',
     mobileLayout: 'fullscreen',
     category: 'system',
     description: 'Browse and launch all installed applications',
-    version: '1.0.0',
-  },
-  {
-    id: 'berry',
-    name: 'About This Berry OS',
-    component: Berry,
-    icon: getAppIconPath('berry', 'svg'),
-    defaultWindowSize: { width: 400, height: 300 },
-    minWindowSize: { width: 400, height: 300 },
-    maxWindowSize: { width: 400, height: 300 },
-    resizable: false,
-    web3Required: false,
-    mobileSupport: 'full',
-    mobileLayout: 'modal',
-    category: 'system',
-    description: 'Information about Berry OS',
     version: '1.0.0',
   },
   {
@@ -105,7 +88,7 @@ const BASE_APPS: AppConfig[] = [
     icon: getAppIconPath('finder', 'svg'),
     defaultWindowSize: { width: 600, height: 450 },
     minWindowSize: { width: 400, height: 300 },
-    maxWindowSize: { width: 1200, height: 900 },
+    // No maxWindowSize - allow full screen resizing
     resizable: true,
     web3Required: false,
     mobileSupport: 'full',
@@ -149,7 +132,7 @@ const BASE_APPS: AppConfig[] = [
     icon: getAppIconPath('media-viewer', 'svg'),
     defaultWindowSize: { width: 800, height: 600 },
     minWindowSize: { width: 400, height: 300 },
-    maxWindowSize: { width: 1920, height: 1080 },
+    // No maxWindowSize - allow full screen resizing for viewing media
     resizable: true,
     web3Required: false,
     mobileSupport: 'full',
@@ -165,7 +148,7 @@ const BASE_APPS: AppConfig[] = [
     icon: '/icons/system/file-text.svg',
     defaultWindowSize: { width: 600, height: 500 },
     minWindowSize: { width: 400, height: 300 },
-    maxWindowSize: { width: 1200, height: 900 },
+    // No maxWindowSize - allow full screen resizing
     resizable: true,
     web3Required: false,
     mobileSupport: 'full',
@@ -197,7 +180,7 @@ const BASE_APPS: AppConfig[] = [
     icon: '/icons/system/preferences.svg',
     defaultWindowSize: { width: 800, height: 600 },
     minWindowSize: { width: 600, height: 500 },
-    maxWindowSize: { width: 1000, height: 800 },
+    // No maxWindowSize - allow full screen resizing
     resizable: true,
     web3Required: false,
     mobileSupport: 'full',
@@ -215,7 +198,7 @@ const BASE_APPS: AppConfig[] = [
     icon: getAppIconPath('berry', 'svg'), // TODO: Create camp icon
     defaultWindowSize: { width: 800, height: 600 },
     minWindowSize: { width: 600, height: 400 },
-    maxWindowSize: { width: 1200, height: 900 },
+    // No maxWindowSize - allow full screen resizing
     resizable: true,
     web3Required: true,
     mobileSupport: 'full',
@@ -231,7 +214,7 @@ const BASE_APPS: AppConfig[] = [
     icon: getAppIconPath('berry', 'svg'), // TODO: Create auction icon
     defaultWindowSize: { width: 700, height: 800 },
     minWindowSize: { width: 500, height: 600 },
-    maxWindowSize: { width: 900, height: 1000 },
+    // No maxWindowSize - allow full screen resizing
     resizable: true,
     web3Required: true,
     mobileSupport: 'full',
@@ -247,7 +230,7 @@ const BASE_APPS: AppConfig[] = [
     icon: getAppIconPath('tabs', 'svg'),
     defaultWindowSize: { width: 800, height: 600 },
     minWindowSize: { width: 600, height: 400 },
-    maxWindowSize: { width: 1200, height: 900 },
+    // No maxWindowSize - allow full screen resizing
     resizable: true,
     web3Required: true,
     mobileSupport: 'full',
@@ -266,7 +249,7 @@ const DEBUG_APP: AppConfig = {
   icon: getAppIconPath('debug', 'svg'),
   defaultWindowSize: { width: 600, height: 700 },
   minWindowSize: { width: 400, height: 500 },
-  maxWindowSize: { width: 800, height: 900 },
+  // No maxWindowSize - allow full screen resizing
   resizable: true,
   web3Required: false,
   mobileSupport: 'full',

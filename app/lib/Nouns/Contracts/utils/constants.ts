@@ -3,7 +3,7 @@
  * Shared constants used across helper functions
  */
 
-import { NOUNS_CONTRACTS } from '../addresses';
+import { NOUNS_CONTRACTS } from './addresses';
 
 /**
  * Berry OS Client ID for rewards tracking

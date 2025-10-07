@@ -1,0 +1,53 @@
+/**
+ * StatusBar Styles
+ * Mac OS 8 classic status bar appearance
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: var(--theme-status-bar-background);
+  border-top: 1px solid var(--theme-status-bar-border);
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-status-bar-text);
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section:first-child {
+  justify-content: flex-start;
+}
+
+.section:nth-child(2) {
+  justify-content: center;
+}
+
+.section:last-child {
+  justify-content: flex-end;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .statusBar {
+    font-size: 12px;
+    height: 32px;
+    padding: 6px 12px;
+  }
+
+  /* Hide center section on mobile if needed */
+  .section:nth-child(2) {
+    display: none;
+  }
+}
+

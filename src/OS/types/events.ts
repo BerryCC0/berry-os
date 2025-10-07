@@ -29,7 +29,13 @@ export type EventType =
   | 'GESTURE_SWIPE_LEFT'
   | 'GESTURE_SWIPE_RIGHT'
   | 'GESTURE_SWIPE_UP'
-  | 'GESTURE_SWIPE_DOWN';
+  | 'GESTURE_SWIPE_DOWN'
+  | 'AUTOSAVE_COMPLETE'
+  | 'AUTOSAVE_ERROR'
+  | 'DRAG_START'
+  | 'DRAG_END'
+  | 'DROP'
+  | 'SELECTION_CHANGE';
 
 export interface BaseEventPayload {
   timestamp: number;

@@ -1,0 +1,175 @@
+/**
+ * NotificationCenter Styles
+ * Mac OS 8 classic notification appearance
+ */
+
+.notificationCenter {
+  position: fixed;
+  top: 40px; /* Below menu bar */
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.notification {
+  pointer-events: auto;
+  width: 320px;
+  background: var(--theme-notification-background);
+  border: 2px solid var(--theme-notification-border);
+  box-shadow: var(--theme-shadow-medium);
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(calc(100% + 20px));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification.dismissing {
+  animation: slideOut 0.2s ease-in forwards;
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(calc(100% + 20px));
+    opacity: 0;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-button-background);
+  border: 1px solid var(--theme-button-border);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  color: var(--theme-button-text);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.closeButton:hover {
+  background: var(--theme-button-background-hover);
+  color: var(--theme-text-inverted);
+}
+
+.content {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+}
+
+.iconContainer {
+  flex-shrink: 0;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+}
+
+.textContainer {
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+}
+
+.title {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--theme-notification-text);
+}
+
+.message {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--theme-notification-text);
+  word-wrap: break-word;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.actionButton {
+  padding: 4px 12px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  background: var(--theme-button-background);
+  border: 1px solid var(--theme-button-border);
+  cursor: pointer;
+  color: var(--theme-button-text);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.actionButton:hover {
+  background: var(--theme-button-background-hover);
+  color: var(--theme-text-inverted);
+}
+
+/* Type variants */
+.notification.success {
+  border-color: var(--theme-success-color);
+}
+
+.notification.warning {
+  border-color: var(--theme-warning-color);
+}
+
+.notification.error {
+  border-color: var(--theme-error-color);
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .notificationCenter {
+    left: 8px;
+    right: 8px;
+    top: 8px;
+  }
+
+  .notification {
+    width: auto;
+  }
+
+  .title {
+    font-size: 13px;
+  }
+
+  .message {
+    font-size: 12px;
+  }
+
+  .closeButton {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+}
+

@@ -1,425 +1,817 @@
 # Nouns DAO Smart Contracts Integration
 
-Complete integration with the **Nouns DAO smart contracts** on Ethereum Mainnet for direct blockchain interactions.
+Complete user-facing API for interacting with all Nouns DAO smart contracts on Ethereum Mainnet.
 
-## Overview
+**Built for Berry OS** • Automatically includes Client ID 11 for rewards tracking
 
-This directory contains:
-- Contract addresses for all Nouns protocol contracts
-- ABIs (Application Binary Interfaces) for contract interactions
-- Helper utilities for read and write operations
-- TypeScript types for type-safe contract interactions
+---
 
-## Directory Structure
+## 🚀 Quick Start
 
-```
-Contracts/
-├── index.ts                    # Main export
-├── addresses.ts                # All contract addresses (13 contracts)
-├── README.md                   # This file
-├── TODO.md                     # Implementation status
-├── abis/                       # Contract ABIs (13 ABIs)
-│   ├── index.ts
-│   ├── NounsToken.ts
-│   ├── NounsAuctionHouse.ts
-│   ├── NounsDAOLogicV3.ts
-│   ├── TreasuryTimelock.ts
-│   ├── DataProxy.ts
-│   ├── NounsDescriptorV3.ts
-│   ├── ClientRewards.ts
-│   ├── TokenBuyer.ts
-│   ├── Payer.ts
-│   ├── StreamFactory.ts
-│   ├── NounsTreasuryV1.ts
-│   ├── ForkEscrow.ts
-│   └── ForkDAODeployer.ts
-└── utils/                      # Helper functions ✓ COMPLETE
-    ├── index.ts                # Main export
-    ├── constants.ts            # Shared constants (Client ID, states)
-    ├── types.ts                # TypeScript types
-    ├── formatting.ts           # Display formatting
-    ├── HELPERS_README.md       # Detailed usage guide
-    ├── token/                  # Token helpers
-    │   ├── read.ts
-    │   ├── write.ts
-    │   └── index.ts
-    ├── auction/                # Auction helpers
-    │   ├── read.ts
-    │   ├── write.ts
-    │   └── index.ts
-    ├── governance/             # Governance helpers
-    │   ├── read.ts
-    │   ├── write.ts
-    │   └── index.ts
-    └── dataproxy/              # Candidates & Feedback helpers
-        ├── read.ts
-        ├── write.ts
-        └── index.ts
-```
-
-## Quick Start
-
-**See `utils/HELPERS_README.md` for comprehensive usage examples!**
-
-### Reading Contract Data
+### Using React Hooks (Recommended)
 
 ```typescript
-import { useReadContract } from 'wagmi';
-import { TokenHelpers, NounsTokenABI } from '@/app/lib/Nouns/Contracts/utils';
+import { useAuctionActions } from '@/app/lib/Nouns/Contracts';
 
-function MyComponent({ address }: { address: Address }) {
-  // Get Noun balance
-  const { data: balance } = useReadContract({
-    address: TokenHelpers.CONTRACTS.NounsToken.address,
-    abi: NounsTokenABI,
-    functionName: 'balanceOf',
-    args: [address],
-  });
+function BidButton() {
+  const { createBid, currentAuction, isPending, isConfirming, isConfirmed } = useAuctionActions();
   
-  // Check if user has Nouns
-  const hasNouns = balance ? TokenHelpers.hasNouns(balance) : false;
-  
-  // Get voting power
-  const { data: votes } = useReadContract({
-    address: TokenHelpers.CONTRACTS.NounsToken.address,
-    abi: NounsTokenABI,
-    functionName: 'getCurrentVotes',
-    args: [address],
-  });
-  
-  return <div>Balance: {balance?.toString()}</div>;
-}
-```
-
-### Writing Contract Data (with NounsOS Client ID = 11)
-
-```typescript
-import { useWriteContract } from 'wagmi';
-import { TokenHelpers, AuctionHelpers } from '@/app/lib/Nouns/Contracts/utils';
-
-function ActionButtons({ delegatee, nounId }: { delegatee: Address; nounId: bigint }) {
-  const { writeContract } = useWriteContract();
-  
-  // Delegate voting power
-  const handleDelegate = () => {
-    const tx = TokenHelpers.prepareDelegateTransaction(delegatee);
-    writeContract(tx);
-  };
-  
-  // Place bid (automatically uses NOUNSOS_CLIENT_ID = 11)
-  const handleBid = () => {
-    const tx = AuctionHelpers.prepareCreateBidTransaction(nounId, '1.5');
-    writeContract(tx);
+  const handleBid = async () => {
+    try {
+      await createBid(currentAuction.nounId, "1.5"); // Bid 1.5 ETH
+      alert('Bid placed successfully!');
+    } catch (error) {
+      console.error('Bid failed:', error);
+    }
   };
   
   return (
-    <>
-      <button onClick={handleDelegate}>Delegate</button>
-      <button onClick={handleBid}>Bid 1.5 ETH</button>
-    </>
+    <button onClick={handleBid} disabled={isPending || isConfirming}>
+      {isPending ? 'Sending...' : isConfirming ? 'Confirming...' : 'Bid 1.5 ETH'}
+    </button>
   );
 }
 ```
 
-## Contract Addresses
-
-### Core Protocol
-
-| Contract | Address | Description |
-|----------|---------|-------------|
-| **Nouns Token** | `0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03` | ERC-721 NFTs with delegation |
-| **Auction House** | `0x830BD73E4184ceF73443C15111a1DF14e495C706` | Daily auctions |
-
-### Governance
-
-| Contract | Address | Description |
-|----------|---------|-------------|
-| **DAO Governor** | `0x6f3E6272A167e8AcCb32072d08E0957F9c79223d` | Proposing & voting |
-| **Data Proxy** | `0xf790A5f59678dd733fb3De93493A91f472ca1365` | Candidates & feedback |
-| **Client Rewards** | `0x883860178F95d0C82413eDc1D6De530cB4771d55` | Proposal rewards |
-
-### Treasury
-
-| Contract | Address | Description |
-|----------|---------|-------------|
-| **Treasury** | `0xb1a32FC9F9D8b2cf86C068Cae13108809547ef71` | Main treasury (Executor) |
-| **Treasury V1** | `0x0BC3807Ec262cB779b38D65b38158acC3bfedE10` | Legacy treasury |
-| **Token Buyer** | `0x4f2acdc74f6941390d9b1804fabc3e780388cfe5` | ETH → USDC |
-| **Payer** | `0xd97Bcd9f47cEe35c0a9ec1dc40C1269afc9E8E1D` | USDC payments |
-| **Stream Factory** | `0x0fd206FC7A7dBcD5661157eDCb1FFDD0D02A61ff` | Payment streams |
-
-### Art & Descriptor
-
-| Contract | Address | Description |
-|----------|---------|-------------|
-| **Descriptor V3** | `0x33a9c445fb4fb21f2c030a6b2d3e2f12d017bfac` | Traits & artwork |
-
-### Fork Mechanism
-
-| Contract | Address | Description |
-|----------|---------|-------------|
-| **Fork Escrow** | `0x44d97D22B3d37d837cE4b22773aAd9d1566055D9` | Fork escrow |
-| **Fork Deployer** | `0xcD65e61f70e0b1Aa433ca1d9A6FC2332e9e73cE3` | Deploy forks |
-
-## Available Contracts
-
-### Nouns Token
-
-**Read Functions:**
-- `balanceOf(address)` - Get Noun balance
-- `ownerOf(tokenId)` - Get Noun owner
-- `totalSupply()` - Total Nouns minted
-- `seeds(tokenId)` - Get Noun traits
-- `dataURI(tokenId)` - Get on-chain SVG
-- `delegates(account)` - Get delegate
-- `getCurrentVotes(account)` - Get voting power
-- `getPriorVotes(account, block)` - Historical votes
-
-**Write Functions:**
-- `delegate(delegatee)` - Delegate votes
-- `transferFrom(from, to, tokenId)` - Transfer Noun
-- `approve(to, tokenId)` - Approve transfer
-
-**Example:**
-```typescript
-import { token } from '@/app/lib/Nouns/Contracts';
-
-// Read
-const balanceConfig = token.balanceOf('0xAddress');
-const ownerConfig = token.ownerOf(BigInt(1));
-const seedConfig = token.seeds(BigInt(1));
-
-// Write
-const delegateConfig = token.delegate('0xDelegatee');
-```
-
-### Auction House
-
-**Read Functions:**
-- `auction()` - Current auction state
-- `duration()` - Auction duration
-- `reservePrice()` - Minimum bid
-- `minBidIncrementPercentage()` - Min bid increase
-
-**Write Functions:**
-- `createBid(nounId)` - Place bid (with ETH value)
-- `settleCurrentAndCreateNewAuction()` - Settle & start new
-- `settleAuction()` - Settle current
-
-**Example:**
-```typescript
-import { auctionHouse } from '@/app/lib/Nouns/Contracts';
-
-// Read auction state
-const auctionConfig = auctionHouse.auction();
-
-// Helper functions
-const isActive = auctionHouse.isAuctionActive(auctionData);
-const timeLeft = auctionHouse.getTimeRemaining(auctionData);
-const formatted = auctionHouse.formatTimeRemaining(timeLeft);
-
-// Place bid
-const bidConfig = auctionHouse.createBid(BigInt(123));
-// Pass value separately: { ...bidConfig, value: parseEther('1.5') }
-```
-
-### Governance (DAO)
-
-**Read Functions:**
-- `state(proposalId)` - Proposal state
-- `proposals(proposalId)` - Proposal data
-- `proposalThreshold()` - Min votes to propose
-- `quorumVotes()` - Quorum required
-- `votingDelay()` - Delay before voting
-- `votingPeriod()` - Voting duration
-
-**Write Functions:**
-- `propose(targets, values, signatures, calldatas, description)` - Create proposal
-- `castVote(proposalId, support)` - Vote (0=Against, 1=For, 2=Abstain)
-- `castVoteWithReason(proposalId, support, reason)` - Vote with reason
-- `queue(proposalId)` - Queue succeeded proposal
-- `execute(proposalId)` - Execute queued proposal
-- `cancel(proposalId)` - Cancel proposal
-
-**Example:**
-```typescript
-import { governance, VoteSupport } from '@/app/lib/Nouns/Contracts';
-
-// Read proposal
-const stateConfig = governance.state(BigInt(123));
-const proposalConfig = governance.proposals(BigInt(123));
-
-// Helper functions
-const stateName = governance.getStateName(ProposalState.ACTIVE);
-const percentages = governance.calculateVotePercentages(proposalData);
-const quorumProgress = governance.calculateQuorumProgress(proposalData);
-
-// Vote
-const voteConfig = governance.castVoteWithReason(
-  BigInt(123),
-  VoteSupport.FOR,
-  'This is important!'
-);
-```
-
-## Helper Functions
-
-### Contract Helpers
+### Using Actions Directly
 
 ```typescript
-import { 
-  formatAddress,
-  formatEth,
-  parseEth,
-  getEtherscanAddressLink,
-  getEtherscanTxLink
-} from '@/app/lib/Nouns/Contracts';
+import { AuctionActions } from '@/app/lib/Nouns/Contracts';
+import { useWriteContract } from 'wagmi';
 
-// Format addresses
-formatAddress('0x1234...5678'); // '0x1234...5678'
-
-// Format ETH
-formatEth(BigInt('1500000000000000000')); // '1.5000'
-parseEth('1.5'); // 1500000000000000000n
-
-// Get Etherscan links
-getEtherscanAddressLink('0x...');
-getEtherscanTxLink('0x...');
-```
-
-### Token Helpers
-
-```typescript
-import { token } from '@/app/lib/Nouns/Contracts';
-
-// Parse seed
-const seed = token.parseSeed(seedTuple);
-
-// Format
-token.formatNounId(BigInt(1)); // 'Noun 1'
-token.formatVotes(BigInt(5)); // '5'
-
-// Check
-token.hasNouns(balance);
-token.isDelegatedToSelf(account, delegate);
-```
-
-### Auction Helpers
-
-```typescript
-import { auctionHouse } from '@/app/lib/Nouns/Contracts';
-
-// State checks
-auctionHouse.isAuctionActive(auction);
-auctionHouse.hasAuctionEnded(auction);
-auctionHouse.isAuctionSettled(auction);
-
-// Time
-const remaining = auctionHouse.getTimeRemaining(auction);
-const formatted = auctionHouse.formatTimeRemaining(remaining);
-
-// Bidding
-const minBid = auctionHouse.calculateMinBid(current, percentage, reserve);
-const isValid = auctionHouse.isValidBid(bid, current, percentage, reserve);
-const error = auctionHouse.getBidError(bid, current, percentage, reserve);
-```
-
-### Governance Helpers
-
-```typescript
-import { governance } from '@/app/lib/Nouns/Contracts';
-
-// State
-governance.getStateName(state);
-governance.getSupportName(support);
-governance.isProposalActive(state);
-governance.hasProposalPassed(proposal);
-
-// Calculations
-governance.calculateVotePercentages(proposal);
-governance.calculateQuorumProgress(proposal);
-governance.getBlocksUntilVoting(current, start);
-governance.getBlocksRemaining(current, end);
-governance.estimateTimeFromBlocks(blocks);
-
-// Checks
-governance.canPropose(votes, threshold);
-```
-
-## Integration with wagmi/viem
-
-This package is designed to work seamlessly with [wagmi](https://wagmi.sh/) and [viem](https://viem.sh/):
-
-```typescript
-import { useReadContract, useWriteContract } from 'wagmi';
-import { TOKEN_CONTRACT, token } from '@/app/lib/Nouns/Contracts';
-
-function NounInfo({ tokenId }: { tokenId: bigint }) {
-  // Read owner
-  const { data: owner } = useReadContract({
-    ...TOKEN_CONTRACT,
-    ...token.ownerOf(tokenId),
-  });
+function BidButton() {
+  const { writeContractAsync } = useWriteContract();
   
-  // Read seed
-  const { data: seedData } = useReadContract({
-    ...TOKEN_CONTRACT,
-    ...token.seeds(tokenId),
-  });
+  const handleBid = async () => {
+    const config = AuctionActions.createBid(BigInt(123), "1.5");
+    await writeContractAsync(config);
+  };
   
-  const seed = seedData ? token.parseSeed(seedData) : null;
+  return <button onClick={handleBid}>Bid 1.5 ETH</button>;
+}
+```
+
+---
+
+## 📚 Core Features
+
+### ✅ Auction House
+- **Place bids** with Berry OS Client ID (11) automatically included
+- **Settle auctions** and start new ones
+- **Read auction state** (current bid, time remaining, etc.)
+
+### ✅ Governance
+- **Vote on proposals** (FOR, AGAINST, ABSTAIN)
+- **Create proposals** with Berry OS tracking
+- **Queue and execute** passed proposals
+- **Update proposals** during updatable period
+
+### ✅ Token (Nouns NFTs)
+- **Delegate voting power** to any address
+- **Transfer Nouns** safely
+- **Check balances** and voting power
+
+### ✅ Data Proxy
+- **Create proposal candidates** (draft proposals)
+- **Send feedback** on proposals and candidates
+- **Update candidates** based on community input
+
+### ✅ Client Rewards
+- **Check Berry OS rewards** (Client ID 11)
+- **Withdraw rewards** earned from bids and votes
+
+---
+
+## 🎯 Usage Examples
+
+### Bidding on Auctions
+
+```typescript
+import { useAuctionActions } from '@/app/lib/Nouns/Contracts';
+
+function AuctionInterface() {
+  const {
+    currentAuction,
+    createBid,
+    settleCurrentAndCreateNewAuction,
+    isPending,
+    isConfirming,
+    isConfirmed,
+    error
+  } = useAuctionActions();
   
-  // Write function
-  const { writeContract } = useWriteContract();
+  if (!currentAuction) return <div>Loading auction...</div>;
   
-  const handleDelegate = (delegatee: string) => {
-    writeContract({
-      ...TOKEN_CONTRACT,
-      ...token.delegate(delegatee as Address),
-    });
+  const handleBid = async (amount: string) => {
+    try {
+      await createBid(currentAuction.nounId, amount);
+    } catch (err) {
+      console.error('Bid failed:', err);
+    }
+  };
+  
+  const handleSettle = async () => {
+    try {
+      await settleCurrentAndCreateNewAuction();
+    } catch (err) {
+      console.error('Settlement failed:', err);
+    }
   };
   
   return (
     <div>
-      <h2>{token.formatNounId(tokenId)}</h2>
-      <p>Owner: {owner ? formatAddress(owner) : 'Loading...'}</p>
-      {seed && (
-        <p>Traits: BG:{seed.background} Body:{seed.body}</p>
+      <h2>Noun {currentAuction.nounId.toString()}</h2>
+      <p>Current Bid: {formatEther(currentAuction.amount)} ETH</p>
+      <p>Bidder: {currentAuction.bidder}</p>
+      
+      <button onClick={() => handleBid("1.5")} disabled={isPending || isConfirming}>
+        {isPending ? 'Bidding...' : isConfirming ? 'Confirming...' : 'Bid 1.5 ETH'}
+      </button>
+      
+      {currentAuction.settled && (
+        <button onClick={handleSettle}>Settle & Start New Auction</button>
       )}
+      
+      {error && <p>Error: {error.message}</p>}
+      {isConfirmed && <p>✅ Transaction confirmed!</p>}
     </div>
   );
 }
 ```
 
-## Type Safety
-
-All functions are fully typed for TypeScript safety:
+### Voting on Proposals
 
 ```typescript
-// ✅ Type-safe
-const config = token.ownerOf(BigInt(1));
+import { useGovernanceActions } from '@/app/lib/Nouns/Contracts';
 
-// ❌ TypeScript error
-const config = token.ownerOf('1'); // Error: Expected bigint
+function VoteButtons({ proposalId }: { proposalId: bigint }) {
+  const {
+    voteFor,
+    voteAgainst,
+    voteAbstain,
+    isPending,
+    isConfirming,
+    isConfirmed
+  } = useGovernanceActions();
+  
+  const handleVote = async (voteFunction: (id: bigint, reason?: string) => Promise<any>) => {
+    try {
+      await voteFunction(proposalId, "Voting from Berry OS!");
+      alert('Vote cast successfully!');
+    } catch (error) {
+      console.error('Vote failed:', error);
+    }
+  };
+  
+  const disabled = isPending || isConfirming;
+  
+  return (
+    <div>
+      <button onClick={() => handleVote(voteFor)} disabled={disabled}>
+        Vote FOR
+      </button>
+      <button onClick={() => handleVote(voteAgainst)} disabled={disabled}>
+        Vote AGAINST
+      </button>
+      <button onClick={() => handleVote(voteAbstain)} disabled={disabled}>
+        Vote ABSTAIN
+      </button>
+      
+      {isPending && <p>Sending transaction...</p>}
+      {isConfirming && <p>Waiting for confirmation...</p>}
+      {isConfirmed && <p>✅ Vote confirmed!</p>}
+    </div>
+  );
+}
 ```
 
-## Constants
+### Delegating Voting Power
 
 ```typescript
-import { 
-  NOUNS_CHAIN_ID,
-  NOUNS_DEPLOY_BLOCK 
+import { useTokenActions } from '@/app/lib/Nouns/Contracts';
+import { useAccount } from 'wagmi';
+
+function DelegateInterface() {
+  const { address } = useAccount();
+  const { delegate, isPending, isConfirming, isConfirmed } = useTokenActions();
+  const [delegatee, setDelegatee] = useState('');
+  
+  const handleDelegate = async () => {
+    if (!delegatee) return;
+    
+    try {
+      await delegate(delegatee as Address);
+      alert('Delegation successful!');
+    } catch (error) {
+      console.error('Delegation failed:', error);
+    }
+  };
+  
+  const handleDelegateToSelf = async () => {
+    if (!address) return;
+    
+    try {
+      await delegate(address);
+      alert('Delegated to self!');
+    } catch (error) {
+      console.error('Delegation failed:', error);
+    }
+  };
+  
+  return (
+    <div>
+      <h3>Delegate Voting Power</h3>
+      
+      <input
+        type="text"
+        placeholder="0x..."
+        value={delegatee}
+        onChange={(e) => setDelegatee(e.target.value)}
+      />
+      
+      <button onClick={handleDelegate} disabled={isPending || isConfirming}>
+        {isPending ? 'Delegating...' : isConfirming ? 'Confirming...' : 'Delegate'}
+      </button>
+      
+      <button onClick={handleDelegateToSelf} disabled={isPending || isConfirming}>
+        Delegate to Self
+      </button>
+      
+      {isConfirmed && <p>✅ Delegation confirmed!</p>}
+    </div>
+  );
+}
+```
+
+### Creating Proposals
+
+```typescript
+import { useGovernanceActions } from '@/app/lib/Nouns/Contracts';
+import { Address } from 'viem';
+
+function ProposalCreator() {
+  const { propose, proposeBySigs, isPending, isConfirming, isConfirmed } = useGovernanceActions();
+  
+  // Simple proposal creation
+  const handleCreateProposal = async () => {
+    const targets = ['0x1234...'] as Address[];
+    const values = [BigInt(0)];
+    const signatures = ['transfer(address,uint256)'];
+    const calldatas = ['0x...'] as `0x${string}`[];
+    const description = '# My Proposal\n\nThis proposal will...';
+    
+    try {
+      await propose(targets, values, signatures, calldatas, description);
+      alert('Proposal created!');
+    } catch (error) {
+      console.error('Proposal creation failed:', error);
+    }
+  };
+  
+  // Multi-signer proposal (requires EIP-712 signatures from co-proposers)
+  const handleMultiSignerProposal = async () => {
+    const proposerSignatures = [
+      {
+        sig: '0x...' as `0x${string}`,
+        signer: '0x...' as Address,
+        expirationTimestamp: BigInt(Date.now() + 86400000), // 24h expiry
+      },
+      // Additional co-signers...
+    ];
+    
+    const targets = ['0x1234...'] as Address[];
+    const values = [BigInt(0)];
+    const signatures = ['transfer(address,uint256)'];
+    const calldatas = ['0x...'] as `0x${string}`[];
+    const description = '# Multi-Signer Proposal\n\nCo-signed by...';
+    
+    try {
+      await proposeBySigs(
+        proposerSignatures,
+        targets,
+        values,
+        signatures,
+        calldatas,
+        description
+      );
+      alert('Multi-signer proposal created!');
+    } catch (error) {
+      console.error('Proposal creation failed:', error);
+    }
+  };
+  
+  return (
+    <div>
+      <h3>Create Proposal</h3>
+      <button onClick={handleCreateProposal} disabled={isPending || isConfirming}>
+        {isPending ? 'Creating...' : isConfirming ? 'Confirming...' : 'Create Proposal'}
+      </button>
+      
+      <button onClick={handleMultiSignerProposal} disabled={isPending || isConfirming}>
+        {isPending ? 'Creating...' : isConfirming ? 'Confirming...' : 'Create Multi-Signer Proposal'}
+      </button>
+      
+      {isConfirmed && <p>✅ Proposal created!</p>}
+      <p className="note">All proposals automatically include Berry OS Client ID (11)</p>
+    </div>
+  );
+}
+```
+
+### Sending Feedback
+
+```typescript
+import { useDataProxyActions } from '@/app/lib/Nouns/Contracts';
+
+function FeedbackForm({ proposalId }: { proposalId: bigint }) {
+  const { sendFeedback, isPending, isConfirming, isConfirmed } = useDataProxyActions();
+  const [reason, setReason] = useState('');
+  const [support, setSupport] = useState<number>(1); // 1 = FOR
+  
+  const handleSubmit = async () => {
+    try {
+      await sendFeedback(proposalId, support, reason);
+      alert('Feedback sent!');
+      setReason('');
+    } catch (error) {
+      console.error('Feedback failed:', error);
+    }
+  };
+  
+  return (
+    <div>
+      <h3>Send Feedback</h3>
+      
+      <select value={support} onChange={(e) => setSupport(Number(e.target.value))}>
+        <option value={0}>Against</option>
+        <option value={1}>For</option>
+        <option value={2}>Abstain</option>
+      </select>
+      
+      <textarea
+        placeholder="Your feedback..."
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+      />
+      
+      <button onClick={handleSubmit} disabled={isPending || isConfirming}>
+        {isPending ? 'Sending...' : isConfirming ? 'Confirming...' : 'Send Feedback'}
+      </button>
+      
+      {isConfirmed && <p>✅ Feedback sent!</p>}
+    </div>
+  );
+}
+```
+
+### Checking & Withdrawing Rewards
+
+```typescript
+import { useRewardsActions } from '@/app/lib/Nouns/Contracts';
+import { formatEther } from 'viem';
+import { useAccount } from 'wagmi';
+
+function RewardsPanel() {
+  const { address } = useAccount();
+  const {
+    berryOSBalance,
+    withdrawBerryOSRewards,
+    isPending,
+    isConfirming,
+    isConfirmed
+  } = useRewardsActions();
+  
+  const handleWithdraw = async () => {
+    if (!address) return;
+    
+    try {
+      await withdrawBerryOSRewards(address);
+      alert('Rewards withdrawn!');
+    } catch (error) {
+      console.error('Withdrawal failed:', error);
+    }
+  };
+  
+  if (!berryOSBalance) return <div>Loading rewards...</div>;
+  
+  const balanceETH = formatEther(berryOSBalance);
+  const hasRewards = berryOSBalance > BigInt(0);
+  
+  return (
+    <div>
+      <h3>Berry OS Rewards (Client ID 11)</h3>
+      <p>Balance: {balanceETH} ETH</p>
+      
+      {hasRewards && (
+        <button onClick={handleWithdraw} disabled={isPending || isConfirming}>
+          {isPending ? 'Withdrawing...' : isConfirming ? 'Confirming...' : 'Withdraw Rewards'}
+        </button>
+      )}
+      
+      {isConfirmed && <p>✅ Withdrawal confirmed!</p>}
+    </div>
+  );
+}
+```
+
+### Updating Rewards (Permissionless)
+
+Anyone can trigger reward distribution! This helps keep the system up-to-date.
+
+**Important**: Proposal rewards can only be updated every **30 days** or **10 qualified proposals** (whichever is sooner).
+
+```typescript
+import { useRewardsActions, getVotingClientIds } from '@/app/lib/Nouns/Contracts';
+import { useReadContract } from 'wagmi';
+
+function RewardUpdater() {
+  const {
+    nextProposalIdToReward,
+    nextAuctionIdToReward,
+    updateRewardsForProposalWritingAndVoting,
+    updateRewardsForAuctions,
+    isPending,
+    isConfirming
+  } = useRewardsActions();
+  
+  // Get the most recent ended proposal ID (e.g., from governance hook)
+  const mostRecentProposalId = BigInt(150); // Example
+  
+  // Step 1: Get the voting client IDs for this proposal
+  const { data: votingClientIds } = useReadContract(
+    getVotingClientIds(mostRecentProposalId)
+  );
+  
+  const handleUpdateProposalRewards = async () => {
+    if (!votingClientIds) return;
+    
+    try {
+      // Step 2: Use the same proposal ID and the fetched client IDs
+      await updateRewardsForProposalWritingAndVoting(
+        mostRecentProposalId,
+        votingClientIds
+      );
+      alert('Proposal rewards updated!');
+    } catch (error) {
+      console.error('Update failed:', error);
+    }
+  };
+  
+  const handleUpdateAuctionRewards = async () => {
+    try {
+      // For auctions, just pass the most recent Noun ID
+      const latestNounId = BigInt(1000); // Example
+      await updateRewardsForAuctions(latestNounId);
+      alert('Auction rewards updated!');
+    } catch (error) {
+      console.error('Update failed:', error);
+    }
+  };
+  
+  return (
+    <div>
+      <h3>Update Rewards (Help the DAO!)</h3>
+      
+      <div>
+        <p>Next proposal to reward: {nextProposalIdToReward?.toString()}</p>
+        <button 
+          onClick={handleUpdateProposalRewards} 
+          disabled={isPending || isConfirming || !votingClientIds}
+        >
+          Update Proposal Rewards
+        </button>
+      </div>
+      
+      <div>
+        <p>Next auction to reward: {nextAuctionIdToReward?.toString()}</p>
+        <button 
+          onClick={handleUpdateAuctionRewards} 
+          disabled={isPending || isConfirming}
+        >
+          Update Auction Rewards
+        </button>
+      </div>
+      
+      {isConfirming && <p>⏳ Confirming transaction...</p>}
+    </div>
+  );
+}
+```
+
+---
+
+## 🔧 Utilities
+
+### Formatting
+
+```typescript
+import {
+  formatAddress,
+  formatEth,
+  formatNounId,
+  formatTimeRemaining,
+  formatPercentage
 } from '@/app/lib/Nouns/Contracts';
 
-console.log(NOUNS_CHAIN_ID); // 1 (Mainnet)
-console.log(NOUNS_DEPLOY_BLOCK); // 12985438
+// Format addresses
+formatAddress('0x1234567890abcdef1234567890abcdef12345678'); // '0x1234...5678'
+
+// Format ETH amounts
+formatEth(BigInt('1500000000000000000')); // '1.5000'
+
+// Format Noun IDs
+formatNounId(BigInt(123)); // 'Noun 123'
+
+// Format time remaining
+formatTimeRemaining(3665); // '1h 1m'
+
+// Format percentages
+formatPercentage(BigInt(45), BigInt(100)); // '45.00%'
 ```
 
-## Reference
+### Calculations
 
-- **Nouns DAO**: [nouns.wtf](https://nouns.wtf)
-- **Etherscan**: [Contract addresses](https://nouns.wtf)
-- **Nouns Monorepo**: [GitHub](https://github.com/nounsDAO/nouns-monorepo)
-- **wagmi Docs**: [wagmi.sh](https://wagmi.sh/)
-- **viem Docs**: [viem.sh](https://viem.sh/)
+```typescript
+import {
+  calculateMinBid,
+  isAuctionActive,
+  hasReachedQuorum,
+  calculateVotePercentages
+} from '@/app/lib/Nouns/Contracts';
 
+// Calculate minimum bid
+const minBid = calculateMinBid(
+  BigInt('1000000000000000000'), // current bid (1 ETH)
+  BigInt(5),                      // 5% increment
+  BigInt('100000000000000000')    // 0.1 ETH reserve
+);
+
+// Check auction status
+const active = isAuctionActive(auction);
+
+// Check quorum
+const reachedQuorum = hasReachedQuorum(proposal);
+
+// Calculate vote percentages
+const percentages = calculateVotePercentages(proposal);
+// { for: 45.67, against: 32.11, abstain: 22.22 }
+```
+
+---
+
+## 🌐 Farcaster MiniApp Support
+
+**Works automatically!** The `farcasterMiniApp()` connector in our Wagmi config makes Farcaster wallets work seamlessly. No special handling needed.
+
+```typescript
+// Same code works in both regular wallets AND Farcaster MiniApps
+import { useAuctionActions } from '@/app/lib/Nouns/Contracts';
+
+function BidButton() {
+  const { createBid, isPending } = useAuctionActions();
+  
+  // This works in:
+  // ✅ MetaMask
+  // ✅ WalletConnect
+  // ✅ Farcaster Wallet (via MiniApp)
+  // ✅ Any wagmi-compatible wallet
+  
+  return (
+    <button onClick={() => createBid(BigInt(123), "1.5")} disabled={isPending}>
+      Bid 1.5 ETH
+    </button>
+  );
+}
+```
+
+---
+
+## 📦 What's Included
+
+### Actions (Transaction Builders)
+Pure TypeScript functions that return wagmi-compatible transaction configs:
+- `AuctionActions` - Bidding, settling
+- `GovernanceActions` - Voting, proposals
+- `TokenActions` - Delegation, transfers
+- `DataProxyActions` - Candidates, feedback
+- `RewardsActions` - Claiming rewards
+
+### Hooks (React)
+React hooks that wrap actions with transaction state management:
+- `useAuctionActions()`
+- `useGovernanceActions()`
+- `useTokenActions()`
+- `useDataProxyActions()`
+- `useRewardsActions()`
+
+### Utilities
+- **Formatting**: Display-friendly text formatting
+- **Calculations**: Business logic for bids, votes, quorum
+- **Constants**: Berry OS Client ID (11), chain info, etc.
+- **Types**: Full TypeScript definitions
+
+### ABIs
+Complete ABIs for all 16 Nouns contracts
+
+---
+
+## 🎨 Berry OS Integration
+
+All write actions automatically include **Berry OS Client ID (11)** where applicable:
+
+- ✅ **Auction bids** → Tracked with Client ID 11
+- ✅ **Votes** → Tracked with Client ID 11 (refundable votes)
+- ✅ **Proposals** → Tracked with Client ID 11
+
+This means Berry OS earns rewards for all user activity!
+
+---
+
+## 📖 API Reference
+
+### Hooks
+
+#### `useAuctionActions()`
+```typescript
+const {
+  // Data
+  currentAuction,
+  auctionDuration,
+  minReservePrice,
+  minBidIncrement,
+  
+  // Actions
+  createBid,
+  settleCurrentAndCreateNewAuction,
+  settleAuction,
+  
+  // Status
+  isPending,
+  isConfirming,
+  isConfirmed,
+  hash,
+  error,
+  
+  // Utils
+  refetchAuction,
+  resetWrite
+} = useAuctionActions();
+```
+
+#### `useGovernanceActions()`
+```typescript
+const {
+  // Data
+  proposalThreshold,
+  votingDelay,
+  votingPeriod,
+  proposalCount,
+  
+  // Voting Actions
+  voteFor,
+  voteAgainst,
+  voteAbstain,
+  castVote,
+  castVoteWithReason,
+  
+  // Proposal Actions
+  propose,
+  queue,
+  execute,
+  cancel,
+  veto,
+  
+  // Update Actions
+  updateProposal,
+  updateProposalDescription,
+  updateProposalTransactions,
+  
+  // Status
+  isPending,
+  isConfirming,
+  isConfirmed,
+  hash,
+  error,
+  
+  // Utils
+  resetWrite
+} = useGovernanceActions();
+```
+
+#### `useTokenActions()`
+```typescript
+const {
+  // Data
+  totalSupply,
+  
+  // Actions
+  delegate,
+  transferFrom,
+  safeTransferFrom,
+  approve,
+  setApprovalForAll,
+  
+  // Status
+  isPending,
+  isConfirming,
+  isConfirmed,
+  hash,
+  error,
+  
+  // Utils
+  resetWrite
+} = useTokenActions();
+```
+
+#### `useDataProxyActions()`
+```typescript
+const {
+  // Data
+  createCandidateCost,
+  updateCandidateCost,
+  
+  // Actions
+  createProposalCandidate,
+  updateProposalCandidate,
+  cancelProposalCandidate,
+  sendFeedback,
+  sendCandidateFeedback,
+  
+  // Status
+  isPending,
+  isConfirming,
+  isConfirmed,
+  hash,
+  error,
+  
+  // Utils
+  resetWrite
+} = useDataProxyActions();
+```
+
+#### `useRewardsActions()`
+```typescript
+const {
+  // Data
+  berryOSBalance,
+  berryOSClient,
+  
+  // Actions
+  withdrawClientBalance,
+  withdrawBerryOSRewards,
+  
+  // Status
+  isPending,
+  isConfirming,
+  isConfirmed,
+  hash,
+  error,
+  
+  // Utils
+  refetchBalance,
+  resetWrite
+} = useRewardsActions();
+```
+
+---
+
+## 🔗 Contract Addresses
+
+All contracts on **Ethereum Mainnet (Chain ID: 1)**:
+
+| Contract | Address |
+|----------|---------|
+| **Nouns Token** | `0x9C8fF314C9Bc7F6e59A9d9225Fb22946427eDC03` |
+| **Auction House** | `0x830BD73E4184ceF73443C15111a1DF14e495C706` |
+| **DAO Governor** | `0x6f3E6272A167e8AcCb32072d08E0957F9c79223d` |
+| **Data Proxy** | `0xf790A5f59678dd733fb3De93493A91f472ca1365` |
+| **Client Rewards** | `0x883860178F95d0C82413eDc1D6De530cB4771d55` |
+| **Treasury** | `0xb1a32FC9F9D8b2cf86C068Cae13108809547ef71` |
+
+[See all contracts →](./utils/addresses.ts)
+
+---
+
+## 🛠️ Development
+
+### Adding New Actions
+
+1. Create action function in `actions/[contract].ts`
+2. Export from `actions/index.ts`
+3. Create hook in `hooks/use[Contract]Actions.ts`
+4. Export from `hooks/index.ts`
+5. Update main `index.ts`
+
+### Testing
+
+Manual testing recommended. Use with real wallet on mainnet or testnet.
+
+---
+
+## 📄 License
+
+MIT
+
+---
+
+**Built with ❤️ for Berry OS**

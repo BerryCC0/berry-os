@@ -1,0 +1,122 @@
+/**
+ * IconPicker Styles
+ * Mac OS 8 classic icon picker
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.iconPicker {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--theme-divider-color);
+}
+
+.tab {
+  padding: 6px 12px;
+  background: var(--theme-tab-background);
+  border: 1px solid var(--theme-tab-border);
+  border-bottom: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--theme-tab-text);
+  transition: background var(--transition-fast);
+}
+
+.tab:hover {
+  background: var(--theme-tab-background-hover);
+}
+
+.tab.active {
+  background: var(--theme-tab-background-active);
+  font-weight: bold;
+  color: var(--theme-tab-text-active);
+  border-bottom: 1px solid var(--theme-tab-background-active);
+  margin-bottom: -1px;
+}
+
+.iconGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+  padding: 12px;
+  background: var(--theme-input-background);
+  border: 1px solid var(--theme-input-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.iconButton {
+  padding: 8px;
+  background: transparent;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton:hover {
+  background: var(--theme-button-background);
+  border-color: var(--theme-button-border);
+}
+
+.iconButton.selected {
+  background: var(--theme-selection-background);
+  border-color: var(--theme-selection-background);
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+}
+
+.iconButton.selected .icon {
+  filter: brightness(2);
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--theme-text-secondary);
+  font-style: italic;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .iconPicker {
+    font-size: 14px;
+  }
+
+  .tab {
+    padding: 8px 16px;
+  }
+
+  .iconGrid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+  }
+
+  .iconButton {
+    padding: 12px;
+  }
+
+  .icon {
+    width: 56px;
+    height: 56px;
+  }
+}
+

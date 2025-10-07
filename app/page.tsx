@@ -4,7 +4,7 @@
  */
 
 import Desktop from '../src/OS/components/Desktop/Desktop';
-import ThemeProvider from '../src/OS/components/ThemeProvider/ThemeProvider';
+import ThemeProvider from '../src/OS/components/Theme/ThemeProvider/ThemeProvider';
 
 // Disable static generation - Desktop is fully client-side
 export const dynamic = 'force-dynamic';

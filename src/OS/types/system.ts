@@ -4,6 +4,7 @@
  */
 
 import type { Window } from './window';
+import type { Theme } from './theme';
 
 export type AppCategory = 'system' | 'utility' | 'web3' | 'media' | 'productivity';
 
@@ -103,6 +104,7 @@ export interface SystemState {
   
   // Theme (Phase 6.5)
   activeTheme: string; // Direct theme ID for immediate synchronous UI updates
+  customTheme: Theme | null; // Custom theme being edited (overrides activeTheme when set)
   
   // Theme Customization (Phase 7.1)
   accentColor: string | null; // Current accent color (Nouns palette or custom)

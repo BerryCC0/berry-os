@@ -1,13 +1,21 @@
 /**
  * Appearance Tab Component
  * Organized theme and appearance settings with collapsible sections
+ * Phase 6: Integrated comprehensive ThemeBuilder
  */
 
 'use client';
 
+import { useState } from 'react';
 import CollapsibleSection from './CollapsibleSection';
 import AccentColorPicker from './AccentColorPicker';
 import AdvancedOptions from './AdvancedOptions';
+import ThemeBuilder from '../../../../OS/components/Theme/ThemeBuilder/ThemeBuilder';
+import Dialog from '../../../../OS/components/UI/Dialog/Dialog';
+import Button from '../../../../OS/components/UI/Button/Button';
+import { getThemeById } from '../../../../OS/lib/themes';
+import { useSystemStore } from '../../../../OS/store/systemStore';
+import { Theme } from '../../../../OS/types/theme';
 import styles from './AppearanceTab.module.css';
 
 interface AppearanceTabProps {
@@ -36,23 +44,83 @@ export default function AppearanceTab({
   onAccentColorChange,
   onCustomizationChange,
 }: AppearanceTabProps) {
+  // Get theme management actions from system store
+  const setCustomTheme = useSystemStore((state) => state.setCustomTheme);
+  const clearCustomTheme = useSystemStore((state) => state.clearCustomTheme);
+  const customTheme = useSystemStore((state) => state.customTheme);
+
+  // ThemeBuilder dialog state
+  const [isThemeBuilderOpen, setIsThemeBuilderOpen] = useState(false);
+  const [editingTheme, setEditingTheme] = useState<Theme | null>(null);
+  const [themeBeforeEdit, setThemeBeforeEdit] = useState<Theme | null>(null);
+
+  // Check if theme has custom colors (for status display)
+  const isThemeCustomized = customTheme !== null;
+
+  // Open ThemeBuilder with current theme (custom or preset)
+  const handleOpenThemeBuilder = () => {
+    const currentTheme = customTheme || getThemeById(activeTheme);
+    setEditingTheme(currentTheme);
+    setThemeBeforeEdit(customTheme); // Remember the state before editing
+    setIsThemeBuilderOpen(true);
+  };
+
+  // Handle theme changes from ThemeBuilder - LIVE PREVIEW
+  const handleThemeChange = (updatedTheme: Theme) => {
+    setEditingTheme(updatedTheme);
+    // Apply theme immediately to system store for LIVE preview
+    setCustomTheme(updatedTheme);
+  };
+
+  // Save custom theme
+  const handleSaveCustomTheme = () => {
+    if (editingTheme) {
+      // Apply the final custom theme
+      setCustomTheme(editingTheme);
+      // TODO Phase 5: Save to database via preferences store
+      console.log('✅ Custom theme applied:', editingTheme.name);
+    }
+    setIsThemeBuilderOpen(false);
+    setThemeBeforeEdit(null);
+  };
+
+  // Cancel theme editing - restore previous state
+  const handleCancelThemeBuilder = () => {
+    // Restore the theme state from before editing
+    if (themeBeforeEdit === null) {
+      // No custom theme was active, clear it
+      clearCustomTheme();
+      console.log('🔄 Cancelled editing, cleared custom theme');
+    } else {
+      // Restore the previous custom theme
+      setCustomTheme(themeBeforeEdit);
+      console.log('🔄 Cancelled editing, restored previous custom theme');
+    }
+    setIsThemeBuilderOpen(false);
+    setEditingTheme(null);
+    setThemeBeforeEdit(null);
+  };
   
-  // Organize themes by category
+  // Handle preset theme selection - CLEARS custom theme
+  const handlePresetThemeSelect = (themeId: string) => {
+    console.log(`🎨 Switching to preset theme: ${themeId}`);
+    // Clear any custom theme first
+    clearCustomTheme();
+    // Then switch to the preset theme
+    onThemeChange(themeId);
+  };
+
+  // Organize themes by category (matches themes.ts BUILT_IN_THEMES)
   const classicThemes = [
-    { id: 'classic', name: 'Classic', description: 'Original Mac OS 8 look' },
-    { id: 'platinum', name: 'Platinum', description: 'Mac OS 8.5+ modern appearance' },
-    { id: 'dark', name: 'Dark Mode', description: 'Easy on the eyes' },
-    { id: 'graphite', name: 'Graphite', description: 'Professional grayscale' },
+    { id: 'classic', name: 'Classic', description: 'Authentic Mac OS 8 look with black & white pinstripes' },
+    { id: 'platinum', name: 'Platinum', description: 'Mac OS 8.5+ modern appearance with gradient blues' },
+    { id: 'dark', name: 'Dark Mode', description: 'Easy on the eyes with dark grays and blue accents' },
+    { id: 'custom', name: 'Custom', description: 'Create your own theme with 150+ color controls', isCustom: true },
   ];
 
   const nounsThemes = [
-    { id: 'nounish', name: 'Nounish', description: 'Official Nouns DAO colors' },
-    { id: 'tangerine', name: 'Tangerine', description: 'Warm Nouns vibes' },
-    { id: 'midnight', name: 'Midnight Nouns', description: 'Dark with Nouns accent' },
-    { id: 'cottonCandy', name: 'Cotton Candy', description: 'Soft Nouns pastels' },
-    { id: 'retroTerminal', name: 'Retro Terminal', description: 'Green phosphor Nouns' },
-    { id: 'bondiBlue', name: 'Bondi Blue', description: 'iMac G3 meets Nouns' },
-    { id: 'tokyoNight', name: 'Tokyo Night', description: 'Cyberpunk Nouns' },
+    { id: 'nounish', name: 'Nounish', description: 'Nouns DAO colors - Nouns red, black, and cream' },
+    { id: 'tangerine', name: 'Tangerine', description: 'Vibrant and playful with oranges and yellows' },
   ];
 
   const wallpapers = [
@@ -86,25 +154,39 @@ export default function AppearanceTab({
             Classic
           </h4>
           <div className={styles.themeGrid}>
-            {classicThemes.map((theme) => (
-              <button
-                key={theme.id}
-                className={`${styles.themeCard} ${activeTheme === theme.id ? styles.selected : ''}`}
-                onClick={() => onThemeChange(theme.id)}
-              >
-                <div className={styles.themePreview}>
-                  <div className={`${styles.previewWindow} ${styles[`theme-${theme.id}`]}`}>
-                    <div className={styles.previewTitleBar} />
-                    <div className={styles.previewContent} />
+            {classicThemes.map((theme) => {
+              const isCustomCard = theme.id === 'custom';
+              const isSelected = isCustomCard ? isThemeCustomized : (activeTheme === theme.id && !customTheme);
+              
+              return (
+                <button
+                  key={theme.id}
+                  className={`${styles.themeCard} ${isSelected ? styles.selected : ''} ${isCustomCard ? styles.customCard : ''}`}
+                  onClick={() => isCustomCard ? handleOpenThemeBuilder() : handlePresetThemeSelect(theme.id)}
+                >
+                  <div className={styles.themePreview}>
+                    {isCustomCard ? (
+                      <div className={styles.customPreview}>
+                        <div className={styles.customIcon}>🎨</div>
+                        <div className={styles.customLabel}>
+                          {isThemeCustomized ? 'Edit' : 'Create'}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={`${styles.previewWindow} ${styles[`theme-${theme.id}`]}`}>
+                        <div className={styles.previewTitleBar} />
+                        <div className={styles.previewContent} />
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className={styles.themeName}>{theme.name}</div>
-                <div className={styles.themeDescription}>{theme.description}</div>
-                {activeTheme === theme.id && (
-                  <div className={styles.checkmark}>✓</div>
-                )}
-              </button>
-            ))}
+                  <div className={styles.themeName}>{theme.name}</div>
+                  <div className={styles.themeDescription}>{theme.description}</div>
+                  {isSelected && (
+                    <div className={styles.checkmark}>✓</div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -118,8 +200,8 @@ export default function AppearanceTab({
             {nounsThemes.map((theme) => (
               <button
                 key={theme.id}
-                className={`${styles.themeCard} ${activeTheme === theme.id ? styles.selected : ''}`}
-                onClick={() => onThemeChange(theme.id)}
+                className={`${styles.themeCard} ${activeTheme === theme.id && !customTheme ? styles.selected : ''}`}
+                onClick={() => handlePresetThemeSelect(theme.id)}
               >
                 <div className={styles.themePreview}>
                   <div className={`${styles.previewWindow} ${styles[`theme-${theme.id}`]}`}>
@@ -129,7 +211,7 @@ export default function AppearanceTab({
                 </div>
                 <div className={styles.themeName}>{theme.name}</div>
                 <div className={styles.themeDescription}>{theme.description}</div>
-                {activeTheme === theme.id && (
+                {activeTheme === theme.id && !customTheme && (
                   <div className={styles.checkmark}>✓</div>
                 )}
               </button>
@@ -141,7 +223,7 @@ export default function AppearanceTab({
       {/* Accent Color Section */}
       <CollapsibleSection
         title="Accent Color"
-        description="Customize highlight colors from the Nouns palette"
+        description="Quick accent color from the Nouns palette"
         icon="🎨"
         defaultExpanded={false}
       >
@@ -233,6 +315,24 @@ export default function AppearanceTab({
         </div>
       </CollapsibleSection>
       */}
+
+      {/* ThemeBuilder Dialog - Phase 6 */}
+      {editingTheme && (
+        <Dialog
+          isOpen={isThemeBuilderOpen}
+          title="Advanced Theme Customization"
+          onClose={handleCancelThemeBuilder}
+          width={800}
+          height={700}
+        >
+          <ThemeBuilder
+            theme={editingTheme}
+            onChange={handleThemeChange}
+            onSave={handleSaveCustomTheme}
+            onCancel={handleCancelThemeBuilder}
+          />
+        </Dialog>
+      )}
     </div>
   );
 }

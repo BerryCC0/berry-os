@@ -1,69 +1,50 @@
 /**
- * Nouns DAO Contract Utilities
- * Comprehensive helpers for interacting with all Nouns contracts
+ * Nouns Contracts Utilities
+ * Pure TypeScript utilities for Nouns DAO contracts
  */
 
-// ============================================================================
-// SHARED UTILITIES
-// ============================================================================
+// Contract addresses
+export * from './addresses';
 
-export * from './constants';
+// Constants (excluding duplicates from addresses and calculations)
+export {
+  BERRY_OS_CLIENT_ID,
+  PROPOSAL_STATES,
+  VOTE_SUPPORT,
+  AUCTION_DURATION,
+  MIN_BID_INCREMENT_PERCENTAGE,
+  CONTRACTS,
+} from './constants';
+
+// Types
 export * from './types';
+
+// Formatting utilities
 export * from './formatting';
 
-// ============================================================================
-// CONTRACT HELPERS
-// ============================================================================
-
-// Core Contracts
-export * as TokenHelpers from './token';
-export * as AuctionHelpers from './auction';
-export * as GovernanceHelpers from './governance';
-export * as DataProxyHelpers from './dataproxy';
-
-// Treasury & Financial
-export * as TreasuryHelpers from './treasury';
-export * as TokenBuyerHelpers from './tokenbuyer';
-export * as PayerHelpers from './payer';
-export * as StreamingHelpers from './streaming';
-export * as RewardsHelpers from './rewards';
-
-// Art & Metadata
-export * as DescriptorHelpers from './descriptor';
-export * as SeederHelpers from './seeder';
-
-// Fork Mechanism
-export * as ForkHelpers from './fork';
-
-// DAO Configuration
-export * as AdminHelpers from './admin';
-
-// Proposal Builders (Transaction builders for proposals/candidates)
-export * as ProposalBuilders from './proposalBuilders';
-
-// ============================================================================
-// ABIS
-// ============================================================================
-
+// Calculation utilities (excluding duplicates from constants)
 export {
-  NounsTokenABI,
-  NounsAuctionHouseABI,
-  NounsDAOLogicV3ABI,
-  NounsDAOAdminABI,
-  TreasuryTimelockABI,
-  DataProxyABI,
-  NounsDescriptorV3ABI,
-  ClientRewardsABI,
-  TokenBuyerABI,
-  PayerABI,
-  StreamFactoryABI,
-  NounsTreasuryV1ABI,
-  ForkEscrowABI,
-  ForkDAODeployerABI,
-} from '../abis';
-
-// ============================================================================
-// CONTRACT ADDRESSES
-// ============================================================================
-
-export { NOUNS_CONTRACTS } from '../addresses';
+  calculateMinBid,
+  isAuctionActive,
+  hasAuctionEnded,
+  getTimeRemaining,
+  isValidBid,
+  calculateVotePercentages,
+  calculateQuorumProgress,
+  hasReachedQuorum,
+  hasProposalPassed,
+  canPropose,
+  getBlocksUntilVoting,
+  getBlocksRemaining,
+  estimateTimeFromBlocks,
+  hasNouns,
+  hasVotingPower,
+  isDelegatedToSelf,
+  calculateBaseVotingPower,
+  BPS_DENOMINATOR,
+  bpsToPercentage,
+  percentageToBps,
+  SECONDS_PER_BLOCK,
+  blocksToSeconds,
+  secondsToBlocks,
+} from './calculations';

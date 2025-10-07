@@ -21,11 +21,11 @@ import {
   useWalletSync,
   useFarcasterSync,
 } from '../../lib/hooks';
-import MenuBar from '../MenuBar/MenuBar';
+import MenuBar from '../UI/MenuBar/MenuBar';
 import Window from '../Window/Window';
-import Dock from '../Dock/Dock';
-import Screensaver from '../Screensaver/Screensaver';
-import LoadingScreen from '../LoadingScreen/LoadingScreen';
+import Dock from '../UI/Dock/Dock';
+import Screensaver from '../UI/Screensaver/Screensaver';
+import LoadingScreen from '../UI/LoadingScreen/LoadingScreen';
 import styles from './Desktop.module.css';
 
 export default function Desktop() {

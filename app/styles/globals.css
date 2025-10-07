@@ -31,36 +31,252 @@ body {
 /* ==================== Mac OS 8 Variables ==================== */
 
 :root {
-  /* Theme Colors (dynamically set by ThemeProvider) */
-  /* These are overridden based on selected theme */
+  /* ==================== Comprehensive Theme Colors ==================== */
+  /* Phase 1: 150+ themeable properties */
+  /* All colors dynamically set by ThemeProvider based on selected theme */
+  
+  /* ===== Windows ===== */
   --theme-window-background: #DDDDDD;
   --theme-window-border: #000000;
   --theme-window-border-inactive: #888888;
+  --theme-window-shadow: rgba(0, 0, 0, 0.3);
+  
+  /* ===== Title Bars ===== */
   --theme-title-bar-active: #000000;
   --theme-title-bar-inactive: #CCCCCC;
   --theme-title-bar-text: #FFFFFF;
   --theme-title-bar-text-inactive: #666666;
-  --theme-text: #000000;
+  --theme-title-bar-shadow: #888888;
+  
+  /* ===== Text ===== */
+  --theme-text-primary: #000000;
   --theme-text-secondary: #666666;
+  --theme-text-tertiary: #999999;
+  --theme-text-disabled: #AAAAAA;
+  --theme-text-inverted: #FFFFFF;
+  
+  /* ===== Highlights & Selection ===== */
   --theme-highlight: #000080;
   --theme-highlight-text: #FFFFFF;
-  --theme-shadow: #888888;
-  --theme-button-face: #DDDDDD;
-  --theme-button-highlight: #FFFFFF;
-  --theme-button-shadow: #888888;
-  --theme-menu-background: #FFFFFF;
-  --theme-menu-text: #000000;
-  --theme-menu-highlight: #000080;
-  --theme-desktop-background: #008080;
+  --theme-highlight-hover: #0000A0;
+  --theme-selection-background: rgba(0, 0, 128, 0.2);
+  --theme-selection-text: #000000;
   
-  /* Legacy Mac OS grayscale palette (for backward compatibility) */
-  --mac-black: #000000;
-  --mac-white: #FFFFFF;
-  --mac-gray-1: #DDDDDD; /* Window backgrounds */
-  --mac-gray-2: #888888; /* Scrollbar tracks */
-  --mac-gray-3: #555555; /* Window borders */
-  --mac-gray-4: #CCCCCC; /* Inactive elements */
-  --mac-gray-5: #EEEEEE; /* Lighter backgrounds */
+  /* ===== Buttons ===== */
+  --theme-button-background: #DDDDDD;
+  --theme-button-background-hover: #EEEEEE;
+  --theme-button-background-active: #CCCCCC;
+  --theme-button-background-disabled: #DDDDDD;
+  --theme-button-border: #000000;
+  --theme-button-border-hover: #000000;
+  --theme-button-text: #000000;
+  --theme-button-text-disabled: #AAAAAA;
+  --theme-button-shadow: #888888;
+  --theme-button-highlight: #FFFFFF;
+  
+  /* Primary Buttons */
+  --theme-button-primary-background: #000000;
+  --theme-button-primary-background-hover: #333333;
+  --theme-button-primary-background-active: #000000;
+  --theme-button-primary-text: #FFFFFF;
+  --theme-button-primary-border: #000000;
+  
+  /* Cancel Buttons */
+  --theme-button-cancel-background: #DDDDDD;
+  --theme-button-cancel-background-hover: #CCCCCC;
+  --theme-button-cancel-text: #000000;
+  
+  /* ===== Inputs ===== */
+  --theme-input-background: #FFFFFF;
+  --theme-input-background-focused: #FFFFFF;
+  --theme-input-background-disabled: #DDDDDD;
+  --theme-input-border: #000000;
+  --theme-input-border-focused: #000000;
+  --theme-input-border-disabled: #888888;
+  --theme-input-text: #000000;
+  --theme-input-text-disabled: #888888;
+  --theme-input-placeholder: #999999;
+  --theme-input-shadow: #888888;
+  
+  /* ===== Menus ===== */
+  --theme-menu-background: #FFFFFF;
+  --theme-menu-border: #000000;
+  --theme-menu-text: #000000;
+  --theme-menu-text-disabled: #888888;
+  --theme-menu-highlight: #000080;
+  --theme-menu-highlight-text: #FFFFFF;
+  --theme-menu-separator: #000000;
+  --theme-menu-shadow: rgba(0, 0, 0, 0.3);
+  
+  /* Menu Bar Specific */
+  --theme-menu-bar-background: #FFFFFF;
+  --theme-menu-bar-border: #000000;
+  --theme-menu-bar-text: #000000;
+  --theme-menu-bar-highlight: #000080;
+  
+  /* ===== Scrollbars ===== */
+  --theme-scrollbar-background: #DDDDDD;
+  --theme-scrollbar-border: #000000;
+  --theme-scrollbar-thumb: #FFFFFF;
+  --theme-scrollbar-thumb-hover: #EEEEEE;
+  --theme-scrollbar-thumb-active: #CCCCCC;
+  --theme-scrollbar-arrow-background: #FFFFFF;
+  --theme-scrollbar-arrow-background-hover: #EEEEEE;
+  --theme-scrollbar-arrow-background-active: #CCCCCC;
+  --theme-scrollbar-arrow-icon: #000000;
+  
+  /* ===== Checkboxes & Radios ===== */
+  --theme-checkbox-background: #FFFFFF;
+  --theme-checkbox-background-checked: #FFFFFF;
+  --theme-checkbox-background-disabled: #DDDDDD;
+  --theme-checkbox-border: #000000;
+  --theme-checkbox-border-checked: #000000;
+  --theme-checkbox-border-focused: #000080;
+  --theme-checkbox-check: #000000;
+  
+  --theme-radio-background: #FFFFFF;
+  --theme-radio-background-checked: #FFFFFF;
+  --theme-radio-background-disabled: #DDDDDD;
+  --theme-radio-border: #000000;
+  --theme-radio-border-checked: #000000;
+  --theme-radio-border-focused: #000080;
+  --theme-radio-dot: #000000;
+  
+  /* ===== Sliders ===== */
+  --theme-slider-track: #DDDDDD;
+  --theme-slider-track-filled: #000080;
+  --theme-slider-thumb: #FFFFFF;
+  --theme-slider-thumb-hover: #EEEEEE;
+  --theme-slider-thumb-active: #CCCCCC;
+  --theme-slider-border: #000000;
+  
+  /* ===== Progress Bars ===== */
+  --theme-progress-background: #DDDDDD;
+  --theme-progress-fill: #000080;
+  --theme-progress-border: #000000;
+  --theme-progress-stripe: rgba(255, 255, 255, 0.3);
+  
+  /* ===== Dialogs & Alerts ===== */
+  --theme-dialog-background: #DDDDDD;
+  --theme-dialog-border: #000000;
+  --theme-dialog-shadow: rgba(0, 0, 0, 0.3);
+  --theme-dialog-header-background: #FFFFFF;
+  --theme-dialog-header-text: #000000;
+  
+  --theme-alert-info-background: #D0E8FF;
+  --theme-alert-info-border: #0066CC;
+  --theme-alert-info-text: #003366;
+  
+  --theme-alert-warning-background: #FFF4CC;
+  --theme-alert-warning-border: #CC9900;
+  --theme-alert-warning-text: #664400;
+  
+  --theme-alert-error-background: #FFD0D0;
+  --theme-alert-error-border: #CC0000;
+  --theme-alert-error-text: #660000;
+  
+  --theme-alert-success-background: #D0FFD0;
+  --theme-alert-success-border: #00CC00;
+  --theme-alert-success-text: #006600;
+  
+  /* ===== Tooltips ===== */
+  --theme-tooltip-background: #FFFFCC;
+  --theme-tooltip-border: #000000;
+  --theme-tooltip-text: #000000;
+  --theme-tooltip-shadow: rgba(0, 0, 0, 0.3);
+  
+  /* ===== Badges & Notifications ===== */
+  --theme-badge-background: #CC0000;
+  --theme-badge-border: #000000;
+  --theme-badge-text: #FFFFFF;
+  
+  --theme-notification-background: #FFFFFF;
+  --theme-notification-border: #000000;
+  --theme-notification-text: #000000;
+  --theme-notification-icon-info: #0066CC;
+  --theme-notification-icon-warning: #CC9900;
+  --theme-notification-icon-error: #CC0000;
+  --theme-notification-icon-success: #00CC00;
+  
+  /* ===== Context Menus ===== */
+  --theme-context-menu-background: #FFFFFF;
+  --theme-context-menu-border: #000000;
+  --theme-context-menu-text: #000000;
+  --theme-context-menu-text-disabled: #888888;
+  --theme-context-menu-highlight: #000080;
+  --theme-context-menu-highlight-text: #FFFFFF;
+  --theme-context-menu-separator: #000000;
+  
+  /* ===== Status Bar ===== */
+  --theme-status-bar-background: #DDDDDD;
+  --theme-status-bar-border: #000000;
+  --theme-status-bar-text: #000000;
+  --theme-status-bar-icon-default: #666666;
+  --theme-status-bar-icon-active: #000000;
+  
+  /* ===== Dock ===== */
+  --theme-dock-background: rgba(221, 221, 221, 0.95);
+  --theme-dock-border: #000000;
+  --theme-dock-shadow: rgba(0, 0, 0, 0.3);
+  --theme-dock-icon-border: transparent;
+  --theme-dock-icon-border-hover: #888888;
+  --theme-dock-icon-border-active: #000000;
+  --theme-dock-indicator: #000080;
+  
+  /* ===== Desktop ===== */
+  --theme-desktop-background: #008080;
+  --theme-desktop-pattern: rgba(255, 255, 255, 0.03);
+  --theme-desktop-icon-text: #000000;
+  --theme-desktop-icon-text-background: #FFFFFF;
+  --theme-desktop-icon-text-background-selected: #000080;
+  --theme-desktop-icon-border: transparent;
+  --theme-desktop-icon-border-selected: #000080;
+  
+  /* ===== Tabs ===== */
+  --theme-tab-background: #CCCCCC;
+  --theme-tab-background-hover: #DDDDDD;
+  --theme-tab-background-active: #FFFFFF;
+  --theme-tab-border: #000000;
+  --theme-tab-text: #666666;
+  --theme-tab-text-active: #000000;
+  
+  /* ===== Dividers ===== */
+  --theme-divider-color: #888888;
+  
+  /* ===== Focus States ===== */
+  --theme-focus-outline: #000080;
+  --theme-focus-outline-offset: 2px;
+  
+  /* ===== Shadows ===== */
+  --theme-shadow-light: rgba(0, 0, 0, 0.1);
+  --theme-shadow-medium: rgba(0, 0, 0, 0.3);
+  --theme-shadow-heavy: rgba(0, 0, 0, 0.5);
+  
+  /* ===== Miscellaneous ===== */
+  --theme-overlay-background: rgba(0, 0, 0, 0.5);
+  --theme-loading-spinner-primary: #000000;
+  --theme-loading-spinner-secondary: #888888;
+  --theme-error-color: #CC0000;
+  --theme-warning-color: #CC9900;
+  --theme-success-color: #00CC00;
+  --theme-info-color: #0066CC;
+  
+  /* ===== Theme Customization Variables ===== */
+  --theme-corner-radius: 0px;
+  --theme-window-corner-radius: 0px;
+  --theme-window-opacity: 1.0;
+  --theme-font-size: 12px;
+  --theme-menu-opacity: 1.0;
+  
+  /* ==================== Legacy Mac OS Palette (Backward Compatibility) ==================== */
+  /* These now map to theme variables for consistency */
+  --mac-black: var(--theme-window-border);
+  --mac-white: var(--theme-window-background);
+  --mac-gray-1: var(--theme-button-background);
+  --mac-gray-2: var(--theme-scrollbar-background);
+  --mac-gray-3: var(--theme-text-secondary);
+  --mac-gray-4: var(--theme-title-bar-inactive);
+  --mac-gray-5: var(--theme-button-background-hover);
   
   /* System fonts */
   --font-chicago: 'Chicago', 'Courier New', monospace;

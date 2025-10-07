@@ -1,0 +1,128 @@
+/**
+ * Slider Styles
+ * Mac OS 8 classic slider appearance
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: var(--theme-font-size, 12px);
+}
+
+.container.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.label {
+  color: var(--theme-text-primary);
+}
+
+.sliderWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider {
+  position: relative;
+  flex: 1;
+  height: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  background: var(--theme-slider-track);
+  border: 1px solid var(--theme-slider-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+}
+
+.fill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  background: var(--theme-slider-track-filled);
+  pointer-events: none;
+}
+
+.thumb {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  background: var(--theme-slider-thumb);
+  border: 1px solid var(--theme-slider-border);
+  box-shadow: var(--theme-shadow-light);
+  pointer-events: none;
+  transition: background var(--transition-fast);
+}
+
+.slider:hover .thumb {
+  background: var(--theme-slider-thumb-hover);
+}
+
+.slider:active .thumb {
+  background: var(--theme-slider-thumb-active);
+}
+
+.thumb::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  background: var(--theme-text-secondary);
+}
+
+.valueDisplay {
+  min-width: 40px;
+  text-align: right;
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-text-primary);
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .container {
+    font-size: 14px;
+  }
+
+  .slider {
+    height: 32px;
+  }
+
+  .track {
+    height: 6px;
+  }
+
+  .fill {
+    height: 6px;
+  }
+
+  .thumb {
+    width: 16px;
+    height: 32px;
+  }
+
+  .thumb::before {
+    width: 3px;
+    height: 16px;
+  }
+}
+

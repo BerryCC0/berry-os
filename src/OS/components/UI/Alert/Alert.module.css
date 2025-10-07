@@ -1,0 +1,140 @@
+/**
+ * Alert Styles
+ * Mac OS 8 classic alert dialog appearance
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--theme-overlay-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.alert {
+  background: var(--theme-dialog-background);
+  border: 2px solid var(--theme-dialog-border);
+  box-shadow: var(--theme-dialog-shadow);
+  width: 400px;
+  max-width: 90vw;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  animation: alertAppear 0.2s ease-out;
+}
+
+@keyframes alertAppear {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.titleBar {
+  background: var(--theme-dialog-header-background);
+  border-bottom: 1px solid var(--theme-dialog-border);
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-dialog-header-text);
+}
+
+.content {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  min-height: 80px;
+}
+
+.iconContainer {
+  flex-shrink: 0;
+}
+
+.alertIcon {
+  width: 32px;
+  height: 32px;
+}
+
+.messageContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.message {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--theme-text-primary);
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 12px 20px 20px 20px;
+  border-top: 1px solid var(--theme-divider-color);
+}
+
+.button {
+  min-width: 80px;
+}
+
+.defaultButton {
+  border: 2px solid var(--theme-button-primary-border) !important;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .alert {
+    width: auto;
+    max-width: calc(100vw - 32px);
+  }
+
+  .content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .message {
+    font-size: 14px;
+  }
+
+  .buttons {
+    flex-direction: column-reverse;
+    padding: 16px;
+  }
+
+  .button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+

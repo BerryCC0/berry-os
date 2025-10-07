@@ -1,0 +1,206 @@
+/**
+ * AboutDialog Styles
+ * Mac OS 8 classic About dialog
+ * Phase 3: Migrated to comprehensive theme system
+ */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--theme-overlay-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dialog {
+  background: var(--theme-dialog-background);
+  border: 2px solid var(--theme-dialog-border);
+  box-shadow: var(--theme-dialog-shadow);
+  width: 400px;
+  max-width: 90vw;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  animation: dialogAppear 0.2s ease-out;
+}
+
+@keyframes dialogAppear {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.titleBar {
+  background: var(--theme-dialog-header-background);
+  border-bottom: 1px solid var(--theme-dialog-border);
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-dialog-header-text);
+}
+
+.closeButton {
+  width: 16px;
+  height: 16px;
+  background: var(--theme-button-background);
+  border: 1px solid var(--theme-window-border);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  color: var(--theme-text-primary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.closeButton:hover {
+  background: var(--theme-button-background-hover);
+  color: var(--theme-text-inverted);
+}
+
+.content {
+  padding: 24px;
+}
+
+.logoSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logo {
+  width: 128px;
+  height: 128px;
+  display: block;
+}
+
+.infoSection {
+  background: var(--theme-input-background);
+  border: 1px solid var(--theme-input-border);
+  border-top: 2px solid var(--theme-input-shadow);
+  border-left: 2px solid var(--theme-input-shadow);
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text-primary);
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--theme-input-border);
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.label {
+  font-weight: bold;
+  color: var(--theme-text-primary);
+}
+
+.value {
+  color: var(--theme-text-primary);
+}
+
+.footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--theme-text-secondary);
+  padding-top: 12px;
+  border-top: 1px solid var(--theme-input-border);
+}
+
+.footer p {
+  margin: 3px 0;
+  line-height: 1.4;
+}
+
+.link {
+  display: inline-block;
+  color: var(--theme-text-primary);
+  text-decoration: underline;
+  margin-bottom: 8px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.link:hover {
+  color: var(--theme-highlight);
+}
+
+.copyright {
+  font-size: 9px;
+  color: var(--theme-text-secondary);
+}
+
+.license {
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.rights {
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .dialog {
+    width: calc(100vw - 40px);
+    max-width: 500px;
+    min-width: 320px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .logo {
+    width: 96px;
+    height: 96px;
+  }
+
+  .infoRow {
+    font-size: 13px;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+

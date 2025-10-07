@@ -1,13 +1,13 @@
 /**
  * Dialog Component Styles
  * Mac OS 8 modal dialog
- * Theme-aware: Supports Classic, Platinum, and Dark Mode
+ * Phase 3: Migrated to comprehensive theme system
  */
 
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--theme-overlay-background);
   z-index: 9998;
   animation: fadeIn 0.2s ease;
 }
@@ -26,9 +26,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: var(--theme-button-face, var(--mac-white));
-  border: 2px solid var(--theme-window-border, var(--mac-black));
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  background: var(--theme-dialog-background);
+  border: 2px solid var(--theme-dialog-border);
+  box-shadow: var(--theme-dialog-shadow);
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -49,8 +49,8 @@
 /* Title Bar */
 .titleBar {
   height: 20px;
-  background: var(--theme-title-bar-active, var(--mac-white));
-  border-bottom: 1px solid var(--theme-window-border, var(--mac-black));
+  background: var(--theme-title-bar-active);
+  border-bottom: 1px solid var(--theme-dialog-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,23 +58,17 @@
   position: relative;
 }
 
-/* Classic theme pinstripes */
+/* Classic theme pinstripes - handled by theme system */
 [data-theme="classic"] .titleBar {
-  background-image: repeating-linear-gradient(
-    0deg,
-    var(--mac-black),
-    var(--mac-black) 1px,
-    transparent 1px,
-    transparent 2px
-  );
+  background: var(--theme-title-bar-active);
 }
 
-/* Platinum gradient */
+/* Platinum gradient - handled by theme system */
 [data-theme="platinum"] .titleBar {
-  background: linear-gradient(180deg, #99AACC 0%, #7788AA 100%);
+  background: var(--theme-title-bar-active);
 }
 
-/* Dark mode solid */
+/* Dark mode solid - handled by theme system */
 [data-theme="dark"] .titleBar {
   background: var(--theme-title-bar-active);
 }
@@ -83,7 +77,7 @@
   font-family: var(--font-chicago);
   font-size: 12px;
   font-weight: bold;
-  color: var(--theme-title-bar-text, var(--mac-white));
+  color: var(--theme-title-bar-text);
   text-align: center;
   margin: 0;
 }
@@ -95,8 +89,8 @@
   transform: translateY(-50%);
   width: 12px;
   height: 12px;
-  border: 1px solid var(--theme-window-border, var(--mac-black));
-  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border);
+  background: var(--theme-button-background);
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -106,13 +100,13 @@
 }
 
 .closeButton:hover {
-  background: var(--theme-button-highlight, var(--mac-gray-1));
+  background: var(--theme-button-background-hover);
 }
 
 .closeButtonInner {
   width: 8px;
   height: 8px;
-  background: var(--theme-text, var(--mac-black));
+  background: var(--theme-text-primary);
 }
 
 /* Content */
@@ -121,8 +115,8 @@
   padding: 16px;
   overflow-y: auto;
   font-family: var(--font-geneva);
-  font-size: 12px;
-  color: var(--theme-text, var(--mac-black));
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-text-primary);
 }
 
 /* Button Row */
@@ -130,9 +124,9 @@
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  border-top: 1px solid var(--theme-window-border, var(--mac-black));
+  border-top: 1px solid var(--theme-divider-color);
   justify-content: flex-end;
-  background: var(--theme-window-background, var(--mac-gray-1));
+  background: var(--theme-dialog-background);
 }
 
 /* ==================== Mobile Adaptations ==================== */
@@ -178,6 +172,6 @@
 /* ==================== Accessibility ==================== */
 
 .closeButton:focus-visible {
-  outline: 2px solid var(--theme-highlight, var(--mac-black));
-  outline-offset: 2px;
+  outline: 2px solid var(--theme-focus-outline);
+  outline-offset: var(--theme-focus-outline-offset);
 }

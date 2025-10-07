@@ -109,6 +109,16 @@ export interface ProposalCandidate {
 }
 
 /**
+ * Proposer Signature (for proposeBySigs)
+ * EIP-712 signature from a Noun holder to co-sign a proposal
+ */
+export interface ProposerSignature {
+  sig: `0x${string}`;
+  signer: Address;
+  expirationTimestamp: bigint;
+}
+
+/**
  * Client Metadata (for rewards)
  */
 export interface ClientMetadata {
