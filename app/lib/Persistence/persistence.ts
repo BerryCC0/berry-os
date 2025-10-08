@@ -30,9 +30,14 @@ export interface ThemePreferences {
   corner_style?: string;    // 'sharp', 'rounded'
   menu_bar_style?: string;  // 'opaque', 'translucent'
   font_size: string;
-  scrollbar_width?: string; // 'thin', 'normal', 'thick' (Phase 7.2)
-  scrollbar_arrow_style?: string; // 'classic', 'modern', 'none' (Phase 7.2)
-  scrollbar_auto_hide?: boolean; // Auto-hide scrollbars (Phase 7.2)
+  scrollbar_width?: string; // 'thin', 'normal', 'thick'
+  scrollbar_arrow_style?: string; // 'classic', 'modern', 'none'
+  scrollbar_auto_hide?: boolean; // Auto-hide scrollbars
+  // Font preferences (Phase 8)
+  font_family_system?: string;
+  font_family_interface?: string;
+  font_family_custom_system?: string;
+  font_family_custom_interface?: string;
   sound_enabled: boolean;
   animations_enabled: boolean;
 }
@@ -141,7 +146,9 @@ export async function loadUserPreferences(
   // Load theme preferences
   const themeResult = await sql`
     SELECT theme_id, wallpaper_url, accent_color, title_bar_style, window_opacity, 
-           corner_style, menu_bar_style, font_size, sound_enabled, animations_enabled
+           corner_style, menu_bar_style, font_size, scrollbar_width, scrollbar_arrow_style, scrollbar_auto_hide,
+           font_family_system, font_family_interface, font_family_custom_system, font_family_custom_interface,
+           sound_enabled, animations_enabled
     FROM theme_preferences
     WHERE wallet_address = ${walletAddress}
   `;
@@ -180,6 +187,10 @@ export async function loadUserPreferences(
     scrollbar_width: row.scrollbar_width,
     scrollbar_arrow_style: row.scrollbar_arrow_style,
     scrollbar_auto_hide: row.scrollbar_auto_hide,
+    font_family_system: row.font_family_system,
+    font_family_interface: row.font_family_interface,
+    font_family_custom_system: row.font_family_custom_system,
+    font_family_custom_interface: row.font_family_custom_interface,
     sound_enabled: row.sound_enabled,
     animations_enabled: row.animations_enabled,
   });
@@ -275,6 +286,7 @@ export async function saveThemePreferences(
       wallet_address, theme_id, wallpaper_url, accent_color, title_bar_style,
       window_opacity, corner_style, menu_bar_style, font_size,
       scrollbar_width, scrollbar_arrow_style, scrollbar_auto_hide,
+      font_family_system, font_family_interface, font_family_custom_system, font_family_custom_interface,
       sound_enabled, animations_enabled
     )
     VALUES (
@@ -283,6 +295,8 @@ export async function saveThemePreferences(
       ${theme.corner_style || 'sharp'}, ${theme.menu_bar_style || 'opaque'},
       ${theme.font_size},
       ${theme.scrollbar_width || 'normal'}, ${theme.scrollbar_arrow_style || 'classic'}, ${theme.scrollbar_auto_hide || false},
+      ${theme.font_family_system || 'Chicago'}, ${theme.font_family_interface || 'Geneva'}, 
+      ${theme.font_family_custom_system || null}, ${theme.font_family_custom_interface || null},
       ${theme.sound_enabled}, ${theme.animations_enabled}
     )
     ON CONFLICT (wallet_address)
@@ -298,6 +312,10 @@ export async function saveThemePreferences(
       scrollbar_width = EXCLUDED.scrollbar_width,
       scrollbar_arrow_style = EXCLUDED.scrollbar_arrow_style,
       scrollbar_auto_hide = EXCLUDED.scrollbar_auto_hide,
+      font_family_system = EXCLUDED.font_family_system,
+      font_family_interface = EXCLUDED.font_family_interface,
+      font_family_custom_system = EXCLUDED.font_family_custom_system,
+      font_family_custom_interface = EXCLUDED.font_family_custom_interface,
       sound_enabled = EXCLUDED.sound_enabled,
       animations_enabled = EXCLUDED.animations_enabled,
       updated_at = NOW()

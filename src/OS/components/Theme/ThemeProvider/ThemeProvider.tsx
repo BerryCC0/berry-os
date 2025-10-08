@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useSystemStore } from '../../../store/systemStore';
 import { BUILT_IN_THEMES, getThemeById } from '../../../lib/themes';
 import { camelToKebab, hexToRgba, lighten, darken } from '../../../lib/colorUtils';
+import { getFontById, getFontStack, loadWebFont } from '../../../lib/fontManager';
 import type { Theme } from '../../../types/theme';
 
 interface ThemeProviderProps {
@@ -107,6 +108,73 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
       };
       const width = scrollbarWidthMap[themeCustomization.scrollbarWidth] || '15px';
       root.style.setProperty('--scrollbar-width', width);
+    }
+    
+    // ==================== Apply Font Customizations ====================
+    if (themeCustomization.fonts) {
+      const { systemFont, interfaceFont, customSystemFont, customInterfaceFont } = themeCustomization.fonts;
+      
+      // System font (Chicago by default)
+      if (systemFont) {
+        const font = getFontById(systemFont);
+        if (font) {
+          root.style.setProperty('--font-chicago', getFontStack(font));
+          
+          // Load web font if needed
+          if (font.isWebFont) {
+            loadWebFont(font).catch(err => {
+              console.warn(`Failed to load system font ${font.name}:`, err);
+            });
+          }
+        }
+      }
+      
+      // Interface font (Geneva by default)
+      if (interfaceFont) {
+        const font = getFontById(interfaceFont);
+        if (font) {
+          root.style.setProperty('--font-geneva', getFontStack(font));
+          
+          // Load web font if needed
+          if (font.isWebFont) {
+            loadWebFont(font).catch(err => {
+              console.warn(`Failed to load interface font ${font.name}:`, err);
+            });
+          }
+        }
+      }
+      
+      // Custom font URLs (advanced)
+      if (customSystemFont) {
+        root.style.setProperty('--font-chicago', customSystemFont);
+      }
+      if (customInterfaceFont) {
+        root.style.setProperty('--font-geneva', customInterfaceFont);
+      }
+    } else if (theme.fonts) {
+      // Apply theme-level font configuration if no customization
+      if (theme.fonts.systemFont) {
+        const font = getFontById(theme.fonts.systemFont);
+        if (font) {
+          root.style.setProperty('--font-chicago', getFontStack(font));
+          if (font.isWebFont) {
+            loadWebFont(font).catch(err => {
+              console.warn(`Failed to load theme system font:`, err);
+            });
+          }
+        }
+      }
+      if (theme.fonts.interfaceFont) {
+        const font = getFontById(theme.fonts.interfaceFont);
+        if (font) {
+          root.style.setProperty('--font-geneva', getFontStack(font));
+          if (font.isWebFont) {
+            loadWebFont(font).catch(err => {
+              console.warn(`Failed to load theme interface font:`, err);
+            });
+          }
+        }
+      }
     }
     
     // ==================== Apply Pattern Data Attributes ====================

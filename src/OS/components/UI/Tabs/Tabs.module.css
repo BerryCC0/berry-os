@@ -1,20 +1,21 @@
 /**
  * Tabs Styles
  * Mac OS 8 classic tab interface
+ * Phase 7: Migrated to comprehensive theme system
  */
 
 .tabsContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
-  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-family: var(--font-geneva);
 }
 
 .tabHeaders {
   display: flex;
   gap: 0;
-  border-bottom: 1px solid var(--mac-black, #000000);
-  background: var(--mac-gray-2, #BBBBBB);
+  border-bottom: 1px solid var(--theme-tab-border, #000000);
+  background: var(--theme-tab-background, #DDDDDD);
   padding: 4px 4px 0 4px;
 }
 
@@ -23,27 +24,30 @@
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  background: var(--mac-gray-1, #DDDDDD);
-  border: 1px solid var(--mac-black, #000000);
+  background: var(--theme-tab-background, #DDDDDD);
+  border: 1px solid var(--theme-tab-border, #000000);
   border-bottom: none;
+  border-radius: var(--theme-corner-radius, 0px) var(--theme-corner-radius, 0px) 0 0;
   cursor: pointer;
   font-family: inherit;
-  font-size: 12px;
-  color: var(--mac-black, #000000);
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-tab-text, #666666);
   position: relative;
   transition: all 0.1s ease;
 }
 
 .tabHeader:hover:not(.active):not(.disabled) {
-  background: var(--mac-white, #FFFFFF);
+  background: var(--theme-tab-background-hover, #EEEEEE);
+  color: var(--theme-tab-text-active, #000000);
 }
 
 .tabHeader.active {
-  background: var(--mac-white, #FFFFFF);
+  background: var(--theme-tab-background-active, #FFFFFF);
+  color: var(--theme-tab-text-active, #000000);
   font-weight: bold;
   z-index: 1;
   margin-bottom: -1px;
-  border-bottom: 1px solid var(--mac-white, #FFFFFF);
+  border-bottom: 1px solid var(--theme-tab-background-active, #FFFFFF);
 }
 
 .tabHeader.disabled {
@@ -62,9 +66,10 @@
 
 .tabContent {
   flex: 1;
-  background: var(--mac-white, #FFFFFF);
-  border: 1px solid var(--mac-black, #000000);
+  background: var(--theme-tab-background-active, #FFFFFF);
+  border: 1px solid var(--theme-tab-border, #000000);
   border-top: none;
+  border-radius: 0 0 var(--theme-corner-radius, 0px) var(--theme-corner-radius, 0px);
   padding: 16px;
   overflow-y: auto;
 }

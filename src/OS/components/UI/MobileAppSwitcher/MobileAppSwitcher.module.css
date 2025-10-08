@@ -1,6 +1,7 @@
 /**
  * MobileAppSwitcher Styles
  * iOS-style app card switcher
+ * Phase 7: Migrated to comprehensive theme system
  */
 
 .overlay {
@@ -35,10 +36,10 @@
 }
 
 .title {
-  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
-  font-size: 16px;
+  font-family: var(--font-chicago);
+  font-size: var(--theme-font-size, 16px);
   font-weight: bold;
-  color: var(--mac-white, #FFFFFF);
+  color: var(--theme-text-inverted, #FFFFFF);
   text-align: center;
   margin-bottom: 20px;
 }

@@ -378,6 +378,30 @@
   margin-top: 8px;
 }
 
+/* ==================== Saved Themes Hint (Phase 8D) ==================== */
+
+.savedThemesInline {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--theme-background-secondary, #F5F5F5);
+  border: 1px dashed var(--theme-border-default, #CCCCCC);
+  border-radius: 4px;
+}
+
+.savedThemesHint {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.savedThemesHint strong {
+  color: var(--theme-text-primary, #000000);
+  font-weight: bold;
+}
+
 /* ==================== Mobile Adaptations ==================== */
 
 @media (max-width: 768px) {

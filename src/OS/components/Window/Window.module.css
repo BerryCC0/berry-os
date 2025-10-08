@@ -55,44 +55,37 @@
   background: var(--theme-title-bar-active, var(--mac-black));
 }
 
-/* Title bar patterns - Phase 7.2 customizable */
-[data-titlebar-pattern="pinstripe"] .titleBarActive {
+/* Title bar patterns - Phase 8: Priority patterns based on customization */
+/* Using higher specificity to override base styles */
+:root[data-titlebar-pattern="pinstripe"] .titleBarActive {
   background: linear-gradient(
     90deg,
-    var(--mac-black) 0px,
-    var(--mac-black) 1px,
-    var(--mac-white) 1px,
-    var(--mac-white) 2px
+    var(--theme-title-bar-active) 0px,
+    var(--theme-title-bar-active) 1px,
+    var(--theme-title-bar-text) 1px,
+    var(--theme-title-bar-text) 2px
   ) !important;
   background-size: 2px 100%;
 }
 
-[data-titlebar-pattern="gradient"] .titleBarActive {
+:root[data-titlebar-pattern="gradient"] .titleBarActive {
   background: linear-gradient(
     180deg, 
-    var(--theme-title-bar-active, #8899BB) 0%, 
-    var(--theme-title-bar-inactive, #667788) 100%
+    var(--theme-title-bar-active) 0%, 
+    var(--theme-title-bar-shadow) 100%
   ) !important;
 }
 
-[data-titlebar-pattern="solid"] .titleBarActive {
-  background: var(--theme-title-bar-active, var(--mac-black)) !important;
-}
-
-/* Legacy theme-specific patterns (fallback) */
-[data-theme="classic"] .titleBarActive {
+:root[data-titlebar-pattern="gradient-light"] .titleBarActive {
   background: linear-gradient(
-    90deg,
-    var(--mac-black) 0px,
-    var(--mac-black) 1px,
-    var(--mac-white) 1px,
-    var(--mac-white) 2px
-  );
-  background-size: 2px 100%;
+    180deg, 
+    var(--theme-title-bar-active) 0%, 
+    var(--theme-title-bar-inactive) 100%
+  ) !important;
 }
 
-[data-theme="platinum"] .titleBarActive {
-  background: linear-gradient(180deg, #99AACC 0%, #7788AA 100%);
+:root[data-titlebar-pattern="solid"] .titleBarActive {
+  background: var(--theme-title-bar-active) !important;
 }
 
 .titleBarInactive {

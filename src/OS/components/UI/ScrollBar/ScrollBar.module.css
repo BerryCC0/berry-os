@@ -155,50 +155,8 @@
 
 /* ==================== Theme Variations ==================== */
 
-/* Dark Mode */
-[data-theme="dark"] .scrollbar {
-  background: #2a2a2a;
-  border-color: #000000;
-}
-
-[data-theme="dark"] .scrollArrow,
-[data-theme="dark"] .scrollThumb {
-  background: #3a3a3a;
-  border-color: #000000;
-  color: #ffffff;
-}
-
-[data-theme="dark"] .scrollArrow:hover,
-[data-theme="dark"] .scrollThumb:hover {
-  background: #4a4a4a;
-}
-
-[data-theme="dark"] .scrollTrack {
-  background: #1a1a1a;
-}
-
-/* Platinum Theme */
-[data-theme="platinum"] .scrollbar {
-  background: #E8E8E8;
-}
-
-[data-theme="platinum"] .scrollArrow,
-[data-theme="platinum"] .scrollThumb {
-  background: #F0F0F0;
-}
-
-[data-theme="platinum"] .scrollTrack {
-  background: #E0E0E0;
-}
-
-/* Nouns Themes */
-[data-theme="nounish"] .scrollThumb {
-  border-color: var(--theme-highlight, #d22209);
-}
-
-[data-theme="tangerine"] .scrollThumb {
-  border-color: var(--theme-highlight, #ff6b35);
-}
+/* Theme-specific styles are now handled by CSS variables above */
+/* No hardcoded theme overrides needed - themes define their own colors */
 
 /* ==================== Mobile Adaptations ==================== */
 

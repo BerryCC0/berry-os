@@ -23,7 +23,6 @@ const Calculator = lazy(() => import('./OS/Calculator/Calculator'));
 const Finder = lazy(() => import('./OS/Finder/Finder'));
 const MediaViewer = lazy(() => import('./OS/MediaViewer/MediaViewer'));
 const TextEditor = lazy(() => import('./OS/TextEditor/TextEditor'));
-const SystemPreferences = lazy(() => import('./OS/SystemPreferences/SystemPreferences'));
 const Debug = lazy(() => import('./OS/Debug/Debug'));
 
 // Nouns Apps (3rd party)
@@ -172,22 +171,6 @@ const BASE_APPS: AppConfig[] = [
         { label: 'Select All', action: 'edit:select-all', shortcut: '⌘A' },
       ],
     },
-  },
-  {
-    id: 'system-preferences',
-    name: 'System Preferences',
-    component: SystemPreferences,
-    icon: '/icons/system/preferences.svg',
-    defaultWindowSize: { width: 800, height: 600 },
-    minWindowSize: { width: 600, height: 500 },
-    // No maxWindowSize - allow full screen resizing
-    resizable: true,
-    web3Required: false,
-    mobileSupport: 'full',
-    mobileLayout: 'fullscreen',
-    category: 'system',
-    description: 'Customize Berry OS appearance, desktop, and system settings',
-    version: '1.0.0',
   },
 
   // Nouns Apps

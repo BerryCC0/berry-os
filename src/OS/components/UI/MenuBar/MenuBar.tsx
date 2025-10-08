@@ -10,12 +10,14 @@ import { useSystemStore } from '../../../store/systemStore';
 import { REGISTERED_APPS, getSystemApps } from '../../../../Apps/AppConfig';
 import SystemTray from '../SystemTray/SystemTray';
 import AboutDialog from '../AboutDialog/AboutDialog';
+import SystemPreferencesModal from '../SystemPreferencesModal/SystemPreferencesModal';
 import { executeMenuAction } from '../../../lib/menuActions';
 import styles from './MenuBar.module.css';
 
 export default function MenuBar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showAboutDialog, setShowAboutDialog] = useState(false);
+  const [showSystemPreferences, setShowSystemPreferences] = useState(false);
   const menuBarRef = useRef<HTMLDivElement>(null);
   
   const launchApp = useSystemStore((state) => state.launchApp);
@@ -136,9 +138,12 @@ export default function MenuBar() {
             <div className={styles.divider} />
             <div
               className={styles.dropdownItem}
-              onClick={() => handleAppLaunch('system-preferences')}
+              onClick={() => {
+                setShowSystemPreferences(true);
+                setActiveMenu(null);
+              }}
             >
-              System Preferences...
+              System Settings...
             </div>
             <div className={styles.divider} />
             <div className={styles.dropdownItem} onClick={() => { sleep(); setActiveMenu(null); }}>
@@ -238,6 +243,11 @@ export default function MenuBar() {
       {/* About Berry Dialog */}
       {showAboutDialog && (
         <AboutDialog onClose={() => setShowAboutDialog(false)} />
+      )}
+
+      {/* System Settings Modal */}
+      {showSystemPreferences && (
+        <SystemPreferencesModal onClose={() => setShowSystemPreferences(false)} />
       )}
     </div>
   );

@@ -100,6 +100,12 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
         scrollbarWidth: preferences.theme?.scrollbar_width as any,
         scrollbarArrowStyle: preferences.theme?.scrollbar_arrow_style as any,
         scrollbarAutoHide: preferences.theme?.scrollbar_auto_hide || false,
+        fonts: preferences.theme?.font_family_system || preferences.theme?.font_family_interface ? {
+          systemFont: preferences.theme?.font_family_system || 'chicago',
+          interfaceFont: preferences.theme?.font_family_interface || 'geneva',
+          customSystemFont: preferences.theme?.font_family_custom_system,
+          customInterfaceFont: preferences.theme?.font_family_custom_interface,
+        } : undefined,
       };
 
       // Apply desktop icon positions if they exist
@@ -205,6 +211,10 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
             scrollbar_width: systemState.themeCustomization.scrollbarWidth || 'normal',
             scrollbar_arrow_style: systemState.themeCustomization.scrollbarArrowStyle || 'classic',
             scrollbar_auto_hide: systemState.themeCustomization.scrollbarAutoHide || false,
+            font_family_system: systemState.themeCustomization.fonts?.systemFont,
+            font_family_interface: systemState.themeCustomization.fonts?.interfaceFont,
+            font_family_custom_system: systemState.themeCustomization.fonts?.customSystemFont,
+            font_family_custom_interface: systemState.themeCustomization.fonts?.customInterfaceFont,
             sound_enabled: userPreferences?.theme?.sound_enabled ?? true,
             animations_enabled: userPreferences?.theme?.animations_enabled ?? true,
           },

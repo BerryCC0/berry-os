@@ -1,10 +1,11 @@
 /**
  * Advanced Theme Options Component
- * Phase 7.2: Fine-grained theme customization
+ * Phase 8: Fine-grained theme customization with font support
  */
 
 'use client';
 
+import FontPicker from '../../../../../OS/components/UI/FontPicker/FontPicker';
 import styles from './AdvancedOptions.module.css';
 
 interface AdvancedOptionsProps {
@@ -17,6 +18,12 @@ interface AdvancedOptionsProps {
     scrollbarWidth?: 'thin' | 'normal' | 'thick';
     scrollbarArrowStyle?: 'classic' | 'modern' | 'none';
     scrollbarAutoHide?: boolean;
+    fonts?: {
+      systemFont?: string;
+      interfaceFont?: string;
+      customSystemFont?: string;
+      customInterfaceFont?: string;
+    };
   };
   onCustomizationChange: (customization: any) => void;
 }
@@ -146,6 +153,45 @@ export default function AdvancedOptions({ customization, onCustomizationChange }
             <span>Translucent</span>
             <span className={styles.buttonHint}>Modern, subtle</span>
           </button>
+        </div>
+      </div>
+
+      {/* Font Customization Section */}
+      <div className={styles.fontSection}>
+        <h3 className={styles.sectionTitle}>Typography</h3>
+        
+        {/* System Font (Chicago) */}
+        <div className={styles.optionGroup}>
+          <label className={styles.optionLabel}>
+            System Font
+            <span className={styles.optionHint}>Used in title bars, menus, and system UI</span>
+          </label>
+          <FontPicker
+            category="system"
+            value={customization.fonts?.systemFont || 'chicago'}
+            onChange={(fontId) => updateOption('fonts', { 
+              ...customization.fonts, 
+              systemFont: fontId 
+            })}
+            showPreview
+          />
+        </div>
+
+        {/* Interface Font (Geneva) */}
+        <div className={styles.optionGroup}>
+          <label className={styles.optionLabel}>
+            Interface Font
+            <span className={styles.optionHint}>Used for body text, buttons, and content</span>
+          </label>
+          <FontPicker
+            category="interface"
+            value={customization.fonts?.interfaceFont || 'geneva'}
+            onChange={(fontId) => updateOption('fonts', { 
+              ...customization.fonts, 
+              interfaceFont: fontId 
+            })}
+            showPreview
+          />
         </div>
       </div>
 

@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { NOUNS_ACCENT_COLORS, getAccentColorOptions } from '../../../../OS/lib/nounsThemes';
+import { NOUNS_ACCENT_COLORS, getAccentColorOptions } from '../../../../../OS/lib/nounsThemes';
 import styles from './AccentColorPicker.module.css';
 
 interface AccentColorPickerProps {

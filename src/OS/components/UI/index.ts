@@ -8,6 +8,13 @@ export { default as Button } from './Button/Button';
 export { default as Dialog } from './Dialog/Dialog';
 export { default as TouchTarget } from './TouchTarget/TouchTarget';
 
+// System Modals
+export { default as AboutDialog } from './AboutDialog/AboutDialog';
+export type { AboutDialogProps } from './AboutDialog/AboutDialog';
+
+export { default as SystemPreferencesModal } from './SystemPreferencesModal/SystemPreferencesModal';
+export type { SystemPreferencesModalProps } from './SystemPreferencesModal/SystemPreferencesModal';
+
 // Phase 6.5 - Core UI Components
 export { default as ContextMenu } from './ContextMenu/ContextMenu';
 export type { ContextMenuProps, ContextMenuItem } from './ContextMenu/ContextMenu';
@@ -57,6 +64,20 @@ export type { ColorPickerProps } from './ColorPicker/ColorPicker';
 
 export { default as IconPicker } from './IconPicker/IconPicker';
 export type { IconPickerProps, IconCategory } from './IconPicker/IconPicker';
+
+// Phase 8 - Font System & Theme Persistence
+export { default as FontPicker } from './FontPicker/FontPicker';
+export type { FontPickerProps } from './FontPicker/FontPicker';
+
+export { default as ThemeNameDialog } from './ThemeNameDialog/ThemeNameDialog';
+export type { ThemeNameDialogProps } from './ThemeNameDialog/ThemeNameDialog';
+
+// Phase 8C - Theme Library & Sharing
+export { default as ThemeLibrary } from './ThemeLibrary/ThemeLibrary';
+export type { ThemeLibraryProps, CustomThemeData } from './ThemeLibrary/ThemeLibrary';
+
+export { default as ThemeBrowser } from './ThemeBrowser/ThemeBrowser';
+export type { ThemeBrowserProps, PublicThemeData } from './ThemeBrowser/ThemeBrowser';
 
 // Missing components - NOW COMPLETE!
 export { default as Tabs } from './Tabs/Tabs';

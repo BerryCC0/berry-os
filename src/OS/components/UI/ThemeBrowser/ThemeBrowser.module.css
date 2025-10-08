@@ -1,0 +1,254 @@
+/**
+ * Theme Browser Styles
+ * Mac OS 8 styled public theme discovery interface
+ */
+
+/* ==================== Layout ==================== */
+.browser {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ==================== Header ==================== */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--theme-border-default, #000000);
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count {
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-text-primary, #000000);
+  font-weight: bold;
+}
+
+.searchRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 150px;
+  padding: 4px 8px;
+  font-size: var(--theme-font-size, 12px);
+  font-family: var(--font-geneva);
+  border: 1px solid var(--theme-border-default, #000000);
+  background: var(--theme-input-background, #FFFFFF);
+  color: var(--theme-text-primary, #000000);
+  border-radius: var(--theme-corner-radius, 0);
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--theme-accent-color, #0000FF);
+}
+
+.shareCodeInput {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ==================== Theme Grid ==================== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+/* ==================== Theme Card ==================== */
+.themeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--theme-window-background, #DDDDDD);
+  border: 1px solid var(--theme-border-default, #000000);
+  border-radius: var(--theme-corner-radius, 0);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.themeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ==================== Preview ==================== */
+.preview {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.miniWindow {
+  width: 80%;
+  height: 80px;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+}
+
+.miniTitleBar {
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+}
+
+.miniContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.miniButton {
+  width: 40px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+/* ==================== Info ==================== */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.themeName {
+  font-size: var(--theme-font-size, 12px);
+  font-family: var(--font-chicago);
+  color: var(--theme-text-primary, #000000);
+  font-weight: bold;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.themeDescription {
+  font-size: var(--theme-font-size-small, 10px);
+  font-family: var(--font-geneva);
+  color: var(--theme-text-secondary, #666666);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.author {
+  font-size: var(--theme-font-size-small, 10px);
+  font-family: var(--font-geneva);
+  color: var(--theme-text-secondary, #666666);
+}
+
+.installs {
+  font-size: var(--theme-font-size-small, 10px);
+  font-family: var(--font-geneva);
+  color: var(--theme-text-tertiary, #999999);
+}
+
+.shareCode {
+  font-size: var(--theme-font-size-small, 10px);
+  font-family: var(--font-geneva);
+  color: var(--theme-text-secondary, #666666);
+  background: var(--theme-background-secondary, #EEEEEE);
+  padding: 4px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--theme-border-subtle, #DDDDDD);
+  margin-top: 4px;
+}
+
+.shareCode strong {
+  font-weight: bold;
+  color: var(--theme-text-primary, #000000);
+}
+
+/* ==================== Actions ==================== */
+.actions {
+  display: flex;
+  margin-top: 4px;
+}
+
+/* ==================== Empty States ==================== */
+.emptyState,
+.loadingState,
+.errorState,
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.emptyIcon,
+.errorIcon {
+  font-size: 48px;
+}
+
+.loadingText,
+.emptyTitle,
+.errorTitle {
+  font-size: var(--theme-font-size-large, 14px);
+  font-family: var(--font-chicago);
+  color: var(--theme-text-primary, #000000);
+  font-weight: bold;
+  margin: 0;
+}
+
+.emptyDescription,
+.errorDescription {
+  font-size: var(--theme-font-size, 12px);
+  font-family: var(--font-geneva);
+  color: var(--theme-text-secondary, #666666);
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+.noResults {
+  padding: 24px;
+}
+
+.noResults p {
+  font-size: var(--theme-font-size, 12px);
+  font-family: var(--font-geneva);
+  color: var(--theme-text-secondary, #666666);
+  margin: 0 0 12px 0;
+}
+

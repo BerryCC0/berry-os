@@ -1,0 +1,68 @@
+/**
+ * FontPicker Component Styles
+ * Mac OS 8 themed font selector
+ */
+
+.fontPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: var(--font-geneva);
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-text-primary, var(--mac-black));
+  font-weight: bold;
+}
+
+.preview {
+  padding: 12px;
+  background: var(--theme-input-background, var(--mac-white));
+  border: 1px solid var(--theme-input-border, var(--mac-black));
+  border-radius: var(--theme-corner-radius, 0px);
+  font-size: 14px;
+  color: var(--theme-text-primary, var(--mac-black));
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  transition: opacity var(--transition-normal);
+}
+
+.loading {
+  font-family: var(--font-geneva);
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  font-style: italic;
+}
+
+.error {
+  font-family: var(--font-geneva);
+  font-size: var(--theme-font-size, 12px);
+  color: var(--theme-error-color, #CC0000);
+  padding: 4px 8px;
+  background: var(--theme-alert-error-background, #FFD0D0);
+  border: 1px solid var(--theme-alert-error-border, #CC0000);
+  border-radius: var(--theme-corner-radius, 0px);
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .preview {
+    padding: 16px;
+    font-size: 16px;
+    min-height: 48px;
+  }
+  
+  .label {
+    font-size: 14px;
+  }
+}
+
+/* ==================== Accessibility ==================== */
+
+.fontPicker:focus-within .label {
+  color: var(--theme-focus-outline, var(--mac-black));
+}
+

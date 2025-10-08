@@ -45,6 +45,8 @@ interface SystemActions {
   // Theme Management
   setCustomTheme: (theme: import('../types/theme').Theme | null) => void;
   clearCustomTheme: () => void;
+  setAccentColor: (color: string | null) => void;
+  updateThemeCustomization: (customization: Partial<import('../types/theme').ThemeCustomization>) => void;
   
   // Menu Bar
   openMenu: (menuId: string) => void;
@@ -539,6 +541,21 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
   clearCustomTheme: () => {
     set({ customTheme: null });
     console.log(`✨ Custom theme cleared, reverting to preset`);
+  },
+
+  setAccentColor: (color) => {
+    set({ accentColor: color });
+    console.log(`🎨 Accent color ${color ? `set to ${color}` : 'cleared'}`);
+  },
+
+  updateThemeCustomization: (customization) => {
+    set((state) => ({
+      themeCustomization: {
+        ...state.themeCustomization,
+        ...customization,
+      },
+    }));
+    console.log(`⚙️ Theme customization updated`, customization);
   },
 
   initializeDesktopIcons: (apps: AppConfig[]) => {

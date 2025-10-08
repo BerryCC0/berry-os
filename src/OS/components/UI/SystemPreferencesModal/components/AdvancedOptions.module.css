@@ -1,9 +1,29 @@
-/* Advanced Theme Options Styles - Phase 7.2 */
+/* Advanced Theme Options Styles - Phase 8 */
 
 .advancedOptions {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+/* Font Section */
+.fontSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--theme-window-background, var(--mac-white, #FFFFFF));
+  border: 1px solid var(--theme-window-border, var(--mac-black, #000000));
+  border-radius: 4px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black, #000000));
+  margin: 0 0 8px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--theme-divider-color, var(--mac-gray-2, #888888));
 }
 
 /* Option Group */

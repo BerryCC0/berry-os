@@ -38,9 +38,13 @@ CREATE TABLE IF NOT EXISTS theme_preferences (
   corner_style VARCHAR(20) DEFAULT 'sharp', -- 'sharp', 'rounded'
   menu_bar_style VARCHAR(20) DEFAULT 'opaque', -- 'opaque', 'translucent'
   font_size VARCHAR(20) DEFAULT 'medium',  -- 'small', 'medium', 'large'
-  scrollbar_width VARCHAR(20) DEFAULT 'normal', -- 'thin', 'normal', 'thick' (Phase 7.2)
-  scrollbar_arrow_style VARCHAR(20) DEFAULT 'classic', -- 'classic', 'modern', 'none' (Phase 7.2)
-  scrollbar_auto_hide BOOLEAN DEFAULT false, -- Auto-hide scrollbars (Phase 7.2)
+  scrollbar_width VARCHAR(20) DEFAULT 'normal', -- 'thin', 'normal', 'thick'
+  scrollbar_arrow_style VARCHAR(20) DEFAULT 'classic', -- 'classic', 'modern', 'none'
+  scrollbar_auto_hide BOOLEAN DEFAULT false, -- Auto-hide scrollbars
+  font_family_system VARCHAR(100) DEFAULT 'Chicago',  -- System font (Phase 8)
+  font_family_interface VARCHAR(100) DEFAULT 'Geneva',  -- UI font (Phase 8)
+  font_family_custom_system VARCHAR(200),  -- Custom web font URL for system (Phase 8)
+  font_family_custom_interface VARCHAR(200),  -- Custom web font URL for interface (Phase 8)
   sound_enabled BOOLEAN DEFAULT true,
   animations_enabled BOOLEAN DEFAULT true,
   updated_at TIMESTAMP DEFAULT NOW()
@@ -95,12 +99,42 @@ CREATE TABLE IF NOT EXISTS app_states (
   UNIQUE(wallet_address, app_id)
 );
 
+-- Custom themes table (user-created themes) - Phase 8
+CREATE TABLE IF NOT EXISTS custom_themes (
+  id SERIAL PRIMARY KEY,
+  wallet_address VARCHAR(66) REFERENCES users(wallet_address) ON DELETE CASCADE,
+  theme_id VARCHAR(50) NOT NULL,
+  theme_name VARCHAR(100) NOT NULL,
+  theme_description TEXT,
+  theme_data JSONB NOT NULL,               -- Full Theme object as JSON
+  is_active BOOLEAN DEFAULT false,         -- Currently applied theme
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(wallet_address, theme_id)
+);
+
+-- Theme sharing table (allow users to share themes) - Phase 8
+CREATE TABLE IF NOT EXISTS shared_themes (
+  id SERIAL PRIMARY KEY,
+  custom_theme_id INTEGER REFERENCES custom_themes(id) ON DELETE CASCADE,
+  share_code VARCHAR(50) UNIQUE NOT NULL,  -- Unique shareable code
+  is_public BOOLEAN DEFAULT false,
+  view_count INTEGER DEFAULT 0,
+  clone_count INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  expires_at TIMESTAMP                     -- Optional expiration
+);
+
 -- ==================== Indexes for Performance ====================
 
 CREATE INDEX IF NOT EXISTS idx_desktop_icons_wallet ON desktop_icons(wallet_address);
 CREATE INDEX IF NOT EXISTS idx_window_states_wallet ON window_states(wallet_address);
 CREATE INDEX IF NOT EXISTS idx_app_states_wallet ON app_states(wallet_address);
 CREATE INDEX IF NOT EXISTS idx_users_last_login ON users(last_login);
+CREATE INDEX IF NOT EXISTS idx_custom_themes_wallet ON custom_themes(wallet_address);
+CREATE INDEX IF NOT EXISTS idx_custom_themes_active ON custom_themes(wallet_address, is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_shared_themes_code ON shared_themes(share_code);
+CREATE INDEX IF NOT EXISTS idx_shared_themes_public ON shared_themes(is_public) WHERE is_public = true;
 
 -- ==================== Helpful Queries ====================
 

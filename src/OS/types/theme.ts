@@ -240,6 +240,16 @@ export interface ThemePatterns {
   scrollbarStyle: 'classic' | 'modern' | 'minimal';
 }
 
+export interface ThemeFonts {
+  systemFont: string;  // 'chicago' | 'monaco' | 'courier' | custom font ID
+  interfaceFont: string;  // 'geneva' | 'helvetica' | 'arial' | custom font ID
+  customSystemFont?: string;  // URL to custom web font
+  customInterfaceFont?: string;  // URL to custom web font
+  systemFontWeight?: 'normal' | 'medium' | 'bold';
+  interfaceFontWeight?: 'normal' | 'medium' | 'bold';
+  monospacedFont?: string;  // For code/terminal (optional)
+}
+
 export interface ThemeCustomization {
   cornerStyle?: 'sharp' | 'rounded';
   windowOpacity?: number; // 0.85 - 1.0
@@ -249,6 +259,7 @@ export interface ThemeCustomization {
   scrollbarArrowStyle?: 'classic' | 'modern' | 'none';
   scrollbarAutoHide?: boolean;
   titleBarStyle?: 'pinstripe' | 'gradient' | 'solid' | 'gradient-light';
+  fonts?: ThemeFonts;  // Font customization
 }
 
 export interface Theme {
@@ -257,9 +268,24 @@ export interface Theme {
   description: string;
   colors: ThemeColors;
   patterns: ThemePatterns;
+  fonts?: ThemeFonts;  // Font configuration (optional, defaults to Chicago/Geneva)
   // Customization defaults (user can override)
   defaultCustomization?: Partial<ThemeCustomization>;
+  // Metadata for custom themes
+  metadata?: {
+    author?: string;
+    version?: string;
+    createdAt?: number;
+    isCustom?: boolean;  // User-created vs built-in
+  };
 }
 
 export type ThemeId = 'classic' | 'platinum' | 'dark' | 'nounish' | 'tangerine' | 'custom' | string;
+
+// Custom theme extends Theme with user-specific data
+export interface CustomTheme extends Theme {
+  userId: string;  // Wallet address
+  isActive: boolean;
+  shareCode?: string;  // If shared
+}
 

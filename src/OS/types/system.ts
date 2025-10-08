@@ -106,18 +106,9 @@ export interface SystemState {
   activeTheme: string; // Direct theme ID for immediate synchronous UI updates
   customTheme: Theme | null; // Custom theme being edited (overrides activeTheme when set)
   
-  // Theme Customization (Phase 7.1)
+  // Theme Customization (Phase 7.1, Phase 8)
   accentColor: string | null; // Current accent color (Nouns palette or custom)
-  themeCustomization: {
-    titleBarStyle?: 'pinstripe' | 'gradient' | 'solid';
-    windowOpacity?: number;
-    cornerStyle?: 'sharp' | 'rounded';
-    menuBarStyle?: 'opaque' | 'translucent';
-    fontSize?: 'small' | 'medium' | 'large';
-    scrollbarWidth?: 'thin' | 'normal' | 'thick';
-    scrollbarArrowStyle?: 'classic' | 'modern' | 'none';
-    scrollbarAutoHide?: boolean;
-  };
+  themeCustomization: import('./theme').ThemeCustomization; // Full theme customization from Phase 8
   
   // System Actions (QoL)
   isScreensaverActive: boolean;
