@@ -13,11 +13,14 @@ import {
   solanaTestnet, 
   solanaDevnet,
   bitcoin,
-  bitcoinTestnet
+  bitcoinTestnet,
+  defineChain
 } from '@reown/appkit/networks';
 import { 
   mainnet, 
   base, 
+  bsc,
+  hyperliquidEvmTestnet,
   sepolia, 
   baseSepolia 
 } from '@reown/appkit/networks';
@@ -41,10 +44,39 @@ export const metadata = {
 // Determine if we're in development
 const isDevelopment = process.env.NODE_ENV === 'development';
 
+// Custom network: Hyperliquid Mainnet
+// https://hyperliquid.gitbook.io/hyperliquid-docs/onboarding/how-to-use-the-hyperevm
+export const hyperliquid = defineChain({
+  id: 999,
+  caipNetworkId: 'eip155:999',
+  chainNamespace: 'eip155',
+  name: 'Hyperliquid',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'HYPE',
+    symbol: 'HYPE',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.hyperliquid.xyz/evm'],
+    },
+  },
+  blockExplorers: {
+    default: { 
+      name: 'HyperEVM Scan', 
+      url: 'https://hyperevmscan.io',
+      apiUrl: 'https://hyperevmscan.io/api'
+    },
+  },
+  contracts: {
+    // Add contracts here as needed
+  }
+});
+
 // EVM networks
 export const evmNetworks = isDevelopment 
-  ? [mainnet, base, sepolia, baseSepolia] 
-  : [mainnet, base];
+  ? [mainnet, base, bsc, hyperliquid, hyperliquidEvmTestnet, sepolia, baseSepolia] 
+  : [mainnet, base, bsc, hyperliquid];
 
 // Solana networks
 export const solanaNetworks = isDevelopment 
