@@ -18,7 +18,6 @@ export type { AppConfig } from '../OS/types/system';
  */
 
 // OS Apps (built-in to Berry OS)
-const Apps = lazy(() => import('./OS/Apps/Apps'));
 const Calculator = lazy(() => import('./OS/Calculator/Calculator'));
 const Finder = lazy(() => import('./OS/Finder/Finder'));
 const MediaViewer = lazy(() => import('./OS/MediaViewer/MediaViewer'));
@@ -36,22 +35,6 @@ const Tabs = lazy(() => import('./Nouns/Tabs/Tabs'));
  */
 const BASE_APPS: AppConfig[] = [
   // OS Apps
-  {
-    id: 'apps',
-    name: 'Apps',
-    component: Apps,
-    icon: '/icons/system/folder-applications.svg',
-    defaultWindowSize: { width: 600, height: 500 },
-    minWindowSize: { width: 400, height: 350 },
-    // No maxWindowSize - allow full screen resizing
-    resizable: true,
-    web3Required: false,
-    mobileSupport: 'full',
-    mobileLayout: 'fullscreen',
-    category: 'system',
-    description: 'Browse and launch all installed applications',
-    version: '1.0.0',
-  },
   {
     id: 'calculator',
     name: 'Calculator',

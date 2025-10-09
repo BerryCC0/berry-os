@@ -1,29 +1,54 @@
 'use client';
 
 /**
- * Dock Component
- * Modern Mac OS style dock with pinned apps and running indicators
+ * Dock Component (Phase 8: Enhanced)
+ * Contemporary macOS dock with magnification, tooltips, context menus, and dynamic sizing
  */
 
+import { useState, useRef, useEffect } from 'react';
 import { useSystemStore } from '../../../store/systemStore';
 import { REGISTERED_APPS, getAppById } from '../../../../Apps/AppConfig';
+import DockContextMenu from './DockContextMenu';
+import AppsLaunchpad from '../AppsLaunchpad/AppsLaunchpad';
 import styles from './Dock.module.css';
 
 export default function Dock() {
-  const pinnedApps = useSystemStore((state) => state.pinnedApps);
+  // ==================== Store State ====================
+  const dockPreferences = useSystemStore((state) => state.dockPreferences);
   const runningApps = useSystemStore((state) => state.runningApps);
   const windows = useSystemStore((state) => state.windows);
   const activeWindowId = useSystemStore((state) => state.activeWindowId);
   const launchApp = useSystemStore((state) => state.launchApp);
   const focusWindow = useSystemStore((state) => state.focusWindow);
   const closeWindow = useSystemStore((state) => state.closeWindow);
+  const toggleDockPin = useSystemStore((state) => state.toggleDockPin);
+  const updateDockPreferences = useSystemStore((state) => state.updateDockPreferences);
 
+  // ==================== Local State ====================
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    appId: string;
+    position: { x: number; y: number };
+  } | null>(null);
+  const [isDockVisible, setIsDockVisible] = useState(true);
+  const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
+  const [isDraggingDivider, setIsDraggingDivider] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragStartSize, setDragStartSize] = useState(64);
+  const [currentContinuousSize, setCurrentContinuousSize] = useState<number | null>(null); // Persists continuous size
+  const [showAppsLaunchpad, setShowAppsLaunchpad] = useState(false); // Apps Launchpad modal state
+  
+  const dockRef = useRef<HTMLDivElement>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const tooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
+
+  // ==================== Dock Items ====================
   // Get all dock items (pinned apps + running non-pinned apps)
-  // Exclude 'apps' since it has its own dedicated button
   const dockItems = [
-    // Pinned apps (Finder always first)
-    ...pinnedApps
-      .filter(appId => appId !== 'apps') // Don't show Apps in dock items
+    // Pinned apps (from dockPreferences.pinnedApps)
+    ...dockPreferences.pinnedApps
+      .filter(appId => appId !== 'apps')
       .map(appId => {
         const appConfig = REGISTERED_APPS.find(app => app.id === appId);
         return appConfig ? { appId, config: appConfig, isPinned: true } : null;
@@ -32,10 +57,12 @@ export default function Dock() {
     
     // Running apps not in pinned list
     ...Object.values(runningApps)
-      .filter(app => !pinnedApps.includes(app.id) && app.id !== 'apps') // Don't show Apps in dock items
+      .filter(app => !dockPreferences.pinnedApps.includes(app.id) && app.id !== 'apps')
       .map(app => ({ appId: app.id, config: app.config, isPinned: false }))
   ];
 
+  // ==================== Event Handlers ====================
+  
   const handleDockItemClick = (appId: string) => {
     const app = runningApps[appId];
     
@@ -57,9 +84,197 @@ export default function Dock() {
     }
   };
 
-  const isAppRunning = (appId: string) => {
-    return appId in runningApps;
+  const handleDockItemRightClick = (e: React.MouseEvent, appId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    setContextMenu({
+      appId,
+      position: {
+        x: rect.left + rect.width / 2,
+        y: window.innerHeight - rect.bottom + 16,
+      },
+    });
   };
+
+  const handleTogglePin = (appId: string) => {
+    toggleDockPin(appId);
+  };
+
+  const handleQuit = (appId: string) => {
+    // Close all windows for this app
+    const appWindows = Object.values(windows).filter(w => w.appId === appId);
+    appWindows.forEach(w => closeWindow(w.id));
+  };
+
+  const handleAppsClick = () => {
+    // Toggle the Apps Launchpad modal
+    setShowAppsLaunchpad(!showAppsLaunchpad);
+  };
+
+  // ==================== Tooltip Logic ====================
+  
+  const handleMouseEnter = (appId: string, appName: string) => {
+    setHoveredItem(appId);
+
+    // Show tooltip after 500ms delay
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setTooltipVisible(appName);
+    }, 500);
+
+    // If auto-hide is enabled, keep dock visible
+    if (dockPreferences.autoHide) {
+      setIsDockVisible(true);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredItem(null);
+    setTooltipVisible(null);
+
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+
+    // If auto-hide is enabled, start hide timer
+    if (dockPreferences.autoHide) {
+      hideTimeoutRef.current = setTimeout(() => {
+        setIsDockVisible(false);
+      }, 500);
+    }
+  };
+
+  // ==================== Auto-Hide Logic ====================
+  
+  useEffect(() => {
+    if (!dockPreferences.autoHide) {
+      setIsDockVisible(true);
+      return;
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dockRef.current) return;
+
+      const dockRect = dockRef.current.getBoundingClientRect();
+      const threshold = 50; // Distance from edge to trigger
+
+      // Check if mouse is near dock edge based on position
+      let isNearDock = false;
+
+      switch (dockPreferences.position) {
+        case 'bottom':
+          isNearDock = e.clientY > window.innerHeight - threshold;
+          break;
+        case 'left':
+          isNearDock = e.clientX < threshold;
+          break;
+        case 'right':
+          isNearDock = e.clientX > window.innerWidth - threshold;
+          break;
+      }
+
+      if (isNearDock) {
+        setIsDockVisible(true);
+        if (hideTimeoutRef.current) {
+          clearTimeout(hideTimeoutRef.current);
+        }
+      } else {
+        // Check if mouse is over dock element
+        const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY);
+        const isOverDock = dockRef.current.contains(elementAtPoint);
+        
+        if (!isOverDock) {
+          // Mouse is not near and not over dock
+          if (hideTimeoutRef.current) {
+            clearTimeout(hideTimeoutRef.current);
+          }
+          hideTimeoutRef.current = setTimeout(() => {
+            setIsDockVisible(false);
+          }, 500);
+        }
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, [dockPreferences.autoHide, dockPreferences.position]);
+
+  // ==================== Divider Drag Handlers (Phase 8.1) ====================
+  
+  const handleDividerMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsDraggingDivider(true);
+    setDragStartY(e.clientY);
+    setDragStartSize(getDockItemSize());
+  };
+
+  // Handle divider dragging (continuous sizing)
+  useEffect(() => {
+    if (!isDraggingDivider) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // Dragging UP = larger size, Dragging DOWN = smaller size
+      const deltaY = dragStartY - e.clientY; // Inverted for intuitive feel
+      const sizeChange = deltaY * 0.8; // Increased sensitivity for smoother gradient
+      
+      // Continuous sizing: 32px (tiny) to 80px (large)
+      const newSize = Math.max(32, Math.min(80, dragStartSize + sizeChange));
+      
+      // Store the exact continuous size FIRST (priority for rendering)
+      setDragStartSize(newSize);
+      setCurrentContinuousSize(newSize);
+      
+      // Map continuous size to discrete category for settings sync (but don't let it interfere)
+      let newSizeCategory: 'small' | 'medium' | 'large';
+      if (newSize < 48) {
+        newSizeCategory = 'small';
+      } else if (newSize > 64) {
+        newSizeCategory = 'large';
+      } else {
+        newSizeCategory = 'medium';
+      }
+
+      // Update category if changed (for settings slider sync, but debounced effect)
+      if (newSizeCategory !== dockPreferences.size) {
+        // Use setTimeout to batch these updates and prevent render thrashing
+        setTimeout(() => {
+          updateDockPreferences({ size: newSizeCategory });
+        }, 0);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingDivider(false);
+      // Keep currentContinuousSize to maintain the final dragged size
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDraggingDivider, dragStartY, dragStartSize, dockPreferences.size, updateDockPreferences]);
+
+  // ==================== Helper Functions ====================
+  
+  const isAppRunning = (appId: string) => appId in runningApps;
 
   const hasMinimizedWindow = (appId: string) => {
     return Object.values(windows).some(
@@ -67,33 +282,86 @@ export default function Dock() {
     );
   };
 
-  // Handler for Apps button - toggles Launchpad-style Apps window
-  const handleAppsClick = () => {
-    const appsApp = getAppById('apps');
-    if (!appsApp) return;
-
-    // Check if Apps is already running
-    const appsRunningApp = runningApps['apps'];
+  // Get dock item size based on preferences or continuous dragging
+  const getDockItemSize = () => {
+    // If actively dragging, use the continuous size from dragStartSize
+    if (isDraggingDivider) {
+      return dragStartSize;
+    }
     
-    if (appsRunningApp && appsRunningApp.windows.length > 0) {
-      const appsWindowId = appsRunningApp.windows[0];
-      
-      // If the Apps window is currently active, close it (toggle off)
-      if (activeWindowId === appsWindowId) {
-        closeWindow(appsWindowId);
-      } else {
-        // If it's open but not active, focus it
-        focusWindow(appsWindowId);
-      }
-    } else {
-      // Launch Apps window
-      launchApp(appsApp);
+    // If we have a persisted continuous size from previous drag, use it
+    if (currentContinuousSize !== null) {
+      return currentContinuousSize;
+    }
+    
+    // Otherwise, use the discrete category from preferences
+    switch (dockPreferences.size) {
+      case 'small': return 48;
+      case 'large': return 80;
+      default: return 64; // medium
     }
   };
+  
+  // Reset continuous size when preference category changes from outside (not during drag)
+  useEffect(() => {
+    // Only clear if not dragging AND the continuous size doesn't match the preference
+    if (!isDraggingDivider && currentContinuousSize !== null) {
+      const expectedSize = 
+        dockPreferences.size === 'small' ? 48 :
+        dockPreferences.size === 'large' ? 80 : 64;
+      
+      // If preference changed externally (from settings slider), reset to match
+      if (Math.abs(currentContinuousSize - expectedSize) > 16) {
+        setCurrentContinuousSize(null);
+      }
+    }
+  }, [dockPreferences.size, isDraggingDivider, currentContinuousSize]);
+
+  // Calculate magnification scale for an item (disabled by default)
+  const getMagnificationScale = (appId: string) => {
+    // Magnification disabled - always return 1
+    return 1;
+  };
+
+  // ==================== Early Return for Hidden Dock ====================
+  
+  if (dockPreferences.position === 'hidden') {
+    return null;
+  }
+
+  // ==================== Render ====================
+  
+  const baseSize = getDockItemSize();
+  const dockClasses = `${styles.dock} ${styles[`position-${dockPreferences.position}`]} ${
+    dockPreferences.autoHide && !isDockVisible ? styles.hidden : ''
+  }`;
 
   return (
-    <div className={styles.dock}>
-      <div className={styles.dockContainer}>
+    <div
+      ref={dockRef}
+      className={dockClasses}
+      onMouseEnter={() => {
+        if (dockPreferences.autoHide) {
+          setIsDockVisible(true);
+        }
+      }}
+      onMouseLeave={() => {
+        if (dockPreferences.autoHide) {
+          if (hideTimeoutRef.current) {
+            clearTimeout(hideTimeoutRef.current);
+          }
+          hideTimeoutRef.current = setTimeout(() => {
+            setIsDockVisible(false);
+          }, 500);
+        }
+      }}
+    >
+      <div 
+        className={styles.dockContainer}
+        style={{
+          borderRadius: Math.max(8, baseSize * 0.15), // Tighter corners: scale at 15% of icon size (8px min)
+        }}
+      >
         {dockItems.map((item) => {
           if (!item) return null;
           
@@ -101,59 +369,117 @@ export default function Dock() {
           const minimized = hasMinimizedWindow(item.appId);
 
           return (
-            <button
-              key={item.appId}
-              className={`${styles.dockItem} ${running ? styles.running : ''}`}
-              onClick={() => handleDockItemClick(item.appId)}
-              title={item.config.name}
-              aria-label={`${running ? 'Switch to' : 'Launch'} ${item.config.name}`}
-            >
-              <div className={styles.iconWrapper}>
-                <img
-                  src={item.config.icon}
-                  alt=""
-                  className={styles.dockIcon}
-                  aria-hidden="true"
-                />
-                {minimized && (
+            <div key={item.appId} className={styles.dockItemWrapper}>
+              <button
+                className={`${styles.dockItem} ${running ? styles.running : ''}`}
+                onClick={() => handleDockItemClick(item.appId)}
+                onContextMenu={(e) => handleDockItemRightClick(e, item.appId)}
+                onMouseEnter={() => handleMouseEnter(item.appId, item.config.name)}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                  width: baseSize,
+                  height: baseSize,
+                }}
+                aria-label={`${running ? 'Switch to' : 'Launch'} ${item.config.name}`}
+              >
+                <div className={styles.iconWrapper}>
+                  <img
+                    src={item.config.icon}
+                    alt=""
+                    className={styles.dockIcon}
+                    aria-hidden="true"
+                  />
+                  {minimized && (
+                    <div 
+                      className={styles.minimizedIndicator}
+                      aria-label="Window minimized"
+                    />
+                  )}
+                </div>
+                
+                {/* Running indicator (dot below icon) */}
+                {running && (
                   <div 
-                    className={styles.minimizedIndicator}
-                    aria-label="Window minimized"
+                    className={styles.runningIndicator}
+                    aria-label="Application running"
                   />
                 )}
-              </div>
-              
-              {/* Running indicator (dot below icon) */}
-              {running && (
-                <div 
-                  className={styles.runningIndicator}
-                  aria-label="Application running"
-                />
+              </button>
+
+              {/* Tooltip popup label */}
+              {tooltipVisible === item.config.name && hoveredItem === item.appId && (
+                <div className={styles.tooltip}>
+                  {item.config.name}
+                </div>
               )}
-            </button>
+            </div>
           );
         })}
         
-        {/* Divider before Apps button */}
-        <div className={styles.dockDivider} aria-hidden="true" />
+        {/* Divider before Apps button - Draggable to resize dock */}
+        <div
+          ref={dividerRef}
+          className={`${styles.dockDivider} ${isDraggingDivider ? styles.dragging : ''}`}
+          onMouseDown={handleDividerMouseDown}
+          title="Drag to resize dock"
+          aria-label="Drag to resize dock"
+          role="separator"
+          aria-orientation="vertical"
+          style={{
+            height: baseSize, // Match icon height
+          }}
+        />
         
         {/* Apps Folder Button (always on far right) */}
-        <button
-          className={styles.appsButton}
-          onClick={handleAppsClick}
-          title="Applications"
-          aria-label="Open Applications folder"
-        >
-          <div className={styles.iconWrapper}>
-            <img
-              src="/icons/system/folder-applications.svg"
-              alt=""
-              className={styles.dockIcon}
-              aria-hidden="true"
-            />
-          </div>
-        </button>
+        <div className={styles.dockItemWrapper}>
+          <button
+            className={styles.appsButton}
+            onClick={handleAppsClick}
+            onMouseEnter={() => handleMouseEnter('apps', 'Applications')}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              width: baseSize,
+              height: baseSize,
+            }}
+            aria-label="Open Applications folder"
+          >
+            <div className={styles.iconWrapper}>
+              <img
+                src="/icons/system/folder-applications.svg"
+                alt=""
+                className={styles.dockIcon}
+                aria-hidden="true"
+              />
+            </div>
+          </button>
+
+          {/* Tooltip for Apps button */}
+          {tooltipVisible === 'Applications' && hoveredItem === 'apps' && (
+            <div className={styles.tooltip}>
+              Applications
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <DockContextMenu
+          appId={contextMenu.appId}
+          appName={dockItems.find(item => item?.appId === contextMenu.appId)?.config.name || ''}
+          isPinned={dockPreferences.pinnedApps.includes(contextMenu.appId)}
+          isRunning={isAppRunning(contextMenu.appId)}
+          position={contextMenu.position}
+          onClose={() => setContextMenu(null)}
+          onTogglePin={() => handleTogglePin(contextMenu.appId)}
+          onQuit={() => handleQuit(contextMenu.appId)}
+        />
+      )}
+
+      {/* Apps Launchpad Modal */}
+      {showAppsLaunchpad && (
+        <AppsLaunchpad onClose={() => setShowAppsLaunchpad(false)} />
+      )}
     </div>
   );
 }

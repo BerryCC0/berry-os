@@ -2,25 +2,31 @@
  * Appearance Tab Component
  * Organized theme and appearance settings with collapsible sections
  * Phase 6: Integrated comprehensive ThemeBuilder
+ * Phase 8D: Integrated saved themes into Custom Themes category
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CollapsibleSection from './CollapsibleSection';
 import AccentColorPicker from './AccentColorPicker';
 import AdvancedOptions from './AdvancedOptions';
 import ThemeBuilder from '../../../../../OS/components/Theme/ThemeBuilder/ThemeBuilder';
 import Dialog from '../../../../../OS/components/UI/Dialog/Dialog';
 import ThemeNameDialog from '../../../../../OS/components/UI/ThemeNameDialog/ThemeNameDialog';
-import ThemeLibrary from '../../../../../OS/components/UI/ThemeLibrary/ThemeLibrary';
 import ThemeBrowser from '../../../../../OS/components/UI/ThemeBrowser/ThemeBrowser';
 import Button from '../../../../../OS/components/UI/Button/Button';
+import Spinner from '../../../../../OS/components/UI/Spinner/Spinner';
 import { getThemeById } from '../../../../../OS/lib/themes';
 import { generateThemeId, isValidThemeName, shareTheme, cloneTheme, exportTheme } from '../../../../../OS/lib/themeManager';
 import { useSystemStore } from '../../../../../OS/store/systemStore';
 import { Theme } from '../../../../../OS/types/theme';
 import styles from './AppearanceTab.module.css';
+
+interface SavedTheme extends Theme {
+  isPublic?: boolean;
+  shareCode?: string;
+}
 
 interface AppearanceTabProps {
   // Theme state
@@ -62,8 +68,38 @@ export default function AppearanceTab({
   const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Saved themes state
+  const [savedThemes, setSavedThemes] = useState<SavedTheme[]>([]);
+  const [isLoadingThemes, setIsLoadingThemes] = useState(false);
+
   // Check if theme has custom colors (for status display)
   const isThemeCustomized = customTheme !== null;
+
+  // Load user's saved themes
+  useEffect(() => {
+    if (connectedWallet) {
+      loadSavedThemes();
+    } else {
+      setSavedThemes([]);
+    }
+  }, [connectedWallet]);
+
+  const loadSavedThemes = async () => {
+    if (!connectedWallet) return;
+
+    setIsLoadingThemes(true);
+    try {
+      const response = await fetch(`/api/themes/list?walletAddress=${connectedWallet}`);
+      if (response.ok) {
+        const themes = await response.json();
+        setSavedThemes(themes);
+      }
+    } catch (error) {
+      console.error('Error loading saved themes:', error);
+    } finally {
+      setIsLoadingThemes(false);
+    }
+  };
 
   // Open ThemeBuilder with current theme (custom or preset)
   const handleOpenThemeBuilder = () => {
@@ -140,7 +176,10 @@ export default function AppearanceTab({
       setIsNameDialogOpen(false);
       setIsThemeBuilderOpen(false);
       setThemeBeforeEdit(null);
-      
+
+      // Reload saved themes to show the new theme
+      await loadSavedThemes();
+
       console.log(`✅ Custom theme "${themeName}" saved successfully!`, customThemeToSave);
       
     } catch (error) {
@@ -177,24 +216,24 @@ export default function AppearanceTab({
     onThemeChange(themeId);
   };
 
-  // ==================== Theme Library Handlers (Phase 8C) ====================
-  
-  // Select a theme from the library
-  const handleSelectTheme = (theme: Theme) => {
-    console.log(`🎨 Applying custom theme: ${theme.name}`);
+  // ==================== Saved Theme Handlers (Phase 8D Inline) ====================
+
+  // Select a saved theme
+  const handleSelectSavedTheme = (theme: SavedTheme) => {
+    console.log(`🎨 Applying saved theme: ${theme.name}`);
     setCustomTheme(theme);
   };
 
-  // Edit a theme from the library
-  const handleEditTheme = (theme: Theme) => {
-    console.log(`✏️ Editing theme: ${theme.name}`);
+  // Edit a saved theme
+  const handleEditSavedTheme = (theme: SavedTheme) => {
+    console.log(`✏️ Editing saved theme: ${theme.name}`);
     setEditingTheme(theme);
     setThemeBeforeEdit(customTheme);
     setIsThemeBuilderOpen(true);
   };
 
-  // Duplicate a theme
-  const handleDuplicateTheme = (theme: Theme) => {
+  // Duplicate a saved theme
+  const handleDuplicateSavedTheme = (theme: SavedTheme) => {
     if (!connectedWallet) {
       alert('Please connect your wallet to duplicate themes');
       return;
@@ -202,17 +241,21 @@ export default function AppearanceTab({
 
     const duplicatedTheme = cloneTheme(theme, `${theme.name} (Copy)`, connectedWallet);
     console.log(`📋 Duplicated theme: ${theme.name} → ${duplicatedTheme.name}`);
-    
+
     // Open in ThemeBuilder
     setEditingTheme(duplicatedTheme);
     setThemeBeforeEdit(customTheme);
     setIsThemeBuilderOpen(true);
   };
 
-  // Delete a theme
-  const handleDeleteTheme = async (themeId: string) => {
+  // Delete a saved theme
+  const handleDeleteSavedTheme = async (theme: SavedTheme) => {
     if (!connectedWallet) {
       alert('Please connect your wallet to delete themes');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to delete "${theme.name}"? This cannot be undone.`)) {
       return;
     }
 
@@ -222,7 +265,7 @@ export default function AppearanceTab({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           walletAddress: connectedWallet,
-          themeId,
+          themeId: theme.id,
         }),
       });
 
@@ -231,21 +274,24 @@ export default function AppearanceTab({
         throw new Error(error.message || 'Failed to delete theme');
       }
 
-      console.log(`🗑️ Theme deleted: ${themeId}`);
-      
+      console.log(`🗑️ Theme deleted: ${theme.id}`);
+
+      // Reload themes
+      await loadSavedThemes();
+
       // If the deleted theme is currently active, switch to default
-      if (customTheme && customTheme.id === themeId) {
+      if (customTheme && customTheme.id === theme.id) {
         clearCustomTheme();
         onThemeChange('classic');
       }
     } catch (error) {
       console.error('Error deleting theme:', error);
-      throw error;
+      alert(`Failed to delete theme: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
-  // Export a theme as JSON
-  const handleExportTheme = (theme: Theme) => {
+  // Export a saved theme as JSON
+  const handleExportSavedTheme = (theme: SavedTheme) => {
     const json = exportTheme(theme);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -259,21 +305,33 @@ export default function AppearanceTab({
     console.log(`💾 Theme exported: ${theme.name}`);
   };
 
-  // Share a theme publicly or make private
-  const handleShareTheme = async (themeId: string, isPublic: boolean) => {
+  // Share a saved theme publicly or make private
+  const handleShareSavedTheme = async (theme: SavedTheme) => {
     if (!connectedWallet) {
       alert('Please connect your wallet to share themes');
       return;
     }
 
+    const action = theme.isPublic ? 'make private' : 'share publicly';
+    const message = theme.isPublic
+      ? `Make "${theme.name}" private? It will no longer be visible to other users.`
+      : `Share "${theme.name}" publicly? Other users will be able to discover and use your theme.`;
+
+    if (!confirm(message)) {
+      return;
+    }
+
     try {
-      const result = await shareTheme(connectedWallet, themeId, isPublic);
-      
+      const result = await shareTheme(connectedWallet, theme.id, !theme.isPublic);
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to share theme');
       }
 
-      if (isPublic && result.shareCode) {
+      // Reload themes to show updated share status
+      await loadSavedThemes();
+
+      if (!theme.isPublic && result.shareCode) {
         console.log(`🌍 Theme shared publicly with code: ${result.shareCode}`);
         alert(`Theme is now public! Share code: ${result.shareCode}`);
       } else {
@@ -281,7 +339,7 @@ export default function AppearanceTab({
       }
     } catch (error) {
       console.error('Error sharing theme:', error);
-      throw error;
+      alert(`Failed to ${action}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -355,48 +413,138 @@ export default function AppearanceTab({
           </div>
         </div>
 
-        {/* Custom Theme Builder + Saved Themes */}
+        {/* Custom Themes: Create + Saved Themes (Inline) */}
         <div className={styles.themeSubcategory}>
           <h4 className={styles.subcategoryTitle}>
             <span className={styles.subcategoryIcon}>🎨</span>
             Custom Themes
           </h4>
+          
+          {/* Loading state for saved themes */}
+          {isLoadingThemes && connectedWallet && (
+            <div className={styles.loadingThemes}>
+              <Spinner size="small" />
+              <span className={styles.loadingText}>Loading your themes...</span>
+            </div>
+          )}
+          
           <div className={styles.themeGrid}>
-            {customThemes.map((theme) => {
-              const isCustomCard = theme.isCustom;
-              const isSelected = isThemeCustomized;
+            {/* Create Theme Button (always first) */}
+            <button
+              className={`${styles.themeCard} ${isThemeCustomized ? styles.selected : ''} ${styles.customCard}`}
+              onClick={handleOpenThemeBuilder}
+            >
+              <div className={styles.themePreview}>
+                <div className={styles.customPreview}>
+                  <div className={styles.customIcon}>🎨</div>
+                  <div className={styles.customLabel}>
+                    {isThemeCustomized ? 'Edit Theme' : 'Create Theme'}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.themeName}>Theme Builder</div>
+              <div className={styles.themeDescription}>Create your own theme with 150+ color controls</div>
+              {isThemeCustomized && (
+                <div className={styles.checkmark}>✓</div>
+              )}
+            </button>
+            
+            {/* User's Saved Themes */}
+            {!isLoadingThemes && savedThemes.map((theme) => {
+              const isSelected = customTheme?.id === theme.id;
               
               return (
-                <button
-                  key={theme.id}
-                  className={`${styles.themeCard} ${isSelected ? styles.selected : ''} ${isCustomCard ? styles.customCard : ''}`}
-                  onClick={handleOpenThemeBuilder}
-                >
-                  <div className={styles.themePreview}>
-                    <div className={styles.customPreview}>
-                      <div className={styles.customIcon}>🎨</div>
-                      <div className={styles.customLabel}>
-                        {isThemeCustomized ? 'Edit Theme' : 'Create Theme'}
+                <div key={theme.id} className={styles.savedThemeCard}>
+                  <button
+                    className={`${styles.themeCard} ${isSelected ? styles.selected : ''}`}
+                    onClick={() => handleSelectSavedTheme(theme)}
+                  >
+                    <div className={styles.themePreview}>
+                      <div className={`${styles.previewWindow} ${styles['theme-custom']}`}
+                        style={{
+                          backgroundColor: theme.colors.windowBackground,
+                          borderColor: theme.colors.windowBorder,
+                        }}
+                      >
+                        <div 
+                          className={styles.previewTitleBar}
+                          style={{
+                            backgroundColor: theme.colors.titleBarActive,
+                          }}
+                        />
+                        <div 
+                          className={styles.previewContent}
+                          style={{
+                            backgroundColor: theme.colors.windowBackground,
+                          }}
+                        />
                       </div>
                     </div>
+                    <div className={styles.themeName}>{theme.name}</div>
+                    <div className={styles.themeDescription}>{theme.description || 'Custom theme'}</div>
+                    {isSelected && (
+                      <div className={styles.checkmark}>✓</div>
+                    )}
+                    {theme.isPublic && (
+                      <div className={styles.publicBadge} title="Shared publicly">🌍</div>
+                    )}
+                  </button>
+                  
+                  {/* Quick actions for saved themes */}
+                  <div className={styles.themeActions}>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleEditSavedTheme(theme)}
+                      title="Edit theme"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleDuplicateSavedTheme(theme)}
+                      title="Duplicate theme"
+                    >
+                      📋
+                    </button>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleExportSavedTheme(theme)}
+                      title="Export as JSON"
+                    >
+                      💾
+                    </button>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleShareSavedTheme(theme)}
+                      title={theme.isPublic ? 'Make private' : 'Share publicly'}
+                    >
+                      {theme.isPublic ? '🔒' : '🌍'}
+                    </button>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleDeleteSavedTheme(theme)}
+                      title="Delete theme"
+                    >
+                      🗑️
+                    </button>
                   </div>
-                  <div className={styles.themeName}>{theme.name}</div>
-                  <div className={styles.themeDescription}>{theme.description}</div>
-                  {isSelected && (
-                    <div className={styles.checkmark}>✓</div>
-                  )}
-                </button>
+                </div>
               );
             })}
           </div>
           
-          {/* User's Saved Themes Inline */}
-          {connectedWallet && (
-            <div className={styles.savedThemesInline}>
-              <p className={styles.savedThemesHint}>
-                💾 Your saved themes are in the <strong>"My Themes"</strong> section below
-              </p>
-            </div>
+          {/* Empty state when no saved themes and wallet is connected */}
+          {!isLoadingThemes && connectedWallet && savedThemes.length === 0 && (
+            <p className={styles.emptyHint}>
+              💡 Create and save your first custom theme using the Theme Builder above!
+            </p>
+          )}
+          
+          {/* Prompt to connect wallet */}
+          {!connectedWallet && (
+            <p className={styles.emptyHint}>
+              🔌 Connect your wallet to save and manage custom themes
+            </p>
           )}
         </div>
       </CollapsibleSection>
@@ -440,25 +588,6 @@ export default function AppearanceTab({
             </button>
           ))}
         </div>
-      </CollapsibleSection>
-
-      {/* My Themes Section - Phase 8C */}
-      <CollapsibleSection
-        title="My Themes"
-        description="Manage your custom themes"
-        icon="💾"
-        defaultExpanded={false}
-      >
-        <ThemeLibrary
-          walletAddress={connectedWallet}
-          activeThemeId={customTheme?.id || activeTheme}
-          onSelectTheme={handleSelectTheme}
-          onEditTheme={handleEditTheme}
-          onDuplicateTheme={handleDuplicateTheme}
-          onDeleteTheme={handleDeleteTheme}
-          onExportTheme={handleExportTheme}
-          onShareTheme={handleShareTheme}
-        />
       </CollapsibleSection>
 
       {/* Community Themes Section - Phase 8C */}

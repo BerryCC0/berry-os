@@ -1,193 +1,361 @@
 /**
- * Dock Component Styles
- * Mac OS 8 style dock with pinned apps
- * Phase 3: Migrated to comprehensive theme system
+ * Dock Styles (Phase 8: Enhanced)
+ * Contemporary macOS dock with positioning, magnification, and auto-hide
  */
+
+/* ==================== Base Dock Container ==================== */
 
 .dock {
   position: fixed;
+  z-index: 900;
+  pointer-events: auto;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.3s ease;
+}
+
+/* Bottom position (default) */
+.dock.position-bottom {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: calc(var(--z-menubar) - 1);
-  pointer-events: none;
   display: flex;
   justify-content: center;
-  padding: 0 0 var(--spacing-md) 0;
+  padding: 8px;
 }
+
+.dock.position-bottom.hidden {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+/* Left position (vertical dock) */
+.dock.position-left {
+  left: 0;
+  top: 20px; /* Below menu bar */
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.dock.position-left.hidden {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.dock.position-left .dockContainer {
+  flex-direction: column !important;
+}
+
+/* Right position (vertical dock) */
+.dock.position-right {
+  right: 0;
+  top: 20px; /* Below menu bar */
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.dock.position-right.hidden {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.dock.position-right .dockContainer {
+  flex-direction: column !important;
+}
+
+/* ==================== Dock Container ==================== */
 
 .dockContainer {
-  background: var(--theme-dock-background);
-  border: 1px solid var(--theme-dock-border);
-  border-radius: 4px;
-  box-shadow: var(--theme-dock-shadow);
   display: flex;
-  gap: 4px;
-  padding: 4px;
-  pointer-events: auto;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 6px 12px; /* Reduced padding to allow smaller sizes */
+  background: var(--theme-background-secondary, rgba(240, 240, 240, 0.95));
+  border: 1px solid var(--theme-border-default, #000000);
+  /* border-radius controlled by inline style to scale with dock size */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  min-width: min-content; /* Allow shrinking to icon size */
+  width: fit-content; /* Don't stretch beyond content */
 }
 
-.dockItem {
+/* Vertical dock containers */
+.position-left .dockContainer,
+.position-right .dockContainer {
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ==================== Dock Item Wrapper ==================== */
+
+.dockItemWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ==================== Dock Items ==================== */
+
+.dockItem,
+.appsButton {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 6px 8px 10px 8px; /* Extra bottom padding for dot */
-  background: var(--theme-button-background);
-  border: 1px solid var(--theme-dock-icon-border);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  min-width: 64px;
-  position: relative;
+  transform-origin: bottom center;
+  will-change: transform;
 }
 
-.dockItem:hover {
-  background: var(--theme-button-background-hover);
-  border-color: var(--theme-dock-icon-border-hover);
+.dockItem:hover,
+.appsButton:hover {
+  /* Magnification applied via inline style - no static CSS needed */
+  outline: none;
 }
 
-.dockItem:active {
-  background: var(--theme-button-background-active);
-  transform: translateY(1px);
-}
-
-/* Running state - slightly inset */
-.dockItem.running {
-  background: var(--theme-window-background);
-  border-color: var(--theme-dock-icon-border-active);
-}
-
-.dockItem.running:hover {
-  background: var(--theme-button-background-hover);
+.dockItem:active,
+.appsButton:active {
+  transform: scale(0.9) !important;
 }
 
 .iconWrapper {
   position: relative;
-  width: 24px;
-  height: 24px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dockIcon {
-  width: 24px;
-  height: 24px;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
 }
 
-/* Running indicator - classic Mac OS dot */
+/* ==================== Running Indicator ==================== */
+
 .runningIndicator {
-  position: absolute;
-  bottom: 3px;
-  left: 50%;
-  transform: translateX(-50%);
   width: 4px;
   height: 4px;
-  background: var(--theme-dock-indicator);
+  background: var(--theme-highlight, #0000AA);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Vertical docks */
+.position-left .runningIndicator {
+  bottom: auto;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.position-right .runningIndicator {
+  bottom: auto;
+  right: -8px;
+  left: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ==================== Minimized Indicator ==================== */
+
+.minimizedIndicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  background: var(--theme-warning, #FF9900);
+  border: 1px solid var(--theme-background, #FFFFFF);
   border-radius: 50%;
 }
 
-/* Minimized indicator - small dash on icon */
-.minimizedIndicator {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 8px;
-  height: 2px;
-  background: var(--theme-dock-indicator);
-  border: 1px solid var(--theme-button-background);
-}
+/* ==================== Divider (Draggable Resize Handle) ==================== */
 
-/* Divider between regular apps and Apps folder */
 .dockDivider {
-  width: 1px;
-  background: var(--theme-divider-color);
+  width: 8px; /* Wider for easier grabbing */
+  /* height controlled by inline style to match icon size */
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--theme-border-default, #CCCCCC) 40%,
+    var(--theme-border-default, #CCCCCC) 60%,
+    transparent 100%
+  );
   margin: 0 4px;
-  align-self: stretch;
-}
-
-/* Apps folder button - special styling */
-.appsButton {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 6px 8px;
-  background: var(--theme-button-background);
-  border: 1px solid transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  min-width: 64px;
+  align-self: center; /* Changed from flex-end to center to align with icons */
+  cursor: ns-resize; /* North-South resize cursor */
   position: relative;
+  user-select: none;
 }
 
-.appsButton:hover {
-  background: var(--theme-button-background-hover);
-  border-color: var(--theme-highlight);
-  box-shadow: 0 0 0 1px var(--theme-highlight);
+/* Vertical docks */
+.position-left .dockDivider,
+.position-right .dockDivider {
+  width: 48px;
+  height: 8px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--theme-border-default, #CCCCCC) 40%,
+    var(--theme-border-default, #CCCCCC) 60%,
+    transparent 100%
+  );
+  margin: 4px 0;
+  align-self: center;
+  cursor: ew-resize; /* East-West resize cursor */
 }
 
-.appsButton:active {
-  background: var(--theme-button-background-active);
-  transform: translateY(1px);
+/* ==================== Tooltip Popup Label ==================== */
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: var(--theme-background, rgba(255, 255, 255, 0.95));
+  color: var(--theme-text, #000000);
+  border: 1px solid var(--theme-border-default, #000000);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: tooltipFadeIn 0.15s ease-out;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+  }
+}
+
+/* Vertical docks */
+.position-left .tooltip {
+  bottom: auto;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+}
+
+.position-left .tooltip {
+  animation: tooltipFadeInLeft 0.15s ease-out;
+}
+
+@keyframes tooltipFadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(8px);
+  }
+}
+
+.position-right .tooltip {
+  bottom: auto;
+  left: auto;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+}
+
+.position-right .tooltip {
+  animation: tooltipFadeInRight 0.15s ease-out;
+}
+
+@keyframes tooltipFadeInRight {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(-8px);
+  }
 }
 
 /* ==================== Mobile Adaptations ==================== */
 
 @media (max-width: 768px) {
   .dock {
-    padding: 0 var(--spacing-md) var(--spacing-md);
+    /* Force bottom position on mobile */
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
   }
 
   .dockContainer {
-    width: 100%;
-    justify-content: space-around;
+    flex-direction: row !important;
     padding: 8px;
-    gap: 8px;
+    border-radius: 12px;
+    gap: 12px;
   }
 
-  .dockItem {
-    min-width: 56px;
-    padding: 8px 6px;
+  .dockItem,
+  .appsButton {
+    width: 48px !important;
+    height: 48px !important;
   }
 
-  .iconWrapper {
-    width: 32px;
-    height: 32px;
-  }
-
-  .dockIcon {
-    width: 32px;
-    height: 32px;
+  /* Disable magnification on mobile */
+  .dockItem:hover,
+  .appsButton:hover {
+    transform: none !important;
   }
 
   .runningIndicator {
-    width: 5px;
-    height: 5px;
+    bottom: -4px !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    transform: translateX(-50%) !important;
   }
 
-  .minimizedIndicator {
-    width: 10px;
-    height: 3px;
-  }
-
-  .dockDivider {
-    margin: 0 6px;
-  }
-
-  .appsButton {
-    min-width: 56px;
-    padding: 8px 6px;
+  .tooltip {
+    font-size: 12px;
+    padding: 6px 10px;
   }
 }
 
-/* ==================== Accessibility ==================== */
+/* ==================== Tablet Adaptations ==================== */
 
-.dockItem:focus-visible {
-  outline: 2px solid var(--theme-focus-outline);
-  outline-offset: var(--theme-focus-outline-offset);
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dockContainer {
+    gap: 6px;
+    padding: 6px 12px;
+  }
+
+  .dockItem,
+  .appsButton {
+    /* Size adjusted via inline style based on preferences */
+    min-width: 56px;
+    min-height: 56px;
+  }
 }

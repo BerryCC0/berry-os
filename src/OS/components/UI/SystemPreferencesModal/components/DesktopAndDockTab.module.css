@@ -1,0 +1,97 @@
+/**
+ * Desktop & Dock Tab Styles
+ * Mac OS 8 styled settings interface
+ */
+
+.desktopAndDockTab {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ==================== Notice ==================== */
+
+.notice {
+  padding: 12px 16px;
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.notice strong {
+  font-weight: bold;
+}
+
+/* ==================== Setting Groups ==================== */
+
+.settingGroup {
+  margin-bottom: 20px;
+}
+
+.settingGroup:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  display: block;
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  margin-bottom: 8px;
+}
+
+.description {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+/* ==================== Info Box ==================== */
+
+.infoBox {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--theme-background-secondary, #F5F5F5);
+  border: 1px solid var(--theme-border-default, #CCCCCC);
+  border-radius: 4px;
+}
+
+.infoText {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==================== Mobile Adaptations ==================== */
+
+@media (max-width: 768px) {
+  .desktopAndDockTab {
+    padding: 12px;
+  }
+
+  .label {
+    font-size: 13px;
+  }
+
+  .description {
+    font-size: 12px;
+  }
+
+  .notice {
+    font-size: 13px;
+  }
+
+  .infoText {
+    font-size: 12px;
+  }
+}
+

@@ -15,6 +15,12 @@ export type { AboutDialogProps } from './AboutDialog/AboutDialog';
 export { default as SystemPreferencesModal } from './SystemPreferencesModal/SystemPreferencesModal';
 export type { SystemPreferencesModalProps } from './SystemPreferencesModal/SystemPreferencesModal';
 
+export { default as AppsLaunchpad } from './AppsLaunchpad/AppsLaunchpad';
+export type { AppsLaunchpadProps } from './AppsLaunchpad/AppsLaunchpad';
+
+export { default as WalletControlCenter } from './WalletControlCenter/WalletControlCenter';
+export type { WalletControlCenterProps } from './WalletControlCenter/WalletControlCenter';
+
 // Phase 6.5 - Core UI Components
 export { default as ContextMenu } from './ContextMenu/ContextMenu';
 export type { ContextMenuProps, ContextMenuItem } from './ContextMenu/ContextMenu';
@@ -39,6 +45,12 @@ export type { CheckboxProps } from './Checkbox/Checkbox';
 
 export { default as Radio } from './Radio/Radio';
 export type { RadioProps, RadioOption } from './Radio/Radio';
+
+export { default as RadioGroup } from './RadioGroup/RadioGroup';
+export type { RadioGroupProps, RadioOption as RadioGroupOption } from './RadioGroup/RadioGroup';
+
+export { default as PinnedAppsManager } from './PinnedAppsManager/PinnedAppsManager';
+export type { PinnedAppsManagerProps } from './PinnedAppsManager/PinnedAppsManager';
 
 export { default as ProgressBar } from './ProgressBar/ProgressBar';
 export type { ProgressBarProps } from './ProgressBar/ProgressBar';

@@ -1,0 +1,349 @@
+/**
+ * AppsLaunchpad Component Styles
+ * Popup modal from Dock button with Mac OS 8 aesthetics
+ */
+
+/* Full-screen overlay backdrop */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Main launchpad popup container */
+.launchpad {
+  background: var(--theme-window-background, rgba(221, 221, 221, 0.98));
+  border: 2px solid var(--theme-window-border, var(--mac-black));
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  max-width: 800px;
+  width: 90%;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  animation: launchpadOpen 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes launchpadOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Header with title */
+.header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  background: var(--theme-window-background, var(--mac-gray-1));
+}
+
+.title {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* Icon grid */
+.iconGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 20px 16px;
+  padding: 24px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+}
+
+/* Custom scrollbar */
+.iconGrid::-webkit-scrollbar {
+  width: 15px;
+}
+
+.iconGrid::-webkit-scrollbar-track {
+  background: var(--theme-scrollbar-track, var(--mac-gray-1));
+  border-left: 1px solid var(--theme-window-border, var(--mac-gray-2));
+}
+
+.iconGrid::-webkit-scrollbar-thumb {
+  background: var(--theme-scrollbar-thumb, var(--mac-gray-2));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-3));
+}
+
+.iconGrid::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-scrollbar-thumb-hover, var(--mac-gray-3));
+}
+
+/* App button */
+.appButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+  text-align: center;
+  position: relative;
+}
+
+.appButton:hover {
+  background: var(--theme-button-highlight, rgba(0, 0, 0, 0.05));
+}
+
+.appButton:active {
+  background: var(--theme-highlight, rgba(0, 0, 0, 0.1));
+  transform: scale(0.95);
+}
+
+.appButton:focus-visible {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: 2px;
+}
+
+/* Icon wrapper */
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: transform 0.15s ease;
+}
+
+.appButton:hover .iconWrapper {
+  transform: scale(1.08);
+}
+
+.appButton:active .iconWrapper {
+  transform: scale(0.95);
+}
+
+/* App icon */
+.appIcon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* App label */
+.appLabel {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text, var(--mac-black));
+  max-width: 85px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+/* ==================== Responsive Design ==================== */
+
+/* Large screens (more columns) */
+@media (min-width: 1200px) {
+  .launchpad {
+    max-width: 900px;
+  }
+
+  .iconGrid {
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 24px 20px;
+  }
+}
+
+/* Tablet (adjust for smaller screens) */
+@media (max-width: 1024px) {
+  .launchpad {
+    max-width: 700px;
+  }
+
+  .iconGrid {
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    gap: 18px 14px;
+  }
+
+  .iconWrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .appIcon {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* Mobile (adjust spacing and sizes) */
+@media (max-width: 768px) {
+  .launchpad {
+    width: 95%;
+    max-height: 60vh;
+    border-radius: 10px;
+  }
+
+  .header {
+    padding: 12px 16px 10px;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .iconGrid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 16px 12px;
+    padding: 20px 16px;
+  }
+
+  .appButton {
+    padding: 6px 3px;
+    gap: 5px;
+  }
+
+  .iconWrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .appIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .appLabel {
+    font-size: 10px;
+    max-width: 75px;
+  }
+}
+
+/* Small mobile (tighter layout) */
+@media (max-width: 480px) {
+  .launchpad {
+    max-height: 55vh;
+  }
+
+  .iconGrid {
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: 14px 10px;
+    padding: 16px 12px;
+  }
+
+  .iconWrapper {
+    width: 52px;
+    height: 52px;
+  }
+
+  .appIcon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .appLabel {
+    font-size: 9px;
+    max-width: 68px;
+  }
+}
+
+/* ==================== Theme Support ==================== */
+
+/* Dark mode adjustments */
+[data-theme="darkMode"] .launchpad {
+  background: rgba(40, 40, 40, 0.98);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="darkMode"] .appButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="darkMode"] .appButton:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Platinum theme adjustments */
+[data-theme="platinum"] .launchpad {
+  background: rgba(235, 235, 235, 0.98);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ==================== Accessibility ==================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .overlay {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .launchpad {
+    border-width: 3px;
+  }
+
+  .appButton:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    animation: none;
+  }
+
+  .launchpad {
+    animation: none;
+  }
+
+  .appButton,
+  .iconWrapper {
+    transition: none;
+  }
+
+  .appButton:hover .iconWrapper {
+    transform: none;
+  }
+
+  .appButton:active {
+    transform: none;
+  }
+
+  .appButton:active .iconWrapper {
+    transform: none;
+  }
+}

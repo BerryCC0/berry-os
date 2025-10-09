@@ -77,6 +77,22 @@ export interface MobileState {
   isMenuOpen: boolean;
 }
 
+export interface DesktopPreferences {
+  gridSpacing: number;         // 60-120px, default 80
+  snapToGrid: boolean;         // default false (free-form)
+  showHiddenFiles: boolean;    // default false
+  doubleClickSpeed: 'slow' | 'medium' | 'fast'; // default 'medium'
+}
+
+export interface DockPreferences {
+  position: 'bottom' | 'left' | 'right' | 'hidden'; // default 'bottom'
+  size: 'small' | 'medium' | 'large';    // default 'medium'
+  pinnedApps: string[];                  // default ['finder', ...]
+  autoHide: boolean;                     // default false
+  magnificationEnabled: boolean;         // default true
+  magnificationScale: number;            // 1.0-2.0, default 1.5
+}
+
 export interface SystemState {
   // Window Management
   windows: Record<string, Window>;
@@ -88,9 +104,11 @@ export interface SystemState {
   // Desktop Management
   desktopIcons: DesktopIcon[];
   wallpaper: string;
+  desktopPreferences: DesktopPreferences; // Desktop behavior preferences
   
   // Dock
-  pinnedApps: string[]; // App IDs pinned to dock
+  pinnedApps: string[]; // App IDs pinned to dock (deprecated - use dockPreferences.pinnedApps)
+  dockPreferences: DockPreferences; // Dock configuration
   
   // Menu Bar
   activeMenu: string | null;
@@ -109,6 +127,9 @@ export interface SystemState {
   // Theme Customization (Phase 7.1, Phase 8)
   accentColor: string | null; // Current accent color (Nouns palette or custom)
   themeCustomization: import('./theme').ThemeCustomization; // Full theme customization from Phase 8
+  
+  // Window Restoration
+  restoreWindowsOnStartup: boolean; // default false
   
   // System Actions (QoL)
   isScreensaverActive: boolean;

@@ -7,14 +7,24 @@
 
 import { useEffect, useState } from 'react';
 import { useAppKit } from '@reown/appkit/react';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useEnsName } from 'wagmi';
+import type { Address } from 'viem';
+import WalletControlCenter from '../WalletControlCenter/WalletControlCenter';
 import styles from './SystemTray.module.css';
 
 export default function SystemTray() {
   const [time, setTime] = useState<string>('');
+  const [showWalletControl, setShowWalletControl] = useState(false);
+  
   const { open } = useAppKit();
   const { address, isConnected, chain } = useAccount();
   const { disconnect } = useDisconnect();
+  
+  // Resolve ENS name (always check mainnet)
+  const { data: ensName, isLoading: ensLoading } = useEnsName({
+    address: address as Address,
+    chainId: 1, // Mainnet for ENS
+  });
 
   // Update time every second
   useEffect(() => {
@@ -37,32 +47,56 @@ export default function SystemTray() {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
-  return (
-    <div className={styles.systemTray}>
-      {/* Wallet Status */}
-      {isConnected && address ? (
-        <button
-          className={styles.walletButton}
-          onClick={() => open()}
-          title={`Connected: ${address}\nChain: ${chain?.name || 'Unknown'}`}
-        >
-          <span className={styles.walletIcon}>💼</span>
-          <span className={styles.walletAddress}>{formatAddress(address)}</span>
-        </button>
-      ) : (
-        <button
-          className={styles.walletButton}
-          onClick={() => open()}
-          title="Connect Wallet"
-        >
-          <span className={styles.walletIcon}>🔌</span>
-          <span className={styles.walletText}>Connect</span>
-        </button>
-      )}
+  // Get display name (ENS or formatted address)
+  const getDisplayName = () => {
+    if (ensLoading) return formatAddress(address!);
+    return ensName || formatAddress(address!);
+  };
 
-      {/* Time */}
-      <div className={styles.time}>{time}</div>
-    </div>
+  // Handle wallet button click
+  const handleWalletClick = () => {
+    if (isConnected) {
+      // Connected: Toggle Control Center
+      setShowWalletControl(!showWalletControl);
+    } else {
+      // Not connected: Open Appkit
+      open();
+    }
+  };
+
+  return (
+    <>
+      <div className={styles.systemTray}>
+        {/* Wallet Status */}
+        {isConnected && address ? (
+          <button
+            className={styles.walletButton}
+            onClick={handleWalletClick}
+            title={`${ensName ? `${ensName}\n` : ''}${address}\nChain: ${chain?.name || 'Unknown'}\n\nClick to open Wallet Control Center`}
+          >
+            <span className={styles.walletIcon}>💼</span>
+            <span className={styles.walletAddress}>{getDisplayName()}</span>
+          </button>
+        ) : (
+          <button
+            className={styles.walletButton}
+            onClick={handleWalletClick}
+            title="Connect Wallet"
+          >
+            <span className={styles.walletIcon}>🔌</span>
+            <span className={styles.walletText}>Connect</span>
+          </button>
+        )}
+
+        {/* Time */}
+        <div className={styles.time}>{time}</div>
+      </div>
+
+      {/* Wallet Control Center Modal */}
+      {showWalletControl && isConnected && (
+        <WalletControlCenter onClose={() => setShowWalletControl(false)} />
+      )}
+    </>
   );
 }
 

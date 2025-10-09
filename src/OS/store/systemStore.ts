@@ -41,12 +41,20 @@ interface SystemActions {
   moveDesktopIcon: (iconId: string, x: number, y: number) => void;
   setWallpaper: (wallpaper: string) => void;
   initializeDesktopIcons: (apps: AppConfig[]) => void;
+  updateDesktopPreferences: (prefs: Partial<SystemState['desktopPreferences']>) => void;
+  
+  // Dock Management
+  updateDockPreferences: (prefs: Partial<SystemState['dockPreferences']>) => void;
+  toggleDockPin: (appId: string) => void;
   
   // Theme Management
   setCustomTheme: (theme: import('../types/theme').Theme | null) => void;
   clearCustomTheme: () => void;
   setAccentColor: (color: string | null) => void;
   updateThemeCustomization: (customization: Partial<import('../types/theme').ThemeCustomization>) => void;
+  
+  // Window Restoration
+  setRestoreWindowsOnStartup: (enabled: boolean) => void;
   
   // Menu Bar
   openMenu: (menuId: string) => void;
@@ -89,7 +97,21 @@ const INITIAL_STATE: SystemState = {
   runningApps: {},
   desktopIcons: [],
   wallpaper: '/filesystem/System/Desktop Pictures/Classic.svg',
-  pinnedApps: ['finder', 'calculator', 'text-editor'], // Finder always first
+  desktopPreferences: {
+    gridSpacing: 80,
+    snapToGrid: false, // Free-form by default
+    showHiddenFiles: false,
+    doubleClickSpeed: 'medium',
+  },
+  pinnedApps: ['finder', 'calculator', 'text-editor'], // Finder always first (deprecated)
+  dockPreferences: {
+    position: 'bottom',
+    size: 'medium',
+    pinnedApps: ['finder', 'calculator', 'text-editor'],
+    autoHide: false,
+    magnificationEnabled: true,
+    magnificationScale: 1.5,
+  },
   activeMenu: null,
   mobile: INITIAL_MOBILE_STATE,
   bootTime: Date.now(),
@@ -98,6 +120,7 @@ const INITIAL_STATE: SystemState = {
   customTheme: null, // Custom theme being edited (overrides activeTheme when set)
   accentColor: null, // No custom accent by default (use theme default)
   themeCustomization: {}, // No customizations by default
+  restoreWindowsOnStartup: false,
   isScreensaverActive: false, // Screensaver state
 };
 
@@ -599,6 +622,73 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
         version: app.version,
       }))
     );
+  },
+
+  updateDesktopPreferences: (prefs: Partial<SystemState['desktopPreferences']>) => {
+    set((state) => ({
+      desktopPreferences: {
+        ...state.desktopPreferences,
+        ...prefs,
+      },
+    }));
+    
+    console.log(`🖥️ Desktop preferences updated`, prefs);
+    
+    // Trigger save via preferences store
+    const { usePreferencesStore } = require('./preferencesStore');
+    usePreferencesStore.getState().saveUserPreferences();
+  },
+
+  // ==================== Dock Management ====================
+
+  updateDockPreferences: (prefs: Partial<SystemState['dockPreferences']>) => {
+    set((state) => ({
+      dockPreferences: {
+        ...state.dockPreferences,
+        ...prefs,
+      },
+    }));
+    
+    console.log(`📍 Dock preferences updated`, prefs);
+    
+    // Trigger save via preferences store
+    const { usePreferencesStore } = require('./preferencesStore');
+    usePreferencesStore.getState().saveUserPreferences();
+  },
+
+  toggleDockPin: (appId: string) => {
+    set((state) => {
+      const { pinnedApps } = state.dockPreferences;
+      const isPinned = pinnedApps.includes(appId);
+      
+      const newPinnedApps = isPinned
+        ? pinnedApps.filter(id => id !== appId)
+        : [...pinnedApps, appId];
+      
+      console.log(`📌 ${isPinned ? 'Unpinned' : 'Pinned'} app: ${appId}`);
+      
+      // Trigger save
+      const { usePreferencesStore } = require('./preferencesStore');
+      usePreferencesStore.getState().saveUserPreferences();
+      
+      return {
+        dockPreferences: {
+          ...state.dockPreferences,
+          pinnedApps: newPinnedApps,
+        },
+      };
+    });
+  },
+
+  // ==================== Window Restoration ====================
+
+  setRestoreWindowsOnStartup: (enabled: boolean) => {
+    set({ restoreWindowsOnStartup: enabled });
+    console.log(`🪟 Restore windows on startup: ${enabled ? 'enabled' : 'disabled'}`);
+    
+    // Trigger save via preferences store
+    const { usePreferencesStore } = require('./preferencesStore');
+    usePreferencesStore.getState().saveUserPreferences();
   },
 
   // ==================== Menu Bar ====================

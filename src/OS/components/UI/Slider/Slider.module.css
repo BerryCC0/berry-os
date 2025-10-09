@@ -1,128 +1,119 @@
 /**
  * Slider Styles
- * Mac OS 8 classic slider appearance
- * Phase 3: Migrated to comprehensive theme system
+ * Mac OS 8 styled slider component
  */
 
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
-  font-size: var(--theme-font-size, 12px);
-}
-
-.container.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
 .label {
-  color: var(--theme-text-primary);
+  display: block;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+  margin-bottom: 8px;
+  font-weight: normal;
 }
 
-.sliderWrapper {
+.sliderContainer {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  min-height: 32px;
 }
 
-.slider {
-  position: relative;
+.sliderTrack {
   flex: 1;
-  height: 20px;
+  height: 4px;
+  background: var(--theme-background-secondary, #CCCCCC);
+  border: 1px solid var(--theme-border-default, #888888);
+  border-radius: 2px;
+  position: relative;
   cursor: pointer;
+  outline: none;
+}
+
+.sliderTrack:focus {
+  box-shadow: 0 0 0 2px var(--theme-highlight, #0000AA);
+}
+
+.sliderFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--theme-highlight, #0000AA);
+  border-radius: 2px 0 0 2px;
+  pointer-events: none;
+  transition: width 0.05s ease-out;
+}
+
+.sliderThumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: var(--theme-button-background, #DDDDDD);
+  border: 1px solid var(--theme-button-border, #000000);
+  border-radius: 50%;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+              1px 1px 2px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.sliderThumb:hover {
+  background: var(--theme-button-hover, #EEEEEE);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.sliderThumb.dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.15);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+              2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sliderValue {
+  min-width: 60px;
+  text-align: right;
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 11px;
+  color: var(--theme-text, #000000);
   user-select: none;
 }
 
-.track {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 4px;
-  transform: translateY(-50%);
-  background: var(--theme-slider-track);
-  border: 1px solid var(--theme-slider-border);
-  border-top: 2px solid var(--theme-input-shadow);
-  border-left: 2px solid var(--theme-input-shadow);
+.sliderContainer.disabled .sliderTrack {
+  background: var(--theme-background-secondary, #E0E0E0);
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.fill {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  height: 4px;
-  transform: translateY(-50%);
-  background: var(--theme-slider-track-filled);
-  pointer-events: none;
+.sliderContainer.disabled .sliderFill {
+  background: var(--theme-text-secondary, #888888);
 }
 
-.thumb {
-  position: absolute;
-  top: 50%;
-  width: 12px;
-  height: 20px;
-  transform: translate(-50%, -50%);
-  background: var(--theme-slider-thumb);
-  border: 1px solid var(--theme-slider-border);
-  box-shadow: var(--theme-shadow-light);
-  pointer-events: none;
-  transition: background var(--transition-fast);
+.sliderContainer.disabled .sliderThumb {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
-.slider:hover .thumb {
-  background: var(--theme-slider-thumb-hover);
+.sliderContainer.disabled .sliderValue {
+  opacity: 0.5;
 }
 
-.slider:active .thumb {
-  background: var(--theme-slider-thumb-active);
-}
-
-.thumb::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 2px;
-  height: 12px;
-  transform: translate(-50%, -50%);
-  background: var(--theme-text-secondary);
-}
-
-.valueDisplay {
-  min-width: 40px;
-  text-align: right;
-  font-size: var(--theme-font-size, 12px);
-  color: var(--theme-text-primary);
-}
-
-/* Mobile adaptations */
+/* Mobile optimizations */
 @media (max-width: 768px) {
-  .container {
-    font-size: 14px;
+  .sliderTrack {
+    height: 6px; /* Thicker track for easier touch */
   }
 
-  .slider {
-    height: 32px;
+  .sliderThumb {
+    width: 20px;
+    height: 20px; /* Larger thumb for touch */
   }
 
-  .track {
-    height: 6px;
-  }
-
-  .fill {
-    height: 6px;
-  }
-
-  .thumb {
-    width: 16px;
-    height: 32px;
-  }
-
-  .thumb::before {
-    width: 3px;
-    height: 16px;
+  .sliderValue {
+    min-width: 50px;
+    font-size: 12px;
   }
 }
-

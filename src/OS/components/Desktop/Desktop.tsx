@@ -42,11 +42,18 @@ export default function Desktop() {
   const initializeDesktopIcons = useSystemStore((state) => state.initializeDesktopIcons);
   const isScreensaverActive = useSystemStore((state) => state.isScreensaverActive);
   const wakeFromSleep = useSystemStore((state) => state.wakeFromSleep);
+  
+  // Desktop preferences (Phase 7)
+  const desktopPreferences = useSystemStore((state) => state.desktopPreferences);
+  
+  // Window restoration preference (Phase 9)
+  const restoreWindowsOnStartup = useSystemStore((state) => state.restoreWindowsOnStartup);
 
   // ==================== Preferences Store ====================
   const saveDesktopIconPositions = usePreferencesStore((state) => state.saveDesktopIconPositions);
   const connectedWallet = usePreferencesStore((state) => state.connectedWallet);
   const isPreferencesLoaded = usePreferencesStore((state) => state.isPreferencesLoaded);
+  const userPreferences = usePreferencesStore((state) => state.userPreferences);
 
   // ==================== Custom Hooks (Business Logic) ====================
   
@@ -77,13 +84,26 @@ export default function Desktop() {
     }
   };
 
+  // Filter desktop icons based on showHiddenFiles preference (Phase 7)
+  const visibleDesktopIcons = desktopIcons.filter((icon) => {
+    // If showHiddenFiles is true, show all icons
+    if (desktopPreferences.showHiddenFiles) return true;
+    
+    // Otherwise, hide icons that start with "." (hidden files convention)
+    return !icon.name.startsWith('.');
+  });
+
   const { draggingIconId, isDragging, handleIconDragStart } = useDesktopIconInteraction({
-    icons: desktopIcons,
+    icons: visibleDesktopIcons,
     isMobile,
     connectedWallet,
     onIconClick: handleIconClick,
     onIconMove: moveDesktopIcon,
     onIconPositionsSave: saveDesktopIconPositions,
+    // Phase 7: Pass desktop preferences
+    snapToGrid: desktopPreferences.snapToGrid,
+    gridSpacing: desktopPreferences.gridSpacing,
+    doubleClickSpeed: desktopPreferences.doubleClickSpeed,
   });
 
   // Gesture handling - swipes and mobile navigation
@@ -130,6 +150,54 @@ export default function Desktop() {
     }
   }, [launchApp]);
 
+  // ==================== Window Restoration (Phase 9) ====================
+  
+  const hasRestoredWindows = useRef(false);
+
+  useEffect(() => {
+    // Only restore once, after preferences are loaded
+    if (hasRestoredWindows.current) return;
+    if (!isPreferencesLoaded) return;
+    if (!restoreWindowsOnStartup) return;
+    if (!connectedWallet) return;
+    if (!userPreferences) return;
+
+    hasRestoredWindows.current = true;
+
+    // Restore windows from saved window states
+    const windowStates = userPreferences.windowStates;
+    if (!windowStates || windowStates.length === 0) return;
+
+    console.log('🪟 Restoring windows from last session...');
+
+    // Group window states by app
+    const appWindows = windowStates.reduce((acc, ws) => {
+      if (!acc[ws.app_id]) {
+        acc[ws.app_id] = [];
+      }
+      acc[ws.app_id].push(ws);
+      return acc;
+    }, {} as Record<string, typeof windowStates>);
+
+    // Launch each app and let the system restore window positions
+    // Wait a bit to ensure desktop is fully initialized
+    setTimeout(() => {
+      Object.keys(appWindows).forEach((appId) => {
+        const appConfig = getAppById(appId);
+        if (appConfig) {
+          launchApp(appConfig);
+          console.log(`  ↪ Restored: ${appConfig.name}`);
+        }
+      });
+    }, 500);
+  }, [
+    isPreferencesLoaded,
+    restoreWindowsOnStartup,
+    connectedWallet,
+    userPreferences,
+    launchApp,
+  ]);
+
   // ==================== Render ====================
 
   return (
@@ -151,7 +219,7 @@ export default function Desktop() {
 
       {/* Desktop Icons (works on both desktop and mobile) */}
       <div className={styles.iconContainer}>
-        {desktopIcons.map((icon) => (
+        {visibleDesktopIcons.map((icon) => (
           <div
             key={icon.id}
             className={`${styles.icon} ${draggingIconId === icon.id ? styles.dragging : ''}`}

@@ -1,0 +1,81 @@
+/**
+ * BalanceCard Component Styles
+ */
+
+.balanceCard {
+  padding: 16px;
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  background: var(--theme-window-background, var(--mac-gray-1));
+}
+
+.label {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.balanceDisplay {
+  padding: 16px;
+  background: var(--theme-button-face, rgba(255, 255, 255, 0.5));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 6px;
+  text-align: center;
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.symbol {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.value {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  line-height: 1;
+}
+
+.unit {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  line-height: 1;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+
+.usdValue {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 14px;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  margin-top: 8px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .symbol {
+    font-size: 24px;
+  }
+
+  .value {
+    font-size: 28px;
+  }
+
+  .unit {
+    font-size: 16px;
+  }
+}
+

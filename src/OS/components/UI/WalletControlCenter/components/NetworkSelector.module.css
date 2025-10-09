@@ -1,0 +1,156 @@
+/**
+ * NetworkSelector Component Styles
+ */
+
+.networkSelector {
+  padding: 16px;
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  background: var(--theme-window-background, var(--mac-gray-1));
+}
+
+.label {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.currentNetwork {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.currentNetwork:hover:not(:disabled) {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+  border-color: var(--theme-highlight, var(--mac-black));
+}
+
+.currentNetwork:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.networkIcon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.networkName {
+  flex: 1;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  color: var(--theme-text, var(--mac-black));
+  font-weight: 500;
+}
+
+.expandIcon {
+  font-size: 10px;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  flex-shrink: 0;
+}
+
+/* Network list */
+.networkList {
+  margin-top: 8px;
+  padding: 4px;
+  background: var(--theme-button-face, rgba(255, 255, 255, 0.5));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 6px;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.networkItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-align: left;
+}
+
+.networkItem:hover:not(:disabled):not(.active) {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+}
+
+.networkItem:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.networkItem.active {
+  background: var(--theme-highlight, var(--mac-black));
+}
+
+.networkItem.active .networkName {
+  color: var(--theme-highlight-text, var(--mac-white));
+}
+
+.checkmark {
+  font-size: 14px;
+  color: var(--theme-highlight-text, var(--mac-white));
+  margin-left: auto;
+}
+
+/* Pending state */
+.pending {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--theme-button-face, rgba(255, 255, 255, 0.5));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 4px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  text-align: center;
+  animation: pulse 1.5s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .networkName {
+    font-size: 12px;
+  }
+
+  .networkIcon {
+    font-size: 18px;
+  }
+}
+

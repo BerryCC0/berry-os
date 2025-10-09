@@ -13,6 +13,10 @@ export interface DesktopIconInteractionOptions {
   onIconClick: (icon: DesktopIcon) => void;
   onIconMove: (iconId: string, x: number, y: number) => void;
   onIconPositionsSave: () => void;
+  // Desktop preferences (Phase 7)
+  snapToGrid?: boolean;
+  gridSpacing?: number;
+  doubleClickSpeed?: 'slow' | 'medium' | 'fast';
 }
 
 export interface DesktopIconInteractionState {
@@ -32,11 +36,35 @@ export function useDesktopIconInteraction({
   onIconClick,
   onIconMove,
   onIconPositionsSave,
+  snapToGrid = false,
+  gridSpacing = 80,
+  doubleClickSpeed = 'medium',
 }: DesktopIconInteractionOptions): DesktopIconInteractionState {
   const [draggingIconId, setDraggingIconId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragStartTime = useRef<number>(0);
+  const lastClickTime = useRef<number>(0);
+  const lastClickedIconId = useRef<string | null>(null);
+
+  // Get double-click timeout based on speed setting
+  const getDoubleClickTimeout = () => {
+    switch (doubleClickSpeed) {
+      case 'slow': return 500;
+      case 'fast': return 200;
+      default: return 300; // medium
+    }
+  };
+
+  // Snap position to grid if enabled
+  const snapPositionToGrid = (x: number, y: number) => {
+    if (!snapToGrid) return { x, y };
+    
+    return {
+      x: Math.round(x / gridSpacing) * gridSpacing,
+      y: Math.round(y / gridSpacing) * gridSpacing,
+    };
+  };
 
   const handleIconDragStart = useCallback(
     (e: React.MouseEvent | React.TouchEvent, iconId: string) => {
@@ -90,15 +118,45 @@ export function useDesktopIconInteraction({
     };
 
     const handleEnd = () => {
-      // If we didn't drag (quick tap/click), open the app
-      if (!isDragging) {
-        const icon = icons.find((i) => i.id === draggingIconId);
-        if (icon) {
+      const icon = icons.find((i) => i.id === draggingIconId);
+      
+      // If we didn't drag (quick tap/click), handle click/double-click
+      if (!isDragging && icon) {
+        const currentTime = Date.now();
+        const timeSinceLastClick = currentTime - lastClickTime.current;
+        const doubleClickTimeout = getDoubleClickTimeout();
+        
+        // Check for double-click on same icon
+        if (
+          lastClickedIconId.current === draggingIconId &&
+          timeSinceLastClick < doubleClickTimeout
+        ) {
+          // Double-click detected - open the app
           onIconClick(icon);
+          lastClickTime.current = 0;
+          lastClickedIconId.current = null;
+        } else {
+          // Single click - just select (future: could highlight icon)
+          lastClickTime.current = currentTime;
+          lastClickedIconId.current = draggingIconId;
+          
+          // On mobile, single tap opens immediately
+          if (isMobile) {
+            onIconClick(icon);
+          }
         }
-      } else if (connectedWallet) {
-        // Icon was dragged and wallet is connected - save position
-        onIconPositionsSave();
+      } else if (isDragging && draggingIconId && icon) {
+        // Icon was dragged - apply snap-to-grid if enabled
+        const snappedPosition = snapPositionToGrid(icon.position.x, icon.position.y);
+        
+        if (snappedPosition.x !== icon.position.x || snappedPosition.y !== icon.position.y) {
+          onIconMove(draggingIconId, snappedPosition.x, snappedPosition.y);
+        }
+        
+        // Save position if wallet is connected
+        if (connectedWallet) {
+          onIconPositionsSave();
+        }
       }
 
       setDraggingIconId(null);
@@ -127,6 +185,9 @@ export function useDesktopIconInteraction({
     isMobile,
     connectedWallet,
     onIconPositionsSave,
+    snapToGrid,
+    gridSpacing,
+    doubleClickSpeed,
   ]);
 
   return {

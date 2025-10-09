@@ -378,28 +378,90 @@
   margin-top: 8px;
 }
 
-/* ==================== Saved Themes Hint (Phase 8D) ==================== */
+/* ==================== Saved Themes Inline (Phase 8D) ==================== */
 
-.savedThemesInline {
-  margin-top: 16px;
+.loadingThemes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 12px;
+  margin-bottom: 12px;
   background: var(--theme-background-secondary, #F5F5F5);
-  border: 1px dashed var(--theme-border-default, #CCCCCC);
   border-radius: 4px;
 }
 
-.savedThemesHint {
+.loadingText {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+.savedThemeCard {
+  position: relative;
+}
+
+.themeActions {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.savedThemeCard:hover .themeActions {
+  opacity: 1;
+}
+
+.actionButton {
+  background: var(--theme-button-background, #DDDDDD);
+  border: 1px solid var(--theme-button-border, #888888);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+}
+
+.actionButton:hover {
+  background: var(--theme-button-hover, #F0F0F0);
+  transform: translateY(-1px);
+}
+
+.actionButton:active {
+  background: var(--theme-button-active, #CCCCCC);
+  transform: translateY(0);
+}
+
+.publicBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--theme-success, #4CAF50);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.emptyHint {
   font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
   font-size: 11px;
   color: var(--theme-text-secondary, #666666);
   text-align: center;
-  margin: 0;
+  margin: 16px 0 0 0;
   line-height: 1.4;
-}
-
-.savedThemesHint strong {
-  color: var(--theme-text-primary, #000000);
-  font-weight: bold;
+  padding: 12px;
+  background: var(--theme-background-secondary, #F5F5F5);
+  border: 1px dashed var(--theme-border-default, #CCCCCC);
+  border-radius: 4px;
 }
 
 /* ==================== Mobile Adaptations ==================== */

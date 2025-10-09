@@ -1,0 +1,156 @@
+/**
+ * QuickActions Component Styles
+ */
+
+.quickActions {
+  padding: 16px;
+  border-bottom: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  background: var(--theme-window-background, var(--mac-gray-1));
+}
+
+.label {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text-secondary, var(--mac-gray-2));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.actionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.actionButton:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+  border-color: var(--theme-highlight, var(--mac-black));
+  transform: translateY(-1px);
+}
+
+.actionButton:active {
+  background: var(--theme-highlight, var(--mac-black));
+  transform: translateY(0) scale(0.98);
+}
+
+.actionButton:active .actionLabel {
+  color: var(--theme-highlight-text, var(--mac-white));
+}
+
+.actionIcon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.actionLabel {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text, var(--mac-black));
+  font-weight: 500;
+}
+
+/* Receive panel */
+.receivePanel {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--theme-button-face, rgba(255, 255, 255, 0.5));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 6px;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.receiveTitle {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin-bottom: 8px;
+}
+
+.addressBox {
+  padding: 12px;
+  background: var(--theme-window-background, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  border-radius: 4px;
+  margin-bottom: 12px;
+  word-break: break-all;
+}
+
+.addressCode {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--theme-text, var(--mac-black));
+  line-height: 1.5;
+}
+
+.copyAddressButton {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  border-radius: 4px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.copyAddressButton:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+  border-color: var(--theme-highlight, var(--mac-black));
+}
+
+.copyAddressButton:active {
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
+  transform: scale(0.98);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .actions {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .actionButton {
+    padding: 10px 6px;
+    gap: 4px;
+  }
+
+  .actionIcon {
+    font-size: 20px;
+  }
+
+  .actionLabel {
+    font-size: 10px;
+  }
+}
+

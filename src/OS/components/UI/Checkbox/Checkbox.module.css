@@ -1,85 +1,115 @@
 /**
  * Checkbox Styles
- * Mac OS 8 classic checkbox appearance
- * Phase 3: Migrated to comprehensive theme system
+ * Mac OS 8 styled checkbox component
  */
 
-.checkboxLabel {
-  display: inline-flex;
-  align-items: center;
+.checkboxContainer {
+  display: flex;
+  align-items: flex-start;
+  min-height: 24px;
+  margin: 8px 0;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: flex-start;
   gap: 8px;
   cursor: pointer;
-  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
-  font-size: var(--theme-font-size, 12px);
-  user-select: none;
-  color: var(--theme-text-primary);
+  outline: none;
+  width: 100%;
 }
 
-.checkboxLabel.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  color: var(--theme-text-disabled);
-}
-
-.checkboxInput {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
+.checkboxWrapper:focus .checkbox {
+  box-shadow: 0 0 0 2px var(--theme-highlight, #0000AA);
 }
 
 .checkbox {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
-  background: var(--theme-checkbox-background);
-  border: 1px solid var(--theme-checkbox-border);
-  border-top: 2px solid var(--theme-input-shadow);
-  border-left: 2px solid var(--theme-input-shadow);
+  border: 1px solid var(--theme-border-default, #000000);
+  background: var(--theme-background, #FFFFFF);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition: background 0.1s ease, border-color 0.1s ease;
+  margin-top: 2px; /* Align with text baseline */
 }
 
-.checkboxInput:checked + .checkbox {
-  background: var(--theme-checkbox-background-checked);
-  border-color: var(--theme-checkbox-border-checked);
+.checkbox.checked {
+  background: var(--theme-button-background, #DDDDDD);
+  border-color: var(--theme-border-active, #000000);
 }
 
-.checkboxInput:focus + .checkbox {
-  outline: 2px solid var(--theme-focus-outline);
-  outline-offset: var(--theme-focus-outline-offset);
+.checkmark {
+  width: 12px;
+  height: 12px;
+  color: var(--theme-text, #000000);
 }
 
-.checkboxInput:disabled + .checkbox {
-  background: var(--theme-checkbox-background-disabled);
-  border-color: var(--theme-checkbox-border);
+.labelWrapper {
+  flex: 1;
+  min-width: 0; /* Allow text to wrap */
 }
 
-.check {
-  font-size: 14px;
-  font-weight: bold;
-  line-height: 1;
-  color: var(--theme-checkbox-check);
+.label {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+  cursor: pointer;
+  user-select: none;
+  display: block;
+  line-height: 1.4;
 }
 
-.labelText {
-  line-height: 1.5;
+.description {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  margin: 4px 0 0 0;
+  line-height: 1.4;
 }
 
-/* Mobile adaptations */
+/* Hover state */
+.checkboxWrapper:hover .checkbox {
+  border-color: var(--theme-border-hover, #333333);
+}
+
+.checkboxWrapper:hover .checkbox.checked {
+  background: var(--theme-button-hover, #EEEEEE);
+}
+
+/* Disabled state */
+.checkboxContainer.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkboxContainer.disabled .checkboxWrapper {
+  cursor: not-allowed;
+}
+
+.checkboxContainer.disabled .label {
+  cursor: not-allowed;
+}
+
+/* Mobile optimizations */
 @media (max-width: 768px) {
-  .checkboxLabel {
-    font-size: 14px;
-  }
-
   .checkbox {
     width: 20px;
-    height: 20px;
+    height: 20px; /* Larger touch target */
   }
 
-  .check {
-    font-size: 16px;
+  .checkmark {
+    width: 14px;
+    height: 14px;
+  }
+
+  .label {
+    font-size: 13px;
+  }
+
+  .description {
+    font-size: 12px;
   }
 }
-

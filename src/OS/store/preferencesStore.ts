@@ -134,9 +134,35 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
         useSystemStore.setState({ wallpaper: preferences.theme.wallpaper_url });
       }
 
-      // Apply pinned apps
+      // Apply pinned apps (deprecated - use dockPreferences.pinnedApps)
       if (preferences.dockPreferences?.pinned_apps) {
         useSystemStore.setState({ pinnedApps: preferences.dockPreferences.pinned_apps });
+      }
+
+      // Apply desktop preferences
+      if (preferences.systemPreferences) {
+        useSystemStore.setState({
+          desktopPreferences: {
+            gridSpacing: preferences.systemPreferences.grid_spacing,
+            snapToGrid: preferences.systemPreferences.snap_to_grid,
+            showHiddenFiles: preferences.systemPreferences.show_hidden_files,
+            doubleClickSpeed: preferences.systemPreferences.double_click_speed as 'slow' | 'medium' | 'fast',
+          },
+        });
+      }
+
+      // Apply dock preferences
+      if (preferences.dockPreferences) {
+        useSystemStore.setState({
+          dockPreferences: {
+            position: preferences.dockPreferences.position as 'bottom' | 'left' | 'right' | 'hidden',
+            size: preferences.dockPreferences.size as 'small' | 'medium' | 'large',
+            pinnedApps: preferences.dockPreferences.pinned_apps,
+            autoHide: preferences.dockPreferences.auto_hide,
+            magnificationEnabled: preferences.dockPreferences.magnification_enabled,
+            magnificationScale: 1.5, // Not in DB yet, use default
+          },
+        });
       }
 
       console.log(
@@ -219,20 +245,20 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
             animations_enabled: userPreferences?.theme?.animations_enabled ?? true,
           },
           windowStates: windowStatesArray,
-          dockPreferences: userPreferences?.dockPreferences || {
-            position: 'bottom',
-            size: 'medium',
-            pinned_apps: pinnedApps,
-            auto_hide: false,
-            magnification_enabled: true,
+          dockPreferences: {
+            position: systemState.dockPreferences.position,
+            size: systemState.dockPreferences.size,
+            pinned_apps: systemState.dockPreferences.pinnedApps,
+            auto_hide: systemState.dockPreferences.autoHide,
+            magnification_enabled: systemState.dockPreferences.magnificationEnabled,
           },
-          systemPreferences: userPreferences?.systemPreferences || {
-            double_click_speed: 'medium',
-            scroll_speed: 'medium',
-            menu_blink_enabled: true,
-            show_hidden_files: false,
-            grid_spacing: 80,
-            snap_to_grid: false,
+          systemPreferences: {
+            double_click_speed: systemState.desktopPreferences.doubleClickSpeed,
+            scroll_speed: userPreferences?.systemPreferences?.scroll_speed || 'medium',
+            menu_blink_enabled: userPreferences?.systemPreferences?.menu_blink_enabled ?? true,
+            show_hidden_files: systemState.desktopPreferences.showHiddenFiles,
+            grid_spacing: systemState.desktopPreferences.gridSpacing,
+            snap_to_grid: systemState.desktopPreferences.snapToGrid,
           },
         };
 

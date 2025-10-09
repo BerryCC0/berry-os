@@ -1,0 +1,72 @@
+/**
+ * DockContextMenu Styles
+ * macOS-style context menu for dock items
+ */
+
+.contextMenu {
+  position: fixed;
+  background: var(--theme-background, #FFFFFF);
+  border: 1px solid var(--theme-border-default, #000000);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  min-width: 180px;
+  padding: 4px 0;
+  z-index: 10000;
+  transform: translateX(-50%) translateY(-8px);
+  animation: menuSlideUp 0.15s ease-out;
+}
+
+@keyframes menuSlideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+  }
+}
+
+.menuItem {
+  width: 100%;
+  padding: 6px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+  cursor: pointer;
+  transition: background 0.1s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menuItem:hover {
+  background: var(--theme-highlight, #0000AA);
+  color: var(--theme-highlight-text, #FFFFFF);
+}
+
+.menuItem:active {
+  background: var(--theme-highlight-active, #000080);
+}
+
+.menuDivider {
+  height: 1px;
+  background: var(--theme-border-default, #CCCCCC);
+  margin: 4px 0;
+}
+
+/* Mobile Adaptations */
+@media (max-width: 768px) {
+  .contextMenu {
+    min-width: 200px;
+  }
+
+  .menuItem {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+

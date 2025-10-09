@@ -8,13 +8,14 @@ import { useState } from 'react';
 import { useSystemStore } from '../../../store/systemStore';
 import { usePreferencesStore } from '../../../store/preferencesStore';
 import AppearanceTab from './components/AppearanceTab';
+import DesktopAndDockTab from './components/DesktopAndDockTab';
 import styles from './SystemPreferencesModal.module.css';
 
 export interface SystemPreferencesModalProps {
   onClose: () => void;
 }
 
-type SettingsCategory = 'appearance' | 'desktop' | 'system' | 'about';
+type SettingsCategory = 'appearance' | 'desktop-dock' | 'system' | 'about';
 
 interface CategoryItem {
   id: SettingsCategory;
@@ -31,10 +32,10 @@ const CATEGORIES: CategoryItem[] = [
     description: 'Themes, colors, fonts, and visual customization',
   },
   {
-    id: 'desktop',
-    label: 'Desktop',
+    id: 'desktop-dock',
+    label: 'Desktop & Dock',
     icon: '🖥️',
-    description: 'Wallpaper, icons, and desktop behavior',
+    description: 'Desktop icons, Dock position, and window behavior',
   },
   {
     id: 'system',
@@ -60,13 +61,23 @@ export default function SystemPreferencesModal({ onClose }: SystemPreferencesMod
   const themeCustomization = useSystemStore((state) => state.themeCustomization);
   const systemVersion = useSystemStore((state) => state.systemVersion);
   
+  // Desktop & Dock state from stores
+  const desktopPreferences = useSystemStore((state) => state.desktopPreferences);
+  const dockPreferences = useSystemStore((state) => state.dockPreferences);
+  const restoreWindowsOnStartup = useSystemStore((state) => state.restoreWindowsOnStartup);
+  
   const connectedWallet = usePreferencesStore((state) => state.connectedWallet);
   
-  // Actions
+  // Theme Actions
   const updateThemePreference = usePreferencesStore((state) => state.updateThemePreference);
   const setWallpaper = useSystemStore((state) => state.setWallpaper);
   const setAccentColor = useSystemStore((state) => state.setAccentColor);
   const updateThemeCustomization = useSystemStore((state) => state.updateThemeCustomization);
+  
+  // Desktop & Dock Actions
+  const updateDesktopPreferences = useSystemStore((state) => state.updateDesktopPreferences);
+  const updateDockPreferences = useSystemStore((state) => state.updateDockPreferences);
+  const setRestoreWindowsOnStartup = useSystemStore((state) => state.setRestoreWindowsOnStartup);
 
   // Handle theme change
   const handleThemeChange = (themeId: string) => {
@@ -86,6 +97,21 @@ export default function SystemPreferencesModal({ onClose }: SystemPreferencesMod
   // Handle customization change
   const handleCustomizationChange = (customization: any) => {
     updateThemeCustomization(customization);
+  };
+
+  // Handle desktop preferences change
+  const handleDesktopChange = (prefs: Partial<typeof desktopPreferences>) => {
+    updateDesktopPreferences(prefs);
+  };
+
+  // Handle dock preferences change
+  const handleDockChange = (prefs: Partial<typeof dockPreferences>) => {
+    updateDockPreferences(prefs);
+  };
+
+  // Handle restore windows change
+  const handleRestoreWindowsChange = (enabled: boolean) => {
+    setRestoreWindowsOnStartup(enabled);
   };
 
   // Close on Escape
@@ -113,13 +139,17 @@ export default function SystemPreferencesModal({ onClose }: SystemPreferencesMod
           />
         );
       
-      case 'desktop':
+      case 'desktop-dock':
         return (
-          <div className={styles.placeholder}>
-            <div className={styles.placeholderIcon}>🖥️</div>
-            <h3>Desktop Settings</h3>
-            <p>Desktop customization options coming soon</p>
-          </div>
+          <DesktopAndDockTab
+            desktopPreferences={desktopPreferences}
+            dockPreferences={dockPreferences}
+            restoreWindowsOnStartup={restoreWindowsOnStartup}
+            connectedWallet={connectedWallet}
+            onDesktopChange={handleDesktopChange}
+            onDockChange={handleDockChange}
+            onRestoreWindowsChange={handleRestoreWindowsChange}
+          />
         );
       
       case 'system':

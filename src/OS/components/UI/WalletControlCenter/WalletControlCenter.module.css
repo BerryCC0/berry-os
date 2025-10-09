@@ -1,0 +1,163 @@
+/**
+ * Wallet Control Center Styles
+ * macOS Control Center modal with Mac OS 8 aesthetics
+ */
+
+/* Overlay backdrop */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 30px 16px 0 0; /* Below menu bar */
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Main control center popup */
+.controlCenter {
+  background: var(--theme-window-background, var(--mac-gray-1));
+  border: 2px solid var(--theme-window-border, var(--mac-black));
+  border-radius: 8px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  width: 360px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  animation: slideDown 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar */
+.controlCenter::-webkit-scrollbar {
+  width: 15px;
+}
+
+.controlCenter::-webkit-scrollbar-track {
+  background: var(--theme-scrollbar-track, var(--mac-gray-1));
+  border-left: 1px solid var(--theme-window-border, var(--mac-gray-2));
+}
+
+.controlCenter::-webkit-scrollbar-thumb {
+  background: var(--theme-scrollbar-thumb, var(--mac-gray-2));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-3));
+}
+
+.controlCenter::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-scrollbar-thumb-hover, var(--mac-gray-3));
+}
+
+/* Footer section */
+.footer {
+  padding: 16px;
+  border-top: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  background: var(--theme-window-background, var(--mac-gray-1));
+}
+
+.disconnectButton {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  border-radius: 4px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+  font-weight: 500;
+}
+
+.disconnectButton:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+  border-color: var(--theme-highlight, var(--mac-black));
+}
+
+.disconnectButton:active {
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
+  transform: scale(0.98);
+}
+
+.disconnectButton:focus-visible {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: 2px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .overlay {
+    padding: 20px 12px 0 0;
+  }
+
+  .controlCenter {
+    width: calc(100vw - 24px);
+    max-width: 360px;
+  }
+}
+
+/* Theme support */
+[data-theme="darkMode"] .controlCenter {
+  background: rgba(40, 40, 40, 0.98);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="platinum"] .controlCenter {
+  background: rgba(235, 235, 235, 0.98);
+}
+
+/* Accessibility */
+@media (prefers-contrast: high) {
+  .overlay {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .controlCenter {
+    border-width: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    animation: none;
+  }
+
+  .controlCenter {
+    animation: none;
+  }
+
+  .disconnectButton {
+    transition: none;
+  }
+
+  .disconnectButton:active {
+    transform: none;
+  }
+}
+
