@@ -159,23 +159,23 @@ const BASE_APPS: AppConfig[] = [
   // Nouns Apps
   {
     id: 'camp',
-    name: 'Nouns Camp',
+    name: 'Camp',
     component: Camp,
-    icon: getAppIconPath('berry', 'svg'), // TODO: Create camp icon
-    defaultWindowSize: { width: 800, height: 600 },
-    minWindowSize: { width: 600, height: 400 },
+    icon: getAppIconPath('camp', 'svg'),
+    defaultWindowSize: { width: 1200, height: 800 },
+    minWindowSize: { width: 800, height: 600 },
     // No maxWindowSize - allow full screen resizing
     resizable: true,
-    web3Required: true,
+    web3Required: false, // Public read access, wallet-gated write actions
     mobileSupport: 'full',
     mobileLayout: 'fullscreen',
     category: 'web3',
-    description: 'Browse and create Nouns proposals on Camp',
+    description: 'View and interact with Nouns governance: proposals, candidates, and voters',
     version: '1.0.0',
   },
   {
     id: 'auction',
-    name: 'Nouns Auction',
+    name: 'Auction',
     component: Auction,
     icon: getAppIconPath('berry', 'svg'), // TODO: Create auction icon
     defaultWindowSize: { width: 700, height: 800 },

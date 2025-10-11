@@ -120,6 +120,14 @@
   margin-left: auto;
 }
 
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--theme-window-border, var(--mac-gray-2));
+  margin: 4px 8px;
+  opacity: 0.5;
+}
+
 /* Pending state */
 .pending {
   margin-top: 8px;

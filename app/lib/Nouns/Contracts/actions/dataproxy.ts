@@ -62,7 +62,7 @@ export function createProposalCandidate(
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'createProposalCandidate' as const,
-    args: [targets, values, signatures, calldatas, description, slug, proposalIdToUpdate],
+    args: [targets, values, signatures, calldatas, description, slug, proposalIdToUpdate] as const,
   };
 }
 
@@ -112,7 +112,7 @@ export function updateProposalCandidate(
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'updateProposalCandidate' as const,
-    args: [targets, values, signatures, calldatas, description, slug, proposalIdToUpdate, reason],
+    args: [targets, values, signatures, calldatas, description, slug, proposalIdToUpdate, reason] as const,
   };
 }
 
@@ -135,7 +135,7 @@ export function cancelProposalCandidate(slug: string) {
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'cancelProposalCandidate' as const,
-    args: [slug],
+    args: [slug] as const,
   };
 }
 
@@ -165,7 +165,7 @@ export function sendFeedback(proposalId: bigint, support: number, reason: string
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'sendFeedback' as const,
-    args: [proposalId, support, reason],
+    args: [proposalId, support, reason] as const,
   };
 }
 
@@ -197,7 +197,7 @@ export function sendCandidateFeedback(
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'sendCandidateFeedback' as const,
-    args: [proposer, slug, support, reason],
+    args: [proposer, slug, support, reason] as const,
   };
 }
 
@@ -249,7 +249,7 @@ export function addSignature(
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'addSignature' as const,
-    args: [sig, expirationTimestamp, proposer, slug, proposalIdToUpdate, encodedProp, reason],
+    args: [sig, expirationTimestamp, proposer, slug, proposalIdToUpdate, encodedProp, reason] as const,
   };
 }
 
@@ -284,7 +284,7 @@ export function postDunaAdminMessage(
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'postDunaAdminMessage' as const,
-    args: [message, relatedProposals],
+    args: [message, relatedProposals] as const,
   };
 }
 
@@ -319,7 +319,7 @@ export function postVoterMessageToDunaAdmin(
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'postVoterMessageToDunaAdmin' as const,
-    args: [message, relatedProposals],
+    args: [message, relatedProposals] as const,
   };
 }
 
@@ -356,7 +356,7 @@ export function signalProposalCompliance(
     address: NOUNS_CONTRACTS.NounsDAODataProxy.proxy as Address,
     abi: DataProxyABI,
     functionName: 'signalProposalCompliance' as const,
-    args: [proposalId, signal, reason],
+    args: [proposalId, signal, reason] as const,
   };
 }
 

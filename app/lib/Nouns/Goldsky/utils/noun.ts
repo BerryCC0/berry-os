@@ -19,11 +19,11 @@ export function isValidNoun(noun: any): noun is Noun {
     typeof noun.id === 'string' &&
     noun.seed &&
     noun.owner &&
-    typeof noun.background === 'number' &&
-    typeof noun.body === 'number' &&
-    typeof noun.accessory === 'number' &&
-    typeof noun.head === 'number' &&
-    typeof noun.glasses === 'number'
+    typeof noun.seed.background === 'number' &&
+    typeof noun.seed.body === 'number' &&
+    typeof noun.seed.accessory === 'number' &&
+    typeof noun.seed.head === 'number' &&
+    typeof noun.seed.glasses === 'number'
   );
 }
 
@@ -77,11 +77,11 @@ export function getNounTraits(noun: Noun): {
   glasses: number;
 } {
   return {
-    background: noun.background,
-    body: noun.body,
-    accessory: noun.accessory,
-    head: noun.head,
-    glasses: noun.glasses,
+    background: noun.seed.background,
+    body: noun.seed.body,
+    accessory: noun.seed.accessory,
+    head: noun.seed.head,
+    glasses: noun.seed.glasses,
   };
 }
 
@@ -114,10 +114,10 @@ export function seedsAreEqual(seed1: NounSeed, seed2: NounSeed): boolean {
  */
 export function filterByTrait(
   nouns: Noun[],
-  trait: keyof Pick<Noun, 'background' | 'body' | 'accessory' | 'head' | 'glasses'>,
+  trait: keyof Omit<NounSeed, 'id'>,
   value: number
 ): Noun[] {
-  return nouns.filter(noun => noun[trait] === value);
+  return nouns.filter(noun => noun.seed[trait as keyof NounSeed] === value);
 }
 
 /**
@@ -161,16 +161,24 @@ export function filterByGlasses(nouns: Noun[], glasses: number): Noun[] {
 
 /**
  * Gets Noun creation timestamp as Date
+ * Falls back to auction startTime if createdAtTimestamp is not available
  */
 export function getCreatedDate(noun: Noun): Date {
-  return new Date(parseInt(noun.createdAtTimestamp, 10) * 1000);
+  if (noun.createdAtTimestamp) {
+    return new Date(parseInt(noun.createdAtTimestamp, 10) * 1000);
+  }
+  if (noun.auction?.startTime) {
+    return new Date(parseInt(noun.auction.startTime, 10) * 1000);
+  }
+  // Fallback to epoch if no timestamp available
+  return new Date(0);
 }
 
 /**
  * Gets Noun creation block number
  */
 export function getCreatedBlock(noun: Noun): number {
-  return parseInt(noun.createdAtBlockNumber, 10);
+  return noun.createdAtBlockNumber ? parseInt(noun.createdAtBlockNumber, 10) : 0;
 }
 
 /**
@@ -235,8 +243,8 @@ export function sortByIdDesc(nouns: Noun[]): Noun[] {
  */
 export function sortByNewest(nouns: Noun[]): Noun[] {
   return [...nouns].sort((a, b) => {
-    const timeA = parseInt(a.createdAtTimestamp, 10);
-    const timeB = parseInt(b.createdAtTimestamp, 10);
+    const timeA = a.createdAtTimestamp ? parseInt(a.createdAtTimestamp, 10) : 0;
+    const timeB = b.createdAtTimestamp ? parseInt(b.createdAtTimestamp, 10) : 0;
     return timeB - timeA;
   });
 }
@@ -246,8 +254,8 @@ export function sortByNewest(nouns: Noun[]): Noun[] {
  */
 export function sortByOldest(nouns: Noun[]): Noun[] {
   return [...nouns].sort((a, b) => {
-    const timeA = parseInt(a.createdAtTimestamp, 10);
-    const timeB = parseInt(b.createdAtTimestamp, 10);
+    const timeA = a.createdAtTimestamp ? parseInt(a.createdAtTimestamp, 10) : 0;
+    const timeB = b.createdAtTimestamp ? parseInt(b.createdAtTimestamp, 10) : 0;
     return timeA - timeB;
   });
 }
@@ -261,9 +269,9 @@ export function sortByOldest(nouns: Noun[]): Noun[] {
  */
 export function getUniqueTraitValues(
   nouns: Noun[],
-  trait: keyof Pick<Noun, 'background' | 'body' | 'accessory' | 'head' | 'glasses'>
+  trait: keyof Omit<NounSeed, 'id'>
 ): number[] {
-  const values = new Set(nouns.map(noun => noun[trait]));
+  const values = new Set(nouns.map(noun => noun.seed[trait as keyof NounSeed] as number));
   return Array.from(values).sort((a, b) => a - b);
 }
 
@@ -272,12 +280,12 @@ export function getUniqueTraitValues(
  */
 export function getTraitDistribution(
   nouns: Noun[],
-  trait: keyof Pick<Noun, 'background' | 'body' | 'accessory' | 'head' | 'glasses'>
+  trait: keyof Omit<NounSeed, 'id'>
 ): Map<number, number> {
   const distribution = new Map<number, number>();
   
   nouns.forEach(noun => {
-    const value = noun[trait];
+    const value = noun.seed[trait as keyof NounSeed] as number;
     distribution.set(value, (distribution.get(value) || 0) + 1);
   });
   
@@ -289,7 +297,7 @@ export function getTraitDistribution(
  */
 export function getRarestTraitValue(
   nouns: Noun[],
-  trait: keyof Pick<Noun, 'background' | 'body' | 'accessory' | 'head' | 'glasses'>
+  trait: keyof Omit<NounSeed, 'id'>
 ): number | null {
   const distribution = getTraitDistribution(nouns, trait);
   let rarest: number | null = null;
@@ -310,7 +318,7 @@ export function getRarestTraitValue(
  */
 export function getMostCommonTraitValue(
   nouns: Noun[],
-  trait: keyof Pick<Noun, 'background' | 'body' | 'accessory' | 'head' | 'glasses'>
+  trait: keyof Omit<NounSeed, 'id'>
 ): number | null {
   const distribution = getTraitDistribution(nouns, trait);
   let mostCommon: number | null = null;
@@ -332,10 +340,10 @@ export function getMostCommonTraitValue(
 export function getTraitRarityScore(
   noun: Noun,
   allNouns: Noun[],
-  trait: keyof Pick<Noun, 'background' | 'body' | 'accessory' | 'head' | 'glasses'>
+  trait: keyof Omit<NounSeed, 'id'>
 ): number {
   const distribution = getTraitDistribution(allNouns, trait);
-  const traitValue = noun[trait];
+  const traitValue = noun.seed[trait as keyof NounSeed] as number;
   const count = distribution.get(traitValue) || 0;
   const total = allNouns.length;
   
@@ -349,7 +357,7 @@ export function getTraitRarityScore(
  * Calculates overall rarity score (average of all traits)
  */
 export function getOverallRarityScore(noun: Noun, allNouns: Noun[]): number {
-  const traits: Array<keyof Pick<Noun, 'background' | 'body' | 'accessory' | 'head' | 'glasses'>> = [
+  const traits: Array<keyof Omit<NounSeed, 'id'>> = [
     'background',
     'body',
     'accessory',
@@ -387,11 +395,11 @@ export function findSimilarNouns(
     if (n.id === noun.id) return false;
     
     let matches = 0;
-    if (n.background === noun.background) matches++;
-    if (n.body === noun.body) matches++;
-    if (n.accessory === noun.accessory) matches++;
-    if (n.head === noun.head) matches++;
-    if (n.glasses === noun.glasses) matches++;
+    if (n.seed.background === noun.seed.background) matches++;
+    if (n.seed.body === noun.seed.body) matches++;
+    if (n.seed.accessory === noun.seed.accessory) matches++;
+    if (n.seed.head === noun.seed.head) matches++;
+    if (n.seed.glasses === noun.seed.glasses) matches++;
     
     return matches >= minMatchingTraits;
   });

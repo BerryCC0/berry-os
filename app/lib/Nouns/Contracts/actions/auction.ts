@@ -35,7 +35,7 @@ export function createBid(nounId: bigint, bidAmountETH: string) {
     address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
     abi: NounsAuctionHouseABI,
     functionName: 'createBid' as const,
-    args: [nounId, BERRY_OS_CLIENT_ID],
+    args: [nounId, BERRY_OS_CLIENT_ID] as const,
     value: parseEther(bidAmountETH),
   };
 }
@@ -55,7 +55,7 @@ export function settleCurrentAndCreateNewAuction() {
     address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
     abi: NounsAuctionHouseABI,
     functionName: 'settleCurrentAndCreateNewAuction' as const,
-    args: [],
+    args: [] as const,
   };
 }
 
@@ -74,7 +74,7 @@ export function settleAuction() {
     address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
     abi: NounsAuctionHouseABI,
     functionName: 'settleAuction' as const,
-    args: [],
+    args: [] as const,
   };
 }
 
@@ -184,7 +184,7 @@ export function biddingClient(nounId: bigint) {
     address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
     abi: NounsAuctionHouseABI,
     functionName: 'biddingClient' as const,
-    args: [nounId],
+    args: [nounId] as const,
   };
 }
 
@@ -204,7 +204,7 @@ export function getSettlements(auctionCount: bigint, skipEmptyValues: boolean = 
     address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
     abi: NounsAuctionHouseABI,
     functionName: 'getSettlements' as const,
-    args: [auctionCount, skipEmptyValues],
+    args: [auctionCount, skipEmptyValues] as const,
   };
 }
 
@@ -227,7 +227,7 @@ export function getSettlementsRange(startId: bigint, endId: bigint, skipEmptyVal
     address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
     abi: NounsAuctionHouseABI,
     functionName: 'getSettlements' as const,
-    args: [startId, endId, skipEmptyValues],
+    args: [startId, endId, skipEmptyValues] as const,
   };
 }
 
@@ -246,6 +246,6 @@ export function getPrices(auctionCount: bigint) {
     address: NOUNS_CONTRACTS.NounsAuctionHouse.proxy as Address,
     abi: NounsAuctionHouseABI,
     functionName: 'getPrices' as const,
-    args: [auctionCount],
+    args: [auctionCount] as const,
   };
 }

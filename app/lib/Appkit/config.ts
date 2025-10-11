@@ -89,7 +89,18 @@ export const bitcoinNetworks = isDevelopment
   : [bitcoin];
 
 // All networks combined
-export const networks = [...evmNetworks, ...solanaNetworks, ...bitcoinNetworks];
+// Type assertion needed because AppKit requires non-empty tuple type
+// We always have at least one network (mainnet is always included), so this is type-safe
+type AnyNetwork = typeof mainnet | typeof base | typeof bsc | typeof hyperliquid | 
+  typeof hyperliquidEvmTestnet | typeof sepolia | typeof baseSepolia |
+  typeof solana | typeof solanaTestnet | typeof solanaDevnet |
+  typeof bitcoin | typeof bitcoinTestnet;
+
+export const networks = [
+  ...evmNetworks, 
+  ...solanaNetworks, 
+  ...bitcoinNetworks
+] as [AnyNetwork, ...AnyNetwork[]];
 
 // Set up the Wagmi Adapter (EVM) with Farcaster Mini App connector
 export const wagmiAdapter = new WagmiAdapter({

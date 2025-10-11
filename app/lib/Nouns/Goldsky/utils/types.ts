@@ -13,24 +13,17 @@
  * A Noun NFT
  */
 export interface Noun {
-  id: string; // Token ID
-  seed: NounSeed;
-  owner: Account;
+  id: string; // Token ID (ERC721 token id)
+  seed: NounSeed; // The seed used to determine the Noun's traits
+  owner: Account; // The owner of the Noun
   
-  // Attributes
-  background: number;
-  body: number;
-  accessory: number;
-  head: number;
-  glasses: number;
-  
-  // Lifecycle
-  createdAtTimestamp: string;
-  createdAtBlockNumber: string;
+  // Timestamps and blocks
+  createdAtTimestamp?: string; // Creation timestamp (from subgraph)
+  createdAtBlockNumber?: string; // Block number when created (from subgraph)
   
   // Relationships
   auction?: Auction;
-  votes?: Vote[];
+  votes?: Vote[]; // Historical votes for the Noun
   delegatedVotes?: Vote[];
 }
 
@@ -38,14 +31,12 @@ export interface Noun {
  * Noun seed - deterministic traits
  */
 export interface NounSeed {
-  id: string;
-  background: number;
-  body: number;
-  accessory: number;
-  head: number;
-  glasses: number;
-  blockNumber: string;
-  createdAtTimestamp: string;
+  id: string; // The Noun's ERC721 token id
+  background: number; // The background index (BigInt in schema)
+  body: number; // The body index (BigInt in schema)
+  accessory: number; // The accessory index (BigInt in schema)
+  head: number; // The head index (BigInt in schema)
+  glasses: number; // The glasses index (BigInt in schema)
 }
 
 /**
@@ -153,7 +144,7 @@ export interface Proposal {
   calldatas: string[]; // Encoded calldata
   
   // Proposer
-  proposer: Account;
+  proposer: Delegate;
   proposalThreshold: string;
   quorumVotes: string;
   
@@ -208,11 +199,12 @@ export interface Vote {
   // Vote details
   support: VoteSupport; // 0 = against, 1 = for, 2 = abstain
   supportDetailed: number;
-  votes: string; // Voting power used
+  votes: string; // Voting power used (normalized)
+  votesRaw: string; // Voting power used (raw)
   reason?: string; // Optional vote reason
   
   // Voter
-  voter: Account;
+  voter: Delegate; // Changed from Account to Delegate (consistent with schema)
   nouns: Noun[]; // Nouns used to vote
   
   // Proposal
@@ -221,6 +213,8 @@ export interface Vote {
   // Context
   blockNumber: string;
   blockTimestamp: string;
+  transactionHash: string;
+  clientId: number;
 }
 
 /**
@@ -299,16 +293,19 @@ export interface ProposalVersion {
   id: string;
   
   // Version details
+  title: string;
+  description: string;
   targets: string[];
   values: string[];
   signatures: string[];
   calldatas: string[];
-  description: string;
   
   // Update context
   updateMessage: string;
   createdBlock: string;
-  createdTimestamp: string;
+  createdAt: string; // Block timestamp
+  createdTimestamp: string; // Deprecated, use createdAt
+  createdTransactionHash: string;
   
   // Relationships
   proposal?: Proposal;

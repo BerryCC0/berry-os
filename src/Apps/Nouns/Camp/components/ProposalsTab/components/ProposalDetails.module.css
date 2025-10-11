@@ -1,0 +1,534 @@
+/**
+ * ProposalDetails Styles
+ * Full proposal view with voting interface
+ */
+
+.details {
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  border-top: none;
+  padding: 16px;
+  font-family: var(--font-geneva);
+  color: var(--theme-text, #000000);
+}
+
+/* Metadata Section (at top) */
+.metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border: 1px solid var(--theme-border, #000000);
+  font-size: 11px;
+}
+
+.metadataRow {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.metadataLabel {
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.metadataValue {
+  color: var(--theme-text-secondary, #555555);
+  word-break: break-all;
+  font-family: var(--font-chicago);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--theme-border, #000000);
+}
+
+.titleSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.proposalId {
+  font-size: 12px;
+  color: var(--theme-text-secondary, #666666);
+  font-weight: bold;
+}
+
+.status {
+  padding: 3px 10px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: var(--theme-text, #000000);
+}
+
+.closeButton {
+  background: var(--theme-button-background, #DDDDDD);
+  border: 1px solid var(--theme-border, #000000);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--theme-text, #000000);
+}
+
+.closeButton:hover {
+  background: var(--theme-button-hover, #CCCCCC);
+}
+
+.closeButton:active {
+  background: var(--theme-button-active, #AAAAAA);
+}
+
+/* Vote Section */
+.voteSection {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  color: var(--theme-text, #000000);
+}
+
+.voteBarContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.voteBarRow {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.voteLabel {
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.voteBarWrapper {
+  height: 20px;
+  background: var(--theme-window-background, #EEEEEE);
+  border: 1px solid var(--theme-border, #000000);
+  overflow: hidden;
+}
+
+.voteBarFill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.voteValue {
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  white-space: nowrap;
+}
+
+.quorumStatus {
+  padding: 8px 12px;
+  background: var(--theme-window-background, #EEEEEE);
+  border: 1px solid var(--theme-border, #000000);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.quorumMet {
+  color: #00AA00;
+  font-weight: bold;
+}
+
+.quorumNotMet {
+  color: #AA0000;
+  font-weight: bold;
+}
+
+.userVoteStatus {
+  padding: 8px 12px;
+  background: #E8F5E9;
+  border: 1px solid #4CAF50;
+  font-size: 12px;
+  color: #2E7D32;
+}
+
+/* Voting Interface */
+.votingSection {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--theme-window-background, #EEEEEE);
+  border: 1px solid var(--theme-border, #000000);
+}
+
+.voteButtons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.voteButton {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--theme-button-background, #DDDDDD);
+  border: 1px solid var(--theme-border, #000000);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.voteButton:hover {
+  background: var(--theme-button-hover, #CCCCCC);
+}
+
+.voteButton.selected {
+  border-width: 2px;
+  border-color: var(--theme-highlight, #000080);
+}
+
+.voteFor.selected {
+  background: #E8F5E9;
+  border-color: #4CAF50;
+}
+
+.voteAgainst.selected {
+  background: #FFEBEE;
+  border-color: #F44336;
+}
+
+.voteAbstain.selected {
+  background: #F5F5F5;
+  border-color: #9E9E9E;
+}
+
+.reasonInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--theme-border, #000000);
+  font-family: inherit;
+  font-size: 12px;
+  resize: vertical;
+  margin-bottom: 8px;
+  background: var(--theme-input-background, #FFFFFF);
+  color: var(--theme-text, #000000);
+}
+
+.submitButton {
+  width: 100%;
+  padding: 12px;
+  background: var(--theme-button-background, #DDDDDD);
+  border: 1px solid var(--theme-border, #000000);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background: var(--theme-button-hover, #CCCCCC);
+}
+
+.submitButton:active {
+  background: var(--theme-button-active, #AAAAAA);
+}
+
+.connectPrompt {
+  padding: 16px;
+  background: #FFF8E1;
+  border: 1px solid #FFC107;
+  font-size: 12px;
+  color: #F57C00;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* Description */
+.descriptionSection {
+  margin-top: 16px;
+  border: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background, #FFFFFF);
+  height: 500px;
+  position: relative;
+}
+
+.descriptionContent {
+  padding: 16px;
+}
+
+/* Actions */
+.actionsSection {
+  margin-bottom: 24px;
+}
+
+.actionsInfo {
+  padding: 12px;
+  background: var(--theme-window-background, #EEEEEE);
+  border: 1px solid var(--theme-border, #000000);
+  font-size: 12px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .details {
+    padding: 16px;
+  }
+
+  .metadata {
+    margin-bottom: 20px;
+  }
+
+  .metadataRow {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .metadataLabel {
+    min-width: unset;
+  }
+
+  .descriptionSection {
+    height: 400px;
+  }
+
+  .descriptionContent {
+    padding: 12px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .voteBarRow {
+    grid-template-columns: 50px 1fr;
+    gap: 8px;
+  }
+
+  .voteValue {
+    grid-column: 2;
+    font-size: 10px;
+  }
+
+  .voteButtons {
+    flex-direction: column;
+  }
+
+  .voteButton {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .description {
+    max-height: 300px;
+  }
+
+  .metadataRow {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .metadataLabel {
+    min-width: unset;
+  }
+}
+
+/* Content Tabs */
+.contentTabs {
+  display: flex;
+  gap: 0;
+  margin-top: 16px;
+  border: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background-alt, #F5F5F5);
+}
+
+.contentTab {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: none;
+  border-right: 1px solid var(--theme-border, #000000);
+  color: var(--theme-text, #000000);
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: normal;
+}
+
+.contentTab:last-child {
+  border-right: none;
+}
+
+.contentTab:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.contentTab.active {
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+/* Votes and Signals Container (Two Column Layout) */
+.votesAndSignalsContainer {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.votesColumn {
+  flex: 2;
+  min-width: 0;
+}
+
+.signalsColumn {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* Votes Section */
+.votesSection {
+  padding-top: 0;
+}
+
+/* Vote Tabs */
+.voteTabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  border: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background-alt, #F5F5F5);
+}
+
+.voteTab {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: none;
+  border-right: 1px solid var(--theme-border, #000000);
+  color: var(--theme-text, #000000);
+  font-family: var(--font-chicago);
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.voteTab:last-child {
+  border-right: none;
+}
+
+.voteTab:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.voteTab.active {
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+/* Mobile content and vote tabs */
+@media (max-width: 768px) {
+  .contentTabs {
+    margin-top: 20px;
+  }
+
+  .contentTab {
+    padding: 14px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  /* Stack columns on mobile */
+  .votesAndSignalsContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .votesColumn,
+  .signalsColumn {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .voteTabs {
+    flex-wrap: wrap;
+  }
+
+  .voteTab {
+    flex: 1 1 45%;
+    padding: 12px;
+    font-size: 12px;
+    min-height: 44px;
+  }
+
+  .votesSection {
+    padding-top: 0;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .votesAndSignalsContainer {
+    gap: 12px;
+  }
+
+  .signalsColumn {
+    min-width: 250px;
+  }
+
+  .voteTab {
+    padding: 10px;
+    font-size: 11px;
+  }
+}
+
+/* Farcaster miniapp */
+@media (max-width: 480px) {
+  .contentTab {
+    font-size: 11px;
+    padding: 12px 12px;
+  }
+
+  .voteTab {
+    font-size: 10px;
+    padding: 10px 8px;
+  }
+}
+

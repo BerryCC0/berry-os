@@ -49,7 +49,7 @@ export function castRefundableVote(
       address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
       abi: NounsDAOLogicV3ABI,
       functionName: 'castRefundableVoteWithReason' as const,
-      args: [proposalId, support, reason, BERRY_OS_CLIENT_ID],
+      args: [proposalId, support, reason, BERRY_OS_CLIENT_ID] as const,
     };
   }
   
@@ -57,7 +57,7 @@ export function castRefundableVote(
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'castRefundableVote' as const,
-    args: [proposalId, support, BERRY_OS_CLIENT_ID],
+    args: [proposalId, support, BERRY_OS_CLIENT_ID] as const,
   };
 }
 
@@ -149,7 +149,7 @@ export function propose(
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'propose' as const,
-    args: [targets, values, signatures, calldatas, description, BERRY_OS_CLIENT_ID],
+    args: [targets, values, signatures, calldatas, description, BERRY_OS_CLIENT_ID] as const,
   };
 }
 
@@ -203,7 +203,7 @@ export function proposeBySigs(
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'proposeBySigs' as const,
-    args: [sigTuples, targets, values, signatures, calldatas, description, BERRY_OS_CLIENT_ID],
+    args: [sigTuples, targets, values, signatures, calldatas, description, BERRY_OS_CLIENT_ID] as const,
   };
 }
 
@@ -225,7 +225,7 @@ export function queue(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'queue' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -247,7 +247,7 @@ export function execute(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'execute' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -270,7 +270,7 @@ export function cancel(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'cancel' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -293,7 +293,7 @@ export function veto(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'veto' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -318,7 +318,7 @@ export function cancelSig(sig: `0x${string}`) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'cancelSig' as const,
-    args: [sig],
+    args: [sig] as const,
   };
 }
 
@@ -356,7 +356,7 @@ export function updateProposal(
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'updateProposal' as const,
-    args: [proposalId, targets, values, signatures, calldatas, description, updateMessage],
+    args: [proposalId, targets, values, signatures, calldatas, description, updateMessage] as const,
   };
 }
 
@@ -381,7 +381,7 @@ export function updateProposalDescription(
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'updateProposalDescription' as const,
-    args: [proposalId, description, updateMessage],
+    args: [proposalId, description, updateMessage] as const,
   };
 }
 
@@ -412,7 +412,7 @@ export function updateProposalTransactions(
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'updateProposalTransactions' as const,
-    args: [proposalId, targets, values, signatures, calldatas, updateMessage],
+    args: [proposalId, targets, values, signatures, calldatas, updateMessage] as const,
   };
 }
 
@@ -437,7 +437,7 @@ export function state(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'state' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -458,7 +458,7 @@ export function proposals(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'proposals' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -475,7 +475,7 @@ export function proposalsV3(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'proposalsV3' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -492,7 +492,7 @@ export function getActions(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'getActions' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -514,7 +514,7 @@ export function getReceipt(proposalId: bigint, voter: Address) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'getReceipt' as const,
-    args: [proposalId, voter],
+    args: [proposalId, voter] as const,
   };
 }
 
@@ -544,7 +544,7 @@ export function quorumVotes(proposalId: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'quorumVotes' as const,
-    args: [proposalId],
+    args: [proposalId] as const,
   };
 }
 
@@ -598,7 +598,7 @@ export function latestProposalIds(account: Address) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'latestProposalIds' as const,
-    args: [account],
+    args: [account] as const,
   };
 }
 
@@ -613,6 +613,6 @@ export function getDynamicQuorumParamsAt(blockNumber: bigint) {
     address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
     abi: NounsDAOLogicV3ABI,
     functionName: 'getDynamicQuorumParamsAt' as const,
-    args: [blockNumber],
+    args: [blockNumber] as const,
   };
 }

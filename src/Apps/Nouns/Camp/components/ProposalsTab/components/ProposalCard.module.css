@@ -1,0 +1,180 @@
+/**
+ * ProposalCard Styles
+ * Mac OS 8 card with vote visualization
+ */
+
+.card {
+  background: var(--theme-window-background, #DDDDDD);
+  border: 1px solid var(--theme-border, #000000);
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-family: var(--font-geneva);
+  transition: background 0.1s ease;
+}
+
+.card:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.card:focus {
+  outline: 2px solid var(--theme-highlight, #000080);
+  outline-offset: -2px;
+}
+
+.card.expanded {
+  background: var(--theme-window-background-hover, #EEEEEE);
+  border-width: 2px;
+  margin-bottom: 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.proposalId {
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Vote Bars */
+.voteBars {
+  display: flex;
+  height: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--theme-border, #000000);
+  overflow: hidden;
+}
+
+.voteBar {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* Vote Counts */
+.voteCounts {
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  margin-bottom: 8px;
+  color: var(--theme-text, #000000);
+}
+
+.voteFor {
+  color: #00AA00;
+  font-weight: bold;
+}
+
+.voteAgainst {
+  color: #AA0000;
+  font-weight: bold;
+}
+
+.voteAbstain {
+  color: #888888;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+.proposer {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timeRemaining {
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  flex-shrink: 0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .card {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .title {
+    font-size: 14px;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .status {
+    align-self: flex-start;
+  }
+
+  .voteBars {
+    height: 12px;
+    margin-bottom: 12px;
+  }
+
+  .voteCounts {
+    font-size: 12px;
+    gap: 12px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 12px;
+  }
+}
+

@@ -26,7 +26,7 @@ const queryClient = new QueryClient();
 createAppKit({
   adapters: [wagmiAdapter, solanaWeb3JsAdapter, bitcoinAdapter],
   projectId,
-  networks: [mainnet, ...networks.slice(1)],
+  networks, // All networks: EVM (Ethereum, Base, BSC, Hyperliquid), Solana, Bitcoin
   defaultNetwork: mainnet,
   metadata,
   features: {

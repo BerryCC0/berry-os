@@ -34,7 +34,7 @@ export function withdrawClientBalance(clientId: number, to: Address) {
     address: NOUNS_CONTRACTS.ClientRewardsProxy.proxy as Address,
     abi: ClientRewardsABI,
     functionName: 'withdrawClientBalance' as const,
-    args: [clientId, to],
+    args: [clientId, to] as const,
   };
 }
 
@@ -84,7 +84,7 @@ export function registerClient(name: string, description: string) {
     address: NOUNS_CONTRACTS.ClientRewardsProxy.proxy as Address,
     abi: ClientRewardsABI,
     functionName: 'registerClient' as const,
-    args: [name, description],
+    args: [name, description] as const,
   };
 }
 
@@ -129,7 +129,7 @@ export function updateRewardsForProposalWritingAndVoting(
     address: NOUNS_CONTRACTS.ClientRewardsProxy.proxy as Address,
     abi: ClientRewardsABI,
     functionName: 'updateRewardsForProposalWritingAndVoting' as const,
-    args: [lastProposalId, clientIds],
+    args: [lastProposalId, clientIds] as const,
   };
 }
 
@@ -155,7 +155,7 @@ export function updateRewardsForAuctions(lastNounId: bigint) {
     address: NOUNS_CONTRACTS.ClientRewardsProxy.proxy as Address,
     abi: ClientRewardsABI,
     functionName: 'updateRewardsForAuctions' as const,
-    args: [lastNounId],
+    args: [lastNounId] as const,
   };
 }
 
@@ -180,7 +180,7 @@ export function clientBalance(clientId: number) {
     address: NOUNS_CONTRACTS.ClientRewardsProxy.proxy as Address,
     abi: ClientRewardsABI,
     functionName: 'clientBalance' as const,
-    args: [clientId],
+    args: [clientId] as const,
   };
 }
 
@@ -214,7 +214,7 @@ export function getClient(clientId: number) {
     address: NOUNS_CONTRACTS.ClientRewardsProxy.proxy as Address,
     abi: ClientRewardsABI,
     functionName: 'getClient' as const,
-    args: [clientId],
+    args: [clientId] as const,
   };
 }
 
@@ -293,7 +293,7 @@ export function getVotingClientIds(lastProposalId: bigint) {
     address: NOUNS_CONTRACTS.ClientRewardsProxy.proxy as Address,
     abi: ClientRewardsABI,
     functionName: 'getVotingClientIds' as const,
-    args: [lastProposalId],
+    args: [lastProposalId] as const,
   };
 }
 

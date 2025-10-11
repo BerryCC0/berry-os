@@ -1,0 +1,179 @@
+/**
+ * FeedbackList Styles
+ * Proposal feedback/signals display
+ */
+
+.feedbackList {
+  border: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background, #FFFFFF);
+  margin-bottom: 16px;
+  font-family: var(--font-geneva);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background-alt, #F5F5F5);
+}
+
+.title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.count {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--theme-text-secondary, #666666);
+}
+
+.toggleButton {
+  font-size: 11px;
+  padding: 4px 8px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  color: var(--theme-text, #000000);
+  font-family: var(--font-chicago);
+  cursor: pointer;
+}
+
+.toggleButton:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.toggleButton:active {
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+}
+
+/* Items */
+.items {
+  display: flex;
+  flex-direction: column;
+}
+
+.feedbackItem {
+  padding: 12px;
+  border-bottom: 1px solid var(--theme-border-light, #DDDDDD);
+}
+
+.feedbackItem:last-child {
+  border-bottom: none;
+}
+
+.feedbackItem:hover {
+  background: var(--theme-window-background-hover, #F9F9F9);
+}
+
+/* Item Header */
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.voter {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.timestamp {
+  font-size: 10px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+/* Item Content */
+.itemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.support {
+  font-size: 11px;
+  color: var(--theme-text, #000000);
+}
+
+.support strong {
+  color: var(--theme-highlight, #000080);
+}
+
+.reason {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--theme-text-secondary, #555555);
+  font-style: italic;
+}
+
+/* More Hint */
+.moreHint {
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border-top: 1px solid var(--theme-border-light, #DDDDDD);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .header {
+    padding: 14px;
+  }
+
+  .title {
+    font-size: 13px;
+  }
+
+  .toggleButton {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 44px;
+  }
+
+  .feedbackItem {
+    padding: 14px;
+  }
+
+  .voter {
+    font-size: 12px;
+  }
+
+  .reason {
+    font-size: 12px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .feedbackItem {
+    padding: 10px;
+  }
+}
+
+/* Farcaster miniapp */
+@media (max-width: 480px) {
+  .header {
+    padding: 12px;
+  }
+
+  .title {
+    font-size: 11px;
+  }
+
+  .toggleButton {
+    font-size: 10px;
+  }
+}
+

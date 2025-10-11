@@ -18,8 +18,6 @@ export const NOUN_SEED_FRAGMENT = gql`
     accessory
     head
     glasses
-    blockNumber
-    createdAtTimestamp
   }
 `;
 
@@ -51,13 +49,6 @@ export const NOUN_FRAGMENT = gql`
     owner {
       ...AccountFields
     }
-    background
-    body
-    accessory
-    head
-    glasses
-    createdAtTimestamp
-    createdAtBlockNumber
   }
 `;
 
@@ -94,23 +85,47 @@ export const AUCTION_FRAGMENT = gql`
 `;
 
 export const VOTE_FRAGMENT = gql`
-  ${ACCOUNT_FRAGMENT}
+  ${DELEGATE_FRAGMENT}
+  ${NOUN_FRAGMENT}
   fragment VoteFields on Vote {
     id
     support
     supportDetailed
     votes
+    votesRaw
     reason
     voter {
-      ...AccountFields
+      ...DelegateFields
+    }
+    nouns {
+      ...NounFields
     }
     blockNumber
     blockTimestamp
+    transactionHash
+    clientId
+  }
+`;
+
+export const PROPOSAL_VERSION_FRAGMENT = gql`
+  fragment ProposalVersionFields on ProposalVersion {
+    id
+    createdBlock
+    createdAt
+    createdTransactionHash
+    targets
+    values
+    signatures
+    calldatas
+    title
+    description
+    updateMessage
   }
 `;
 
 export const PROPOSAL_FRAGMENT = gql`
   ${ACCOUNT_FRAGMENT}
+  ${DELEGATE_FRAGMENT}
   fragment ProposalFields on Proposal {
     id
     title
@@ -123,7 +138,7 @@ export const PROPOSAL_FRAGMENT = gql`
     abstainVotes
     totalSupply
     proposer {
-      ...AccountFields
+      ...DelegateFields
     }
     createdBlock
     createdTimestamp
@@ -672,6 +687,25 @@ export const GET_PROPOSAL_FEEDBACK = gql`
       reason
       createdBlock
       createdTimestamp
+    }
+  }
+`;
+
+export const GET_PROPOSAL_VERSIONS = gql`
+  ${PROPOSAL_VERSION_FRAGMENT}
+  query GetProposalVersions(
+    $proposalId: String!
+    $first: Int = 100
+    $skip: Int = 0
+  ) {
+    proposalVersions(
+      where: { proposal: $proposalId }
+      first: $first
+      skip: $skip
+      orderBy: createdBlock
+      orderDirection: asc
+    ) {
+      ...ProposalVersionFields
     }
   }
 `;

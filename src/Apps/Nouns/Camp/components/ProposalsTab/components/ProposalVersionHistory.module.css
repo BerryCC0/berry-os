@@ -1,0 +1,338 @@
+/* Proposal Version History - Mac OS 8 Style */
+
+.versionHistory {
+  margin-top: 16px;
+  border: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background, #FFFFFF);
+}
+
+/* Header */
+.header {
+  width: 100%;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border: none;
+  border-bottom: 1px solid var(--theme-border, #000000);
+  cursor: pointer;
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+}
+
+.header:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+  font-size: 10px;
+  border-radius: 2px;
+}
+
+.arrow {
+  font-size: 10px;
+}
+
+/* Version List */
+.versionList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Version Item */
+.versionItem {
+  border-bottom: 1px solid var(--theme-border, #DDDDDD);
+}
+
+.versionItem:last-child {
+  border-bottom: none;
+}
+
+.versionHeader {
+  width: 100%;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--theme-window-background, #FFFFFF);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  color: var(--theme-text, #000000);
+  text-align: left;
+}
+
+.versionHeader:hover {
+  background: var(--theme-window-background-hover, #F9F9F9);
+}
+
+.versionHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.versionNumber {
+  font-weight: bold;
+  font-family: var(--font-chicago);
+  color: var(--theme-highlight, #000080);
+  flex-shrink: 0;
+}
+
+.versionTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.versionHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.versionDate {
+  font-size: 10px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+.expandIcon {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Version Details */
+.versionDetails {
+  padding: 12px;
+  background: var(--theme-window-background-alt, #FAFAFA);
+  border-top: 1px solid var(--theme-border, #DDDDDD);
+}
+
+/* Metadata */
+.versionMetadata {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #DDDDDD);
+  font-size: 10px;
+}
+
+.metadataRow {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.metadataLabel {
+  font-weight: bold;
+  font-family: var(--font-chicago);
+  color: var(--theme-text, #000000);
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.metadataValue {
+  color: var(--theme-text-secondary, #555555);
+  font-family: var(--font-geneva);
+  word-break: break-all;
+}
+
+.txLink {
+  color: var(--theme-highlight, #000080);
+  text-decoration: underline;
+}
+
+.txLink:hover {
+  text-decoration: none;
+}
+
+/* Update Message */
+.updateMessage {
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #FFFFCC;
+  border: 1px solid var(--theme-border, #CCCC99);
+}
+
+.updateMessageTitle {
+  margin: 0 0 6px 0;
+  font-family: var(--font-chicago);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.updateMessageText {
+  margin: 0;
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--theme-text, #000000);
+  white-space: pre-wrap;
+}
+
+/* Description */
+.versionDescription {
+  margin-top: 12px;
+}
+
+.descriptionTitle {
+  margin: 0 0 8px 0;
+  font-family: var(--font-chicago);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.descriptionContent {
+  padding: 12px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .badge {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+
+  .versionHeader {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .versionHeaderLeft {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .versionDate {
+    font-size: 9px;
+  }
+
+  .versionDetails {
+    padding: 10px;
+  }
+
+  .versionMetadata {
+    font-size: 9px;
+  }
+
+  .metadataLabel {
+    min-width: 50px;
+  }
+
+  .updateMessage {
+    padding: 6px;
+  }
+
+  .updateMessageTitle,
+  .descriptionTitle {
+    font-size: 10px;
+  }
+
+  .updateMessageText {
+    font-size: 10px;
+  }
+
+  .descriptionContent {
+    max-height: 200px;
+    padding: 8px;
+    font-size: 10px;
+  }
+}
+
+/* Tablet Responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .versionHeader {
+    font-size: 11px;
+  }
+
+  .descriptionContent {
+    max-height: 250px;
+  }
+}
+
+/* Farcaster Miniapp */
+@media (max-width: 480px) {
+  .header {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .badge {
+    font-size: 8px;
+  }
+
+  .versionHeader {
+    padding: 6px 8px;
+    font-size: 9px;
+  }
+
+  .versionDate {
+    font-size: 8px;
+  }
+
+  .versionDetails {
+    padding: 8px;
+  }
+
+  .versionMetadata {
+    font-size: 8px;
+    padding: 6px;
+  }
+
+  .updateMessage {
+    padding: 4px;
+  }
+
+  .updateMessageTitle,
+  .descriptionTitle {
+    font-size: 9px;
+  }
+
+  .updateMessageText {
+    font-size: 9px;
+  }
+
+  .descriptionContent {
+    max-height: 150px;
+    padding: 6px;
+    font-size: 9px;
+  }
+}
+

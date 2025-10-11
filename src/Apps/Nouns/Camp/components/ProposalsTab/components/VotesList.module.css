@@ -1,0 +1,117 @@
+/**
+ * VotesList Styles
+ * Container for vote items with infinite scroll
+ */
+
+.votesList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.votesContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Empty State */
+.empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--theme-text, #000000);
+  font-family: var(--font-geneva);
+}
+
+.empty p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.empty p:first-child {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.emptyHint {
+  color: var(--theme-text-secondary, #666666);
+  font-size: 11px;
+}
+
+/* Loading States */
+.loading {
+  padding: 20px;
+  text-align: center;
+  color: var(--theme-text-secondary, #666666);
+  font-family: var(--font-geneva);
+  font-size: 11px;
+}
+
+.loading p {
+  margin: 0;
+}
+
+/* Sentinel for intersection observer */
+.sentinel {
+  height: 1px;
+  width: 100%;
+}
+
+/* Load More Button */
+.loadMoreButton {
+  padding: 12px 16px;
+  margin: 12px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  color: var(--theme-text, #000000);
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.loadMoreButton:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.loadMoreButton:active {
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+}
+
+.loadMoreButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .loadMoreButton {
+    padding: 16px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  .empty {
+    padding: 60px 20px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .loadMoreButton {
+    padding: 14px;
+  }
+}
+
+/* Farcaster miniapp */
+@media (max-width: 480px) {
+  .loadMoreButton {
+    font-size: 12px;
+  }
+
+  .empty {
+    padding: 40px 16px;
+  }
+}
+

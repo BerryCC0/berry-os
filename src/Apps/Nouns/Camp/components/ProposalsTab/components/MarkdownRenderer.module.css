@@ -1,0 +1,207 @@
+/**
+ * MarkdownRenderer Styles
+ * Mac OS 8 styled markdown rendering
+ */
+
+.markdown {
+  font-family: var(--font-geneva);
+  color: var(--theme-text, #000000);
+  line-height: 1.6;
+}
+
+/* Paragraphs */
+.paragraph {
+  margin: 0 0 12px 0;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* Headings */
+.h1,
+.h2,
+.h3 {
+  font-family: var(--font-chicago);
+  margin: 16px 0 8px 0;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.h1 {
+  font-size: 18px;
+  border-bottom: 1px solid var(--theme-border, #000000);
+  padding-bottom: 4px;
+}
+
+.h2 {
+  font-size: 16px;
+}
+
+.h3 {
+  font-size: 14px;
+}
+
+/* Links */
+.link {
+  color: var(--theme-highlight, #000080);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: var(--theme-highlight-hover, #0000CC);
+}
+
+.link:visited {
+  color: #800080;
+}
+
+/* Images */
+.image {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  margin: 12px 0;
+  border: 1px solid var(--theme-border, #000000);
+  display: block;
+}
+
+/* Lists */
+.ul,
+.ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.li {
+  margin: 4px 0;
+}
+
+.ul .li {
+  list-style-type: square;
+}
+
+.ol .li {
+  list-style-type: decimal;
+}
+
+/* Code */
+.inlineCode {
+  font-family: 'Courier New', monospace;
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border: 1px solid var(--theme-border, #000000);
+  padding: 2px 4px;
+  font-size: 11px;
+}
+
+.pre {
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border: 1px solid var(--theme-border, #000000);
+  padding: 12px;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.codeBlock {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  display: block;
+}
+
+/* Blockquotes */
+.blockquote {
+  margin: 12px 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--theme-border, #000000);
+  background: var(--theme-window-background-alt, #F5F5F5);
+  font-style: italic;
+}
+
+/* Tables */
+.tableWrapper {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--theme-border, #000000);
+  font-size: 11px;
+}
+
+.th,
+.td {
+  border: 1px solid var(--theme-border, #000000);
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.th {
+  background: var(--theme-window-background-alt, #F5F5F5);
+  font-weight: bold;
+  font-family: var(--font-chicago);
+}
+
+/* Horizontal Rule */
+.hr {
+  border: none;
+  border-top: 1px solid var(--theme-border, #000000);
+  margin: 16px 0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .h1 {
+    font-size: 16px;
+  }
+
+  .h2 {
+    font-size: 14px;
+  }
+
+  .h3 {
+    font-size: 13px;
+  }
+
+  .image {
+    max-width: 100%;
+    margin: 8px 0;
+  }
+
+  .pre {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .table {
+    font-size: 10px;
+  }
+
+  .th,
+  .td {
+    padding: 4px 6px;
+  }
+}
+
+/* Farcaster miniapp */
+@media (max-width: 480px) {
+  .h1 {
+    font-size: 14px;
+  }
+
+  .h2 {
+    font-size: 13px;
+  }
+
+  .h3 {
+    font-size: 12px;
+  }
+
+  .paragraph {
+    font-size: 11px;
+  }
+}
+

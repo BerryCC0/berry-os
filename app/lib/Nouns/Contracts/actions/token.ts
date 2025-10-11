@@ -30,7 +30,7 @@ export function delegate(delegatee: Address) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'delegate' as const,
-    args: [delegatee],
+    args: [delegatee] as const,
   };
 }
 
@@ -60,7 +60,7 @@ export function transferFrom(from: Address, to: Address, tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'transferFrom' as const,
-    args: [from, to, tokenId],
+    args: [from, to, tokenId] as const,
   };
 }
 
@@ -86,7 +86,7 @@ export function safeTransferFrom(from: Address, to: Address, tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'safeTransferFrom' as const,
-    args: [from, to, tokenId],
+    args: [from, to, tokenId] as const,
   };
 }
 
@@ -110,7 +110,7 @@ export function approve(to: Address, tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'approve' as const,
-    args: [to, tokenId],
+    args: [to, tokenId] as const,
   };
 }
 
@@ -133,7 +133,7 @@ export function setApprovalForAll(operator: Address, approved: boolean) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'setApprovalForAll' as const,
-    args: [operator, approved],
+    args: [operator, approved] as const,
   };
 }
 
@@ -158,7 +158,7 @@ export function balanceOf(owner: Address) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'balanceOf' as const,
-    args: [owner],
+    args: [owner] as const,
   };
 }
 
@@ -179,7 +179,7 @@ export function ownerOf(tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'ownerOf' as const,
-    args: [tokenId],
+    args: [tokenId] as const,
   };
 }
 
@@ -217,7 +217,7 @@ export function seeds(tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'seeds' as const,
-    args: [tokenId],
+    args: [tokenId] as const,
   };
 }
 
@@ -238,7 +238,7 @@ export function dataURI(tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'dataURI' as const,
-    args: [tokenId],
+    args: [tokenId] as const,
   };
 }
 
@@ -255,7 +255,7 @@ export function tokenURI(tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'tokenURI' as const,
-    args: [tokenId],
+    args: [tokenId] as const,
   };
 }
 
@@ -280,7 +280,7 @@ export function delegates(account: Address) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'delegates' as const,
-    args: [account],
+    args: [account] as const,
   };
 }
 
@@ -301,7 +301,7 @@ export function getCurrentVotes(account: Address) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'getCurrentVotes' as const,
-    args: [account],
+    args: [account] as const,
   };
 }
 
@@ -323,7 +323,7 @@ export function getPriorVotes(account: Address, blockNumber: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'getPriorVotes' as const,
-    args: [account, blockNumber],
+    args: [account, blockNumber] as const,
   };
 }
 
@@ -340,7 +340,7 @@ export function numCheckpoints(account: Address) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'numCheckpoints' as const,
-    args: [account],
+    args: [account] as const,
   };
 }
 
@@ -358,7 +358,7 @@ export function checkpoints(account: Address, index: number) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'checkpoints' as const,
-    args: [account, index],
+    args: [account, index] as const,
   };
 }
 
@@ -379,7 +379,7 @@ export function getApproved(tokenId: bigint) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'getApproved' as const,
-    args: [tokenId],
+    args: [tokenId] as const,
   };
 }
 
@@ -398,6 +398,6 @@ export function isApprovedForAll(owner: Address, operator: Address) {
     address: NOUNS_CONTRACTS.NounsToken.address as Address,
     abi: NounsTokenABI,
     functionName: 'isApprovedForAll' as const,
-    args: [owner, operator],
+    args: [owner, operator] as const,
   };
 }
