@@ -1,0 +1,7 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Padlock -->
+  <rect x="4" y="7" width="8" height="7" rx="0.5" stroke="#000000" stroke-width="1.5" fill="none"/>
+  <path d="M6 7V5C6 3.895 6.895 3 8 3C9.105 3 10 3.895 10 5V7" stroke="#000000" stroke-width="1.5" stroke-linecap="square"/>
+  <circle cx="8" cy="10.5" r="1" fill="#000000"/>
+</svg>
+

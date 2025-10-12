@@ -48,6 +48,14 @@
   flex-shrink: 0;
 }
 
+.networkIconImg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .networkName {
   flex: 1;
   font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
@@ -115,9 +123,12 @@
 }
 
 .checkmark {
-  font-size: 14px;
-  color: var(--theme-highlight-text, var(--mac-white));
+  width: 14px;
+  height: 14px;
+  display: block;
+  object-fit: contain;
   margin-left: auto;
+  filter: brightness(0) invert(1);
 }
 
 /* Divider */

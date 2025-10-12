@@ -49,7 +49,7 @@ export default function AccentColorPicker({ currentAccent, onAccentChange }: Acc
             aria-label={`${option.name} accent color`}
           >
             {currentAccent === option.hex && (
-              <span className={styles.checkmark}>✓</span>
+              <img src="/icons/actions/check.svg" alt="Selected" className={styles.checkmark} />
             )}
           </button>
         ))}
@@ -61,7 +61,7 @@ export default function AccentColorPicker({ currentAccent, onAccentChange }: Acc
           title="Custom color"
           aria-label="Custom color picker"
         >
-          <span className={styles.customIcon}>🎨</span>
+          <img src="/icons/preferences/palette.svg" alt="" className={styles.customIcon} />
         </button>
         
         {/* Reset Button */}

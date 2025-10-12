@@ -7,7 +7,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAccount, useEnsName, useBalance, useEnsAvatar } from 'wagmi';
+import { useAccount, useEnsName, useBalance, useEnsAvatar, useDisconnect } from 'wagmi';
 import { useAppKit } from '@reown/appkit/react';
 import type { Address } from 'viem';
 import WalletInfo from './components/WalletInfo';
@@ -23,6 +23,7 @@ export interface WalletControlCenterProps {
 export default function WalletControlCenter({ onClose }: WalletControlCenterProps) {
   const { address, chain } = useAccount();
   const { open } = useAppKit();
+  const { disconnect } = useDisconnect();
   
   // Wallet data
   const { data: ensName } = useEnsName({
@@ -60,7 +61,7 @@ export default function WalletControlCenter({ onClose }: WalletControlCenterProp
 
   // Handle disconnect
   const handleDisconnect = () => {
-    open({ view: 'Account' });
+    disconnect();
     onClose();
   };
 

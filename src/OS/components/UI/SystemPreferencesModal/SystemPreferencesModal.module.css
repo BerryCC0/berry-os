@@ -145,9 +145,12 @@
 }
 
 .categoryIcon {
-  font-size: 24px;
+  width: 20px;
+  height: 20px;
+  display: block;
+  object-fit: contain;
   flex-shrink: 0;
-  line-height: 1;
+  margin-right: 12px;
 }
 
 .categoryInfo {
@@ -203,8 +206,11 @@
 }
 
 .placeholderIcon {
-  font-size: 64px;
-  margin-bottom: 16px;
+  width: 64px;
+  height: 64px;
+  display: block;
+  object-fit: contain;
+  margin: 0 auto 16px;
   opacity: 0.5;
 }
 

@@ -106,11 +106,9 @@ const INITIAL_STATE: SystemState = {
   pinnedApps: ['finder', 'calculator', 'text-editor'], // Finder always first (deprecated)
   dockPreferences: {
     position: 'bottom',
-    size: 'medium',
+    size: 64,
     pinnedApps: ['finder', 'calculator', 'text-editor'],
     autoHide: false,
-    magnificationEnabled: true,
-    magnificationScale: 1.5,
   },
   activeMenu: null,
   mobile: INITIAL_MOBILE_STATE,

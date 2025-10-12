@@ -50,8 +50,11 @@
 }
 
 .subcategoryIcon {
-  font-size: 16px;
-  line-height: 1;
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 /* ==================== Theme Grid ==================== */
@@ -222,7 +225,7 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 20px;
+  width: 16px;
   height: 20px;
   background: var(--theme-highlight, var(--mac-black));
   color: var(--theme-highlight-text, var(--mac-white));
@@ -304,7 +307,10 @@
 }
 
 .customIcon {
-  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  display: block;
+  object-fit: contain;
   opacity: 0.9;
 }
 
@@ -349,7 +355,10 @@
 }
 
 .comingSoonIcon {
-  font-size: 24px;
+  width: 20px;
+  height: 20px;
+  display: block;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
@@ -418,6 +427,9 @@
   border: 1px solid var(--theme-button-border, #888888);
   border-radius: 4px;
   padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -441,27 +453,46 @@
 .publicBadge {
   position: absolute;
   top: 8px;
-  right: 8px;
-  background: var(--theme-success, #4CAF50);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
   z-index: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 .emptyHint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
   font-size: 11px;
   color: var(--theme-text-secondary, #666666);
   text-align: center;
+  justify-content: center;
   margin: 16px 0 0 0;
   line-height: 1.4;
   padding: 12px;
   background: var(--theme-background-secondary, #F5F5F5);
   border: 1px dashed var(--theme-border-default, #CCCCCC);
   border-radius: 4px;
+}
+
+.hintIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.actionIcon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  object-fit: contain;
 }
 
 /* ==================== Mobile Adaptations ==================== */
@@ -481,7 +512,8 @@
   }
 
   .subcategoryIcon {
-    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
 
   .themeGrid {
@@ -519,7 +551,8 @@
   }
 
   .comingSoonIcon {
-    font-size: 20px;
+    width: 18px;
+    height: 18px;
   }
 }
 

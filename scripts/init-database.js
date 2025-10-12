@@ -90,10 +90,9 @@ async function initDatabase() {
       CREATE TABLE IF NOT EXISTS dock_preferences (
         wallet_address VARCHAR(66) PRIMARY KEY REFERENCES users(wallet_address) ON DELETE CASCADE,
         position VARCHAR(20) DEFAULT 'bottom',
-        size VARCHAR(20) DEFAULT 'medium',
+        size INTEGER DEFAULT 64,
         pinned_apps TEXT[] DEFAULT ARRAY['finder', 'calculator', 'text-editor']::TEXT[],
         auto_hide BOOLEAN DEFAULT false,
-        magnification_enabled BOOLEAN DEFAULT true,
         updated_at TIMESTAMP DEFAULT NOW()
       )
     `;

@@ -156,11 +156,9 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
         useSystemStore.setState({
           dockPreferences: {
             position: preferences.dockPreferences.position as 'bottom' | 'left' | 'right' | 'hidden',
-            size: preferences.dockPreferences.size as 'small' | 'medium' | 'large',
+            size: preferences.dockPreferences.size,
             pinnedApps: preferences.dockPreferences.pinned_apps,
             autoHide: preferences.dockPreferences.auto_hide,
-            magnificationEnabled: preferences.dockPreferences.magnification_enabled,
-            magnificationScale: 1.5, // Not in DB yet, use default
           },
         });
       }
@@ -250,7 +248,6 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
             size: systemState.dockPreferences.size,
             pinned_apps: systemState.dockPreferences.pinnedApps,
             auto_hide: systemState.dockPreferences.autoHide,
-            magnification_enabled: systemState.dockPreferences.magnificationEnabled,
           },
           systemPreferences: {
             double_click_speed: systemState.desktopPreferences.doubleClickSpeed,

@@ -1,0 +1,8 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Trash can -->
+  <path d="M3 5H13V13C13 13.5 12.5 14 12 14H4C3.5 14 3 13.5 3 13V5Z" stroke="#000000" stroke-width="1.5" fill="none"/>
+  <path d="M2 5H14" stroke="#000000" stroke-width="1.5" stroke-linecap="square"/>
+  <path d="M6 3H10" stroke="#000000" stroke-width="1.5" stroke-linecap="square"/>
+  <path d="M6 7V12M8 7V12M10 7V12" stroke="#000000" stroke-width="1.5" stroke-linecap="square"/>
+</svg>
+

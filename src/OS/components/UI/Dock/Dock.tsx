@@ -34,8 +34,7 @@ export default function Dock() {
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
   const [isDraggingDivider, setIsDraggingDivider] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
-  const [dragStartSize, setDragStartSize] = useState(64);
-  const [currentContinuousSize, setCurrentContinuousSize] = useState<number | null>(null); // Persists continuous size
+  const [dragStartSize, setDragStartSize] = useState(64); // Store initial size when drag starts
   const [showAppsLaunchpad, setShowAppsLaunchpad] = useState(false); // Apps Launchpad modal state
   
   const dockRef = useRef<HTMLDivElement>(null);
@@ -220,7 +219,7 @@ export default function Dock() {
     
     setIsDraggingDivider(true);
     setDragStartY(e.clientY);
-    setDragStartSize(getDockItemSize());
+    setDragStartSize(dockPreferences.size); // Capture initial size
   };
 
   // Handle divider dragging (continuous sizing)
@@ -230,37 +229,18 @@ export default function Dock() {
     const handleMouseMove = (e: MouseEvent) => {
       // Dragging UP = larger size, Dragging DOWN = smaller size
       const deltaY = dragStartY - e.clientY; // Inverted for intuitive feel
-      const sizeChange = deltaY * 0.8; // Increased sensitivity for smoother gradient
+      const sizeChange = deltaY * 0.8; // Sensitivity for smooth dragging
       
       // Continuous sizing: 32px (tiny) to 80px (large)
+      // Use dragStartSize as the base, not current dockPreferences.size
       const newSize = Math.max(32, Math.min(80, dragStartSize + sizeChange));
       
-      // Store the exact continuous size FIRST (priority for rendering)
-      setDragStartSize(newSize);
-      setCurrentContinuousSize(newSize);
-      
-      // Map continuous size to discrete category for settings sync (but don't let it interfere)
-      let newSizeCategory: 'small' | 'medium' | 'large';
-      if (newSize < 48) {
-        newSizeCategory = 'small';
-      } else if (newSize > 64) {
-        newSizeCategory = 'large';
-      } else {
-        newSizeCategory = 'medium';
-      }
-
-      // Update category if changed (for settings slider sync, but debounced effect)
-      if (newSizeCategory !== dockPreferences.size) {
-        // Use setTimeout to batch these updates and prevent render thrashing
-        setTimeout(() => {
-          updateDockPreferences({ size: newSizeCategory });
-        }, 0);
-      }
+      // Update dock preferences directly with exact pixel value
+      updateDockPreferences({ size: Math.round(newSize) });
     };
 
     const handleMouseUp = () => {
       setIsDraggingDivider(false);
-      // Keep currentContinuousSize to maintain the final dragged size
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -270,7 +250,7 @@ export default function Dock() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDraggingDivider, dragStartY, dragStartSize, dockPreferences.size, updateDockPreferences]);
+  }, [isDraggingDivider, dragStartY, dragStartSize, updateDockPreferences]);
 
   // ==================== Helper Functions ====================
   
@@ -282,45 +262,9 @@ export default function Dock() {
     );
   };
 
-  // Get dock item size based on preferences or continuous dragging
+  // Get dock item size directly from preferences
   const getDockItemSize = () => {
-    // If actively dragging, use the continuous size from dragStartSize
-    if (isDraggingDivider) {
-      return dragStartSize;
-    }
-    
-    // If we have a persisted continuous size from previous drag, use it
-    if (currentContinuousSize !== null) {
-      return currentContinuousSize;
-    }
-    
-    // Otherwise, use the discrete category from preferences
-    switch (dockPreferences.size) {
-      case 'small': return 48;
-      case 'large': return 80;
-      default: return 64; // medium
-    }
-  };
-  
-  // Reset continuous size when preference category changes from outside (not during drag)
-  useEffect(() => {
-    // Only clear if not dragging AND the continuous size doesn't match the preference
-    if (!isDraggingDivider && currentContinuousSize !== null) {
-      const expectedSize = 
-        dockPreferences.size === 'small' ? 48 :
-        dockPreferences.size === 'large' ? 80 : 64;
-      
-      // If preference changed externally (from settings slider), reset to match
-      if (Math.abs(currentContinuousSize - expectedSize) > 16) {
-        setCurrentContinuousSize(null);
-      }
-    }
-  }, [dockPreferences.size, isDraggingDivider, currentContinuousSize]);
-
-  // Calculate magnification scale for an item (disabled by default)
-  const getMagnificationScale = (appId: string) => {
-    // Magnification disabled - always return 1
-    return 1;
+    return dockPreferences.size;
   };
 
   // ==================== Early Return for Hidden Dock ====================

@@ -1,0 +1,7 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pencil -->
+  <path d="M12 2L14 4L6 12H4V10L12 2Z" stroke="#000000" stroke-width="1.5" fill="none" stroke-linejoin="miter"/>
+  <path d="M11 3L13 5" stroke="#000000" stroke-width="1.5" stroke-linecap="square"/>
+  <path d="M3 13H13" stroke="#000000" stroke-width="1.5" stroke-linecap="square"/>
+</svg>
+

@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAppKit } from '@reown/appkit/react';
 import type { Address } from 'viem';
 import styles from './WalletInfo.module.css';
 
@@ -18,6 +19,7 @@ interface WalletInfoProps {
 
 export default function WalletInfo({ address, ensName, ensAvatar, chainName }: WalletInfoProps) {
   const [copied, setCopied] = useState(false);
+  const { open } = useAppKit();
 
   // Format address
   const formatAddress = (addr: string) => {
@@ -35,6 +37,11 @@ export default function WalletInfo({ address, ensName, ensAvatar, chainName }: W
     }
   };
 
+  // Open manage wallets view
+  const handleManageWallets = () => {
+    open({ view: 'Account' });
+  };
+
   return (
     <div className={styles.walletInfo}>
       <div className={styles.header}>
@@ -43,7 +50,7 @@ export default function WalletInfo({ address, ensName, ensAvatar, chainName }: W
           {ensAvatar ? (
             <img src={ensAvatar} alt="" className={styles.avatarImage} />
           ) : (
-            <span className={styles.avatarIcon}>💼</span>
+            <img src="/icons/actions/wallet.svg" alt="" className={styles.avatarIcon} />
           )}
         </div>
 
@@ -65,7 +72,11 @@ export default function WalletInfo({ address, ensName, ensAvatar, chainName }: W
           onClick={handleCopy}
           title={copied ? 'Copied!' : 'Copy address'}
         >
-          {copied ? '✓' : '📋'}
+          {copied ? (
+            <img src="/icons/actions/check.svg" alt="Copied" className={styles.copyIcon} />
+          ) : (
+            <img src="/icons/actions/copy.svg" alt="Copy" className={styles.copyIcon} />
+          )}
         </button>
       </div>
 
@@ -74,6 +85,14 @@ export default function WalletInfo({ address, ensName, ensAvatar, chainName }: W
         <span className={styles.networkDot}></span>
         <span className={styles.networkText}>Connected to {chainName}</span>
       </div>
+
+      {/* Manage Wallets Button */}
+      <button
+        className={styles.manageWalletsButton}
+        onClick={handleManageWallets}
+      >
+        Manage Wallets
+      </button>
     </div>
   );
 }

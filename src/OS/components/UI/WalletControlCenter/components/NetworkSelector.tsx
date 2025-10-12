@@ -36,28 +36,25 @@ export default function NetworkSelector() {
     setIsExpanded(false);
   };
 
-  // Get network icon
-  const getNetworkIcon = (chainId?: number, type?: string) => {
-    if (type === 'solana') return '🟣';
-    if (type === 'bitcoin') return '🟠';
+  // Get network icon path
+  const getNetworkIcon = (chainId?: number, type?: string): string => {
+    if (type === 'solana') return '/icons/networks/solana.svg';
+    if (type === 'bitcoin') return '/icons/networks/bitcoin.svg';
     
     switch (chainId) {
       case 1: // Ethereum Mainnet
-        return '🔷';
-      case 8453: // Base
-        return '🔵';
-      case 56: // BSC
-        return '🟡';
-      case 999: // Hyperliquid
-        return '⚡';
-      case 998: // Hyperliquid Testnet
-        return '⚡';
       case 11155111: // Sepolia
-        return '🔷';
+        return '/icons/networks/ethereum.svg';
+      case 8453: // Base
       case 84532: // Base Sepolia
-        return '🔵';
+        return '/icons/networks/base.svg';
+      case 56: // BSC
+        return '/icons/networks/bsc.svg';
+      case 999: // Hyperliquid
+      case 998: // Hyperliquid Testnet
+        return '/icons/networks/hyperliquid.svg';
       default:
-        return '🌐';
+        return '/icons/networks/default.svg';
     }
   };
 
@@ -72,7 +69,7 @@ export default function NetworkSelector() {
     if (bitcoin.isConnected) {
       return { icon: getNetworkIcon(undefined, 'bitcoin'), name: 'Bitcoin' };
     }
-    return { icon: '🌐', name: 'No Network' };
+    return { icon: '/icons/networks/default.svg', name: 'No Network' };
   };
 
   const currentNetwork = getCurrentNetworkDisplay();
@@ -86,7 +83,7 @@ export default function NetworkSelector() {
         onClick={() => setIsExpanded(!isExpanded)}
         disabled={isEVMSwitching}
       >
-        <span className={styles.networkIcon}>{currentNetwork.icon}</span>
+        <img src={currentNetwork.icon} alt={currentNetwork.name} className={styles.networkIconImg} />
         <span className={styles.networkName}>{currentNetwork.name}</span>
         <span className={styles.expandIcon}>{isExpanded ? '▲' : '▼'}</span>
       </button>
@@ -102,10 +99,10 @@ export default function NetworkSelector() {
               onClick={() => handleEVMNetworkSwitch(network.id)}
               disabled={chain?.id === network.id || isEVMSwitching}
             >
-              <span className={styles.networkIcon}>{getNetworkIcon(network.id)}</span>
+              <img src={getNetworkIcon(network.id)} alt={network.name} className={styles.networkIconImg} />
               <span className={styles.networkName}>{network.name}</span>
               {chain?.id === network.id && (
-                <span className={styles.checkmark}>✓</span>
+                <img src="/icons/actions/check.svg" alt="Active" className={styles.checkmark} />
               )}
             </button>
           ))}
@@ -120,7 +117,7 @@ export default function NetworkSelector() {
             className={styles.networkItem}
             onClick={handleCrossChainSwitch}
           >
-            <span className={styles.networkIcon}>🔄</span>
+            <img src="/icons/actions/swap.svg" alt="" className={styles.networkIconImg} />
             <span className={styles.networkName}>
               {activeChainType === 'evm' ? 'Switch to Solana/Bitcoin' : 
                activeChainType === 'solana' ? 'Switch to EVM/Bitcoin' : 

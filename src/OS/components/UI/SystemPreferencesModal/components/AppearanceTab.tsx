@@ -381,13 +381,13 @@ export default function AppearanceTab({
       <CollapsibleSection
         title="Themes"
         description="Choose your Berry OS appearance"
-        icon="🎨"
+        icon="/icons/preferences/appearance.svg"
         defaultExpanded={false}
       >
         {/* Built-In Themes - Phase 8D: All 9 themes consolidated */}
         <div className={styles.themeSubcategory}>
           <h4 className={styles.subcategoryTitle}>
-            <span className={styles.subcategoryIcon}>💎</span>
+            <img src="/icons/preferences/diamond.svg" alt="" className={styles.subcategoryIcon} />
             Built-In Themes
           </h4>
           <div className={styles.themeGrid}>
@@ -406,7 +406,7 @@ export default function AppearanceTab({
                 <div className={styles.themeName}>{theme.name}</div>
                 <div className={styles.themeDescription}>{theme.description}</div>
                 {activeTheme === theme.id && !customTheme && (
-                  <div className={styles.checkmark}>✓</div>
+                  <img src="/icons/actions/check.svg" alt="Selected" className={styles.checkmark} />
                 )}
               </button>
             ))}
@@ -416,7 +416,7 @@ export default function AppearanceTab({
         {/* Custom Themes: Create + Saved Themes (Inline) */}
         <div className={styles.themeSubcategory}>
           <h4 className={styles.subcategoryTitle}>
-            <span className={styles.subcategoryIcon}>🎨</span>
+            <img src="/icons/preferences/palette.svg" alt="" className={styles.subcategoryIcon} />
             Custom Themes
           </h4>
           
@@ -436,7 +436,7 @@ export default function AppearanceTab({
             >
               <div className={styles.themePreview}>
                 <div className={styles.customPreview}>
-                  <div className={styles.customIcon}>🎨</div>
+                  <img src="/icons/preferences/palette.svg" alt="" className={styles.customIcon} />
                   <div className={styles.customLabel}>
                     {isThemeCustomized ? 'Edit Theme' : 'Create Theme'}
                   </div>
@@ -445,7 +445,7 @@ export default function AppearanceTab({
               <div className={styles.themeName}>Theme Builder</div>
               <div className={styles.themeDescription}>Create your own theme with 150+ color controls</div>
               {isThemeCustomized && (
-                <div className={styles.checkmark}>✓</div>
+                <img src="/icons/actions/check.svg" alt="Selected" className={styles.checkmark} />
               )}
             </button>
             
@@ -483,10 +483,10 @@ export default function AppearanceTab({
                     <div className={styles.themeName}>{theme.name}</div>
                     <div className={styles.themeDescription}>{theme.description || 'Custom theme'}</div>
                     {isSelected && (
-                      <div className={styles.checkmark}>✓</div>
+                      <img src="/icons/actions/check.svg" alt="Selected" className={styles.checkmark} />
                     )}
                     {theme.isPublic && (
-                      <div className={styles.publicBadge} title="Shared publicly">🌍</div>
+                      <img src="/icons/preferences/share.svg" alt="Public" className={styles.publicBadge} title="Shared publicly" />
                     )}
                   </button>
                   
@@ -497,35 +497,39 @@ export default function AppearanceTab({
                       onClick={() => handleEditSavedTheme(theme)}
                       title="Edit theme"
                     >
-                      ✏️
+                      <img src="/icons/preferences/edit.svg" alt="Edit" className={styles.actionIcon} />
                     </button>
                     <button 
                       className={styles.actionButton}
                       onClick={() => handleDuplicateSavedTheme(theme)}
                       title="Duplicate theme"
                     >
-                      📋
+                      <img src="/icons/preferences/duplicate.svg" alt="Duplicate" className={styles.actionIcon} />
                     </button>
                     <button 
                       className={styles.actionButton}
                       onClick={() => handleExportSavedTheme(theme)}
                       title="Export as JSON"
                     >
-                      💾
+                      <img src="/icons/preferences/save.svg" alt="Export" className={styles.actionIcon} />
                     </button>
                     <button 
                       className={styles.actionButton}
                       onClick={() => handleShareSavedTheme(theme)}
                       title={theme.isPublic ? 'Make private' : 'Share publicly'}
                     >
-                      {theme.isPublic ? '🔒' : '🌍'}
+                      {theme.isPublic ? (
+                        <img src="/icons/preferences/lock.svg" alt="Make private" className={styles.actionIcon} />
+                      ) : (
+                        <img src="/icons/preferences/share.svg" alt="Share publicly" className={styles.actionIcon} />
+                      )}
                     </button>
                     <button 
                       className={styles.actionButton}
                       onClick={() => handleDeleteSavedTheme(theme)}
                       title="Delete theme"
                     >
-                      🗑️
+                      <img src="/icons/preferences/delete.svg" alt="Delete" className={styles.actionIcon} />
                     </button>
                   </div>
                 </div>
@@ -536,14 +540,16 @@ export default function AppearanceTab({
           {/* Empty state when no saved themes and wallet is connected */}
           {!isLoadingThemes && connectedWallet && savedThemes.length === 0 && (
             <p className={styles.emptyHint}>
-              💡 Create and save your first custom theme using the Theme Builder above!
+              <img src="/icons/preferences/lightbulb.svg" alt="" className={styles.hintIcon} />
+              Create and save your first custom theme using the Theme Builder above!
             </p>
           )}
           
           {/* Prompt to connect wallet */}
           {!connectedWallet && (
             <p className={styles.emptyHint}>
-              🔌 Connect your wallet to save and manage custom themes
+              <img src="/icons/preferences/plug.svg" alt="" className={styles.hintIcon} />
+              Connect your wallet to save and manage custom themes
             </p>
           )}
         </div>
@@ -553,7 +559,7 @@ export default function AppearanceTab({
       <CollapsibleSection
         title="Accent Color"
         description="Quick accent color from the Nouns palette"
-        icon="🎨"
+        icon="/icons/preferences/palette.svg"
         defaultExpanded={false}
       >
         <AccentColorPicker
@@ -566,7 +572,7 @@ export default function AppearanceTab({
       <CollapsibleSection
         title="Desktop Wallpaper"
         description="Choose a background for your desktop"
-        icon="🖼️"
+        icon="/icons/preferences/wallpaper.svg"
         defaultExpanded={false}
       >
         <div className={styles.wallpaperGrid}>
@@ -610,7 +616,7 @@ export default function AppearanceTab({
       <CollapsibleSection
         title="Advanced Options"
         description="Fine-tune window appearance, scrollbars, and typography"
-        icon="⚙️"
+        icon="/icons/preferences/system.svg"
         defaultExpanded={false}
       >
         <AdvancedOptions
@@ -624,33 +630,33 @@ export default function AppearanceTab({
       <CollapsibleSection
         title="Coming Soon"
         description="Future customization features"
-        icon="🚀"
+        icon="/icons/preferences/lightbulb.svg"
         defaultExpanded={false}
       >
         <div className={styles.comingSoon}>
           <div className={styles.comingSoonItem}>
-            <span className={styles.comingSoonIcon}>🖼️</span>
+            <img src="/icons/preferences/wallpaper.svg" alt="" className={styles.comingSoonIcon} />
             <div>
               <strong>Custom Wallpapers</strong>
               <p>Upload your own wallpapers via IPFS</p>
             </div>
           </div>
           <div className={styles.comingSoonItem}>
-            <span className={styles.comingSoonIcon}>💾</span>
+            <img src="/icons/preferences/save.svg" alt="" className={styles.comingSoonIcon} />
             <div>
               <strong>Theme Import/Export</strong>
               <p>Share your custom themes with others</p>
             </div>
           </div>
           <div className={styles.comingSoonItem}>
-            <span className={styles.comingSoonIcon}>🏪</span>
+            <img src="/icons/preferences/share.svg" alt="" className={styles.comingSoonIcon} />
             <div>
               <strong>Theme Marketplace</strong>
               <p>Browse and install community themes</p>
             </div>
           </div>
           <div className={styles.comingSoonItem}>
-            <span className={styles.comingSoonIcon}>🎭</span>
+            <img src="/icons/preferences/mask.svg" alt="" className={styles.comingSoonIcon} />
             <div>
               <strong>Dynamic Themes</strong>
               <p>Themes that change based on time of day</p>

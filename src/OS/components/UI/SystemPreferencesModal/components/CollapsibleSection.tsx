@@ -33,7 +33,7 @@ export default function CollapsibleSection({
         aria-expanded={isExpanded}
       >
         <div className={styles.headerLeft}>
-          {icon && <span className={styles.icon}>{icon}</span>}
+          {icon && <img src={icon} alt="" className={styles.icon} />}
           <div className={styles.headerText}>
             <h3 className={styles.title}>{title}</h3>
             {description && <p className={styles.description}>{description}</p>}

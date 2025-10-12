@@ -55,10 +55,9 @@ export interface WindowState {
 
 export interface DockPreferences {
   position: string;
-  size: string;
+  size: number;
   pinned_apps: string[];
   auto_hide: boolean;
-  magnification_enabled: boolean;
 }
 
 export interface SystemPreferences {
@@ -162,7 +161,7 @@ export async function loadUserPreferences(
 
   // Load dock preferences
   const dockResult = await sql`
-    SELECT position, size, pinned_apps, auto_hide, magnification_enabled
+    SELECT position, size, pinned_apps, auto_hide
     FROM dock_preferences
     WHERE wallet_address = ${walletAddress}
   `;
@@ -201,7 +200,6 @@ export async function loadUserPreferences(
     size: row.size,
     pinned_apps: row.pinned_apps,
     auto_hide: row.auto_hide,
-    magnification_enabled: row.magnification_enabled,
   });
 
   // Helper to convert DB row to SystemPreferences
@@ -371,11 +369,11 @@ export async function saveDockPreferences(
 
   await sql`
     INSERT INTO dock_preferences (
-      wallet_address, position, size, pinned_apps, auto_hide, magnification_enabled
+      wallet_address, position, size, pinned_apps, auto_hide
     )
     VALUES (
       ${walletAddress}, ${dock.position}, ${dock.size}, ${dock.pinned_apps},
-      ${dock.auto_hide}, ${dock.magnification_enabled}
+      ${dock.auto_hide}
     )
     ON CONFLICT (wallet_address)
     DO UPDATE SET
@@ -383,7 +381,6 @@ export async function saveDockPreferences(
       size = EXCLUDED.size,
       pinned_apps = EXCLUDED.pinned_apps,
       auto_hide = EXCLUDED.auto_hide,
-      magnification_enabled = EXCLUDED.magnification_enabled,
       updated_at = NOW()
   `;
 }
@@ -470,10 +467,9 @@ export function getDefaultThemePreferences(): ThemePreferences {
 export function getDefaultDockPreferences(): DockPreferences {
   return {
     position: 'bottom',
-    size: 'medium',
+    size: 64,
     pinned_apps: ['finder', 'calculator', 'text-editor'],
     auto_hide: false,
-    magnification_enabled: true,
   };
 }
 

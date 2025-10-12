@@ -52,7 +52,8 @@ export default function DesktopAndDockTab({
       {/* Wallet notice */}
       {!connectedWallet && (
         <div className={styles.notice}>
-          <strong>💡 Tip:</strong> Connect your wallet to save preferences across sessions.
+          <img src="/icons/preferences/lightbulb.svg" alt="" className={styles.noticeIcon} />
+          <strong>Tip:</strong> Connect your wallet to save preferences across sessions.
           Changes will persist for this session only.
         </div>
       )}
@@ -61,12 +62,13 @@ export default function DesktopAndDockTab({
       <CollapsibleSection
         title="Dock"
         description="Position and behavior"
-        icon="📍"
+        icon="/icons/preferences/desktop.svg"
         defaultExpanded={false}
       >
         <div className={styles.infoBox}>
           <p className={styles.infoText}>
-            💡 <strong>Tip:</strong> Drag the divider line on the dock (between pinned apps and the Apps folder) 
+            <img src="/icons/preferences/lightbulb.svg" alt="" className={styles.infoIcon} />
+            <strong>Tip:</strong> Drag the divider line on the dock (between pinned apps and the Apps folder) 
             up or down to resize the dock to any size you like.
           </p>
         </div>
@@ -106,7 +108,7 @@ export default function DesktopAndDockTab({
       <CollapsibleSection
         title="Desktop"
         description="Icon arrangement and behavior"
-        icon="🖥️"
+        icon="/icons/preferences/desktop.svg"
         defaultExpanded={false}
       >
         <div className={styles.settingGroup}>
@@ -157,7 +159,7 @@ export default function DesktopAndDockTab({
       <CollapsibleSection
         title="Windows"
         description="Window management preferences"
-        icon="🪟"
+        icon="/icons/preferences/desktop.svg"
         defaultExpanded={false}
       >
         <div className={styles.settingGroup}>
@@ -171,7 +173,8 @@ export default function DesktopAndDockTab({
 
         <div className={styles.infoBox}>
           <p className={styles.infoText}>
-            ℹ️ Window positions and sizes are automatically saved as you work. 
+            <img src="/icons/preferences/info.svg" alt="" className={styles.infoIcon} />
+            Window positions and sizes are automatically saved as you work. 
             Enable this option to restore them on your next visit.
           </p>
         </div>

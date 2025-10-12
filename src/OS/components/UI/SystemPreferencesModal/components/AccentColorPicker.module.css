@@ -42,11 +42,11 @@
 }
 
 .checkmark {
-  color: #FFFFFF;
-  font-size: 20px;
-  font-weight: bold;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8),
-               0 1px 2px rgba(0, 0, 0, 0.9);
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+  filter: brightness(0) invert(1) drop-shadow(0 0 4px rgba(0, 0, 0, 0.8));
   pointer-events: none;
 }
 
@@ -64,7 +64,10 @@
 }
 
 .customIcon {
-  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  display: block;
+  object-fit: contain;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 

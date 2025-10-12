@@ -19,7 +19,7 @@
 .avatar {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  border-radius: 5%;
   background: var(--theme-button-face, var(--mac-white));
   border: 1px solid var(--theme-window-border, var(--mac-gray-2));
   display: flex;
@@ -36,7 +36,10 @@
 }
 
 .avatarIcon {
-  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  display: block;
+  object-fit: contain;
 }
 
 /* Identity */
@@ -94,6 +97,13 @@
   transform: scale(0.95);
 }
 
+.copyIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+}
+
 /* Network indicator */
 .network {
   display: flex;
@@ -129,6 +139,39 @@
   color: var(--theme-text, var(--mac-black));
 }
 
+/* Manage Wallets Button */
+.manageWalletsButton {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: var(--theme-button-face, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  border-radius: 4px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+  font-weight: 500;
+}
+
+.manageWalletsButton:hover {
+  background: var(--theme-button-highlight, var(--mac-gray-5));
+  border-color: var(--theme-highlight, var(--mac-black));
+}
+
+.manageWalletsButton:active {
+  background: var(--theme-highlight, var(--mac-black));
+  color: var(--theme-highlight-text, var(--mac-white));
+  transform: scale(0.98);
+}
+
+.manageWalletsButton:focus-visible {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: 2px;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .ensName {
@@ -138,6 +181,11 @@
   .address,
   .addressOnly {
     font-size: 11px;
+  }
+
+  .manageWalletsButton {
+    font-size: 12px;
+    padding: 9px 14px;
   }
 }
 

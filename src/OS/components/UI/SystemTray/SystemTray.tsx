@@ -74,7 +74,7 @@ export default function SystemTray() {
             onClick={handleWalletClick}
             title={`${ensName ? `${ensName}\n` : ''}${address}\nChain: ${chain?.name || 'Unknown'}\n\nClick to open Wallet Control Center`}
           >
-            <span className={styles.walletIcon}>💼</span>
+            <img src="/icons/system/wallet-connection.svg" alt="" className={styles.walletIcon} />
             <span className={styles.walletAddress}>{getDisplayName()}</span>
           </button>
         ) : (
@@ -83,7 +83,7 @@ export default function SystemTray() {
             onClick={handleWalletClick}
             title="Connect Wallet"
           >
-            <span className={styles.walletIcon}>🔌</span>
+            <img src="/icons/system/wallet-connection.svg" alt="" className={styles.walletIcon} />
             <span className={styles.walletText}>Connect</span>
           </button>
         )}

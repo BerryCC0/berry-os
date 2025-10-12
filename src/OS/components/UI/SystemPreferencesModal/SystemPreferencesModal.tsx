@@ -28,25 +28,25 @@ const CATEGORIES: CategoryItem[] = [
   {
     id: 'appearance',
     label: 'Appearance',
-    icon: '🎨',
+    icon: '/icons/preferences/appearance.svg',
     description: 'Themes, colors, fonts, and visual customization',
   },
   {
     id: 'desktop-dock',
     label: 'Desktop & Dock',
-    icon: '🖥️',
+    icon: '/icons/preferences/desktop.svg',
     description: 'Desktop icons, Dock position, and window behavior',
   },
   {
     id: 'system',
     label: 'System',
-    icon: '⚙️',
+    icon: '/icons/preferences/system.svg',
     description: 'General system settings and preferences',
   },
   {
     id: 'about',
     label: 'About',
-    icon: 'ℹ️',
+    icon: '/icons/preferences/info.svg',
     description: 'System information and version',
   },
 ];
@@ -155,7 +155,7 @@ export default function SystemPreferencesModal({ onClose }: SystemPreferencesMod
       case 'system':
         return (
           <div className={styles.placeholder}>
-            <div className={styles.placeholderIcon}>⚙️</div>
+            <img src="/icons/preferences/system.svg" alt="" className={styles.placeholderIcon} />
             <h3>System Settings</h3>
             <p>System preferences coming soon</p>
           </div>
@@ -221,7 +221,7 @@ export default function SystemPreferencesModal({ onClose }: SystemPreferencesMod
                 }`}
                 onClick={() => setActiveCategory(category.id)}
               >
-                <span className={styles.categoryIcon}>{category.icon}</span>
+                <img src={category.icon} alt="" className={styles.categoryIcon} />
                 <div className={styles.categoryInfo}>
                   <div className={styles.categoryLabel}>{category.label}</div>
                   <div className={styles.categoryDescription}>{category.description}</div>

@@ -86,11 +86,9 @@ export interface DesktopPreferences {
 
 export interface DockPreferences {
   position: 'bottom' | 'left' | 'right' | 'hidden'; // default 'bottom'
-  size: 'small' | 'medium' | 'large';    // default 'medium'
+  size: number;                          // Pixel size 32-80, default 64
   pinnedApps: string[];                  // default ['finder', ...]
   autoHide: boolean;                     // default false
-  magnificationEnabled: boolean;         // default true
-  magnificationScale: number;            // 1.0-2.0, default 1.5
 }
 
 export interface SystemState {

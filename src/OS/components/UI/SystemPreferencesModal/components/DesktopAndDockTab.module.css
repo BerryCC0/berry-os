@@ -12,6 +12,9 @@
 /* ==================== Notice ==================== */
 
 .notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 12px 16px;
   background: var(--theme-highlight, var(--mac-black));
   color: var(--theme-highlight-text, var(--mac-white));
@@ -24,6 +27,15 @@
 
 .notice strong {
   font-weight: bold;
+}
+
+.noticeIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: brightness(0) invert(1);
 }
 
 /* ==================== Setting Groups ==================== */
@@ -64,11 +76,24 @@
 }
 
 .infoText {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
   font-size: 11px;
   color: var(--theme-text-secondary, #666666);
   margin: 0;
   line-height: 1.5;
+}
+
+.infoIcon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-top: 2px;
+  opacity: 0.7;
 }
 
 /* ==================== Mobile Adaptations ==================== */

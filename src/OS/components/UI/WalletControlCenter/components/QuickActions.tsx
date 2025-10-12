@@ -20,9 +20,9 @@ export default function QuickActions({ onClose }: QuickActionsProps) {
   const [showReceive, setShowReceive] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Handle Send - Opens Appkit account view
+  // Handle Send - Opens Appkit wallet send view
   const handleSend = () => {
-    open({ view: 'Account' });
+    open({ view: 'WalletSend' });
     onClose();
   };
 
@@ -61,22 +61,22 @@ export default function QuickActions({ onClose }: QuickActionsProps) {
       
       <div className={styles.actions}>
         <button className={styles.actionButton} onClick={handleSend}>
-          <span className={styles.actionIcon}>📤</span>
+          <img src="/icons/actions/send.svg" alt="" className={styles.actionIcon} />
           <span className={styles.actionLabel}>Send</span>
         </button>
 
         <button className={styles.actionButton} onClick={handleReceive}>
-          <span className={styles.actionIcon}>📥</span>
+          <img src="/icons/actions/receive.svg" alt="" className={styles.actionIcon} />
           <span className={styles.actionLabel}>Receive</span>
         </button>
 
         <button className={styles.actionButton} onClick={handleBuy}>
-          <span className={styles.actionIcon}>💳</span>
+          <img src="/icons/actions/buy.svg" alt="" className={styles.actionIcon} />
           <span className={styles.actionLabel}>Buy</span>
         </button>
 
         <button className={styles.actionButton} onClick={handleSwap}>
-          <span className={styles.actionIcon}>🔄</span>
+          <img src="/icons/actions/swap.svg" alt="" className={styles.actionIcon} />
           <span className={styles.actionLabel}>Swap</span>
         </button>
       </div>
@@ -92,7 +92,17 @@ export default function QuickActions({ onClose }: QuickActionsProps) {
             className={styles.copyAddressButton}
             onClick={handleCopy}
           >
-            {copied ? '✓ Copied!' : '📋 Copy Address'}
+            {copied ? (
+              <>
+                <img src="/icons/actions/check.svg" alt="" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
+                Copied!
+              </>
+            ) : (
+              <>
+                <img src="/icons/actions/copy.svg" alt="" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
+                Copy Address
+              </>
+            )}
           </button>
         </div>
       )}
