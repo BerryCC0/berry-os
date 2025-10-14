@@ -806,3 +806,113 @@ export const GET_DAO_STATS = gql`
   }
 `;
 
+// ============================================================================
+// Activity Feed Queries (All Votes & Signals)
+// ============================================================================
+
+export const GET_CANDIDATE_FEEDBACKS = gql`
+  query GetCandidateFeedbacks(
+    $first: Int = 100
+    $skip: Int = 0
+  ) {
+    candidateFeedbacks(
+      first: $first
+      skip: $skip
+      orderBy: createdTimestamp
+      orderDirection: desc
+    ) {
+      id
+      voter {
+        id
+      }
+      supportDetailed
+      reason
+      votes
+      createdBlock
+      createdTimestamp
+      candidate {
+        id
+        slug
+      }
+    }
+  }
+`;
+
+export const GET_CANDIDATE_SIGNATURES = gql`
+  query GetCandidateSignatures(
+    $first: Int = 100
+    $skip: Int = 0
+  ) {
+    proposalCandidateSignatures(
+      first: $first
+      skip: $skip
+      orderBy: createdTimestamp
+      orderDirection: desc
+    ) {
+      id
+      signer {
+        id
+      }
+      reason
+      expirationTimestamp
+      createdBlock
+      createdTimestamp
+      content {
+        id
+        title
+        proposer
+      }
+    }
+  }
+`;
+
+export const GET_ALL_VOTES = gql`
+  ${VOTE_FRAGMENT}
+  query GetAllVotes(
+    $first: Int = 100
+    $skip: Int = 0
+  ) {
+    votes(
+      first: $first
+      skip: $skip
+      orderBy: blockTimestamp
+      orderDirection: desc
+    ) {
+      ...VoteFields
+      proposal {
+        id
+        title
+        status
+      }
+    }
+  }
+`;
+
+export const GET_ALL_PROPOSAL_FEEDBACKS = gql`
+  query GetAllProposalFeedbacks(
+    $first: Int = 100
+    $skip: Int = 0
+  ) {
+    proposalFeedbacks(
+      first: $first
+      skip: $skip
+      orderBy: createdTimestamp
+      orderDirection: desc
+    ) {
+      id
+      voter {
+        id
+      }
+      supportDetailed
+      reason
+      createdBlock
+      createdTimestamp
+      proposal {
+        id
+        title
+        status
+      }
+    }
+  }
+`;
+

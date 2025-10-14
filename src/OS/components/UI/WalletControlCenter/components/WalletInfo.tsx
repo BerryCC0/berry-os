@@ -1,29 +1,42 @@
 /**
  * WalletInfo Component
  * Displays wallet address, ENS name, and connection status
+ * Supports EVM, Solana, and Bitcoin chains
  */
 
 'use client';
 
 import { useState } from 'react';
 import { useAppKit } from '@reown/appkit/react';
-import type { Address } from 'viem';
 import styles from './WalletInfo.module.css';
 
+type ChainType = 'evm' | 'solana' | 'bitcoin';
+
 interface WalletInfoProps {
-  address: Address;
+  address: string;
   ensName?: string;
   ensAvatar?: string;
   chainName: string;
+  chainType: ChainType | null;
 }
 
-export default function WalletInfo({ address, ensName, ensAvatar, chainName }: WalletInfoProps) {
+export default function WalletInfo({ address, ensName, ensAvatar, chainName, chainType }: WalletInfoProps) {
   const [copied, setCopied] = useState(false);
   const { open } = useAppKit();
 
-  // Format address
-  const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  // Format address based on chain type
+  const formatAddress = (addr: string, type: ChainType | null) => {
+    // Different chains have different address formats
+    if (type === 'solana') {
+      // Solana addresses are longer (base58, ~44 chars)
+      return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
+    } else if (type === 'bitcoin') {
+      // Bitcoin addresses vary in length
+      return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+    } else {
+      // EVM addresses (0x + 40 hex chars)
+      return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+    }
   };
 
   // Copy address to clipboard
@@ -59,10 +72,10 @@ export default function WalletInfo({ address, ensName, ensAvatar, chainName }: W
           {ensName ? (
             <>
               <div className={styles.ensName}>{ensName}</div>
-              <div className={styles.address}>{formatAddress(address)}</div>
+              <div className={styles.address}>{formatAddress(address, chainType)}</div>
             </>
           ) : (
-            <div className={styles.addressOnly}>{formatAddress(address)}</div>
+            <div className={styles.addressOnly}>{formatAddress(address, chainType)}</div>
           )}
         </div>
 

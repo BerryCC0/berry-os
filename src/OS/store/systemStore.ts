@@ -15,6 +15,7 @@ import type { Window, WindowConfig } from '../types/window';
 import { eventBus } from '../lib/eventBus';
 import { addAppToURL, removeAppFromURL } from '../../../app/lib/utils/stateUtils';
 import * as screenReader from '../lib/screenReader';
+import * as windowManager from '../lib/windowManager';
 import type { UserPreferences } from '../../../app/lib/Persistence/persistence';
 import { initializeApplicationsFolder } from '../lib/filesystem';
 
@@ -141,16 +142,43 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     const { usePreferencesStore } = require('./preferencesStore');
     const savedPosition = usePreferencesStore.getState().restoreWindowPosition(config.appId);
     
+    // Calculate viewport dimensions for smart positioning
+    const viewportWidth = typeof globalThis.window !== 'undefined' ? globalThis.window.innerWidth : 1920;
+    const viewportHeight = typeof globalThis.window !== 'undefined' ? globalThis.window.innerHeight : 1080;
+    const menuBarHeight = 20;
+    
+    // Get dock height - ensure element exists and has been rendered
+    const dockElement = typeof document !== 'undefined' ? document.querySelector('[class*="dock"]') : null;
+    const dockHeight = dockElement?.getBoundingClientRect().height || 80;
+    
+    // CRITICAL: Ensure dock height is reasonable (between 60-120px typical range)
+    const validatedDockHeight = Math.max(60, Math.min(120, dockHeight));
+    
+    // Calculate available height for windows
+    const availableHeight = viewportHeight - menuBarHeight - validatedDockHeight;
+    
+    // Smart positioning: center large windows, cascade smaller ones
+    const isLargeWindow = config.defaultSize.height > availableHeight * 0.6;
+    
+    const defaultPosition = config.initialPosition ?? (isLargeWindow
+      ? {
+          // Center large windows to ensure resize corner is visible
+          x: Math.max(20, (viewportWidth - config.defaultSize.width) / 2),
+          y: Math.max(20, (availableHeight - config.defaultSize.height) / 2)
+        }
+      : {
+          // Cascade smaller windows with better starting position
+          x: 100 + (Object.keys(get().windows).length * 30),
+          y: 60 + (Object.keys(get().windows).length * 30)
+        });
+    
     const window: Window = {
       id: windowId,
       appId: config.appId,
       title: config.title,
       position: savedPosition 
         ? { x: savedPosition.x, y: savedPosition.y }
-        : config.initialPosition ?? {
-            x: 100 + (Object.keys(get().windows).length * 30), // Cascade windows
-            y: 100 + (Object.keys(get().windows).length * 30),
-          },
+        : defaultPosition,
       size: savedPosition
         ? { width: savedPosition.width, height: savedPosition.height }
         : config.defaultSize,
@@ -161,6 +189,18 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
       minSize: config.minSize,
       maxSize: config.maxSize,
     };
+
+    // Clamp window position to viewport bounds to prevent windows opening off-screen
+    const clampedPosition = windowManager.clampWindowPosition(
+      window.position,
+      window.size,
+      viewportWidth,
+      viewportHeight,
+      menuBarHeight,
+      validatedDockHeight
+    );
+    
+    window.position = clampedPosition;
 
     set((state) => ({
       windows: { ...state.windows, [windowId]: window },
@@ -298,26 +338,32 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
         originalSize: { ...window.size },
       };
 
-      // Use smart zoom calculation
+      // Calculate dock height from DOM for accurate sizing
+      const dockElement = typeof document !== 'undefined' 
+        ? document.querySelector('[class*="dock"]') 
+        : null;
+      const dockHeight = dockElement ? dockElement.getBoundingClientRect().height : 80;
+      
       const viewportWidth = typeof globalThis.window !== 'undefined' ? globalThis.window.innerWidth : 1920;
       const viewportHeight = typeof globalThis.window !== 'undefined' ? globalThis.window.innerHeight : 1080;
       const menuBarHeight = 20;
-      // Windows are positioned relative to Desktop container (top: 20px)
-      const desktopHeight = viewportHeight - menuBarHeight;
+      
+      // Available desktop space between menubar and dock
+      const availableHeight = viewportHeight - menuBarHeight - dockHeight;
 
-      // Calculate optimal size (90% of desktop area, respecting max size constraints)
+      // Calculate optimal size (respecting max size constraints and dock)
       const maxWidth = window.maxSize?.width || viewportWidth - 40;
-      const maxHeight = window.maxSize?.height || (desktopHeight - 40);
+      const maxHeight = window.maxSize?.height || availableHeight - 40;
       
       updatedWindow.size = {
         width: Math.min(maxWidth, viewportWidth - 40),
-        height: Math.min(maxHeight, desktopHeight - 40),
+        height: Math.min(maxHeight, availableHeight - 40),
       };
       
-      // Position relative to desktop container (not viewport)
+      // Center window in available space (between menubar and dock)
       updatedWindow.position = {
         x: (viewportWidth - updatedWindow.size.width) / 2,
-        y: (desktopHeight - updatedWindow.size.height) / 2,
+        y: (availableHeight - updatedWindow.size.height) / 2,
       };
     } else {
       // Restore original position and size
@@ -366,10 +412,17 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     let finalWidth = width;
     let finalHeight = height;
 
-    // Get viewport dimensions for max constraints
+    // Get viewport dimensions and dock height for max constraints
     const viewportWidth = typeof globalThis.window !== 'undefined' ? globalThis.window.innerWidth : 1920;
     const viewportHeight = typeof globalThis.window !== 'undefined' ? globalThis.window.innerHeight : 1080;
     const menuBarHeight = 20;
+    
+    // Get dock height from DOM
+    const dockElement = typeof document !== 'undefined' ? document.querySelector('[class*="dock"]') : null;
+    const dockHeight = dockElement ? dockElement.getBoundingClientRect().height : 80;
+    
+    // Available height accounting for dock
+    const availableHeight = viewportHeight - menuBarHeight - dockHeight;
 
     // Enforce minimum size
     if (window.minSize) {
@@ -377,19 +430,26 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
       finalHeight = Math.max(finalHeight, window.minSize.height);
     }
 
-    // Enforce maximum size (but allow up to viewport size if no maxSize is set)
+    // Enforce maximum size (accounting for dock)
     if (window.maxSize) {
       finalWidth = Math.min(finalWidth, window.maxSize.width);
       finalHeight = Math.min(finalHeight, window.maxSize.height);
     } else {
-      // No maxSize set - allow resizing up to viewport edges
+      // No maxSize set - allow resizing up to available space (above dock)
       finalWidth = Math.min(finalWidth, viewportWidth);
-      finalHeight = Math.min(finalHeight, viewportHeight - menuBarHeight);
+      finalHeight = Math.min(finalHeight, availableHeight);
     }
 
     // Ensure minimum practical size (50x50)
     finalWidth = Math.max(finalWidth, 50);
     finalHeight = Math.max(finalHeight, 50);
+    
+    // Clamp window position if it would extend below dock
+    if (window.position.y + finalHeight > availableHeight) {
+      // Adjust height to fit above dock
+      const adjustedHeight = Math.min(finalHeight, availableHeight - window.position.y);
+      finalHeight = Math.max(adjustedHeight, window.minSize?.height || 50);
+    }
 
     set((state) => ({
       windows: {

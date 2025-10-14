@@ -1,20 +1,24 @@
 /**
  * BalanceCard Component
  * Displays wallet balance with enhanced formatting and token icons
+ * Supports EVM, Solana, and Bitcoin chains
  */
 
 'use client';
 
 import styles from './BalanceCard.module.css';
 
+type ChainType = 'evm' | 'solana' | 'bitcoin';
+
 interface BalanceCardProps {
   balance?: string;
   symbol?: string;
   decimals?: number;
   isLoading?: boolean;
+  chainType: ChainType | null;
 }
 
-export default function BalanceCard({ balance, symbol, decimals, isLoading }: BalanceCardProps) {
+export default function BalanceCard({ balance, symbol, decimals, isLoading, chainType }: BalanceCardProps) {
   // Format balance for display with smart decimals
   const formatBalance = (bal?: string, sym?: string): string => {
     if (!bal) return '0.00';
@@ -50,6 +54,17 @@ export default function BalanceCard({ balance, symbol, decimals, isLoading }: Ba
     });
   };
 
+  // Determine default symbol based on chain type
+  const getDefaultSymbol = (): string => {
+    if (symbol) return symbol;
+    
+    if (chainType === 'solana') return 'SOL';
+    if (chainType === 'bitcoin') return 'BTC';
+    return 'ETH'; // EVM default
+  };
+
+  const displaySymbol = getDefaultSymbol();
+
   return (
     <div className={styles.balanceCard}>
       <div className={styles.label}>Balance</div>
@@ -64,9 +79,9 @@ export default function BalanceCard({ balance, symbol, decimals, isLoading }: Ba
       ) : (
         <div className={styles.balanceDisplay}>
           <div className={styles.amount}>
-            <img src={getTokenIcon(symbol)} alt={symbol || 'Token'} className={styles.symbol} />
-            <span className={styles.value}>{formatBalance(balance, symbol)}</span>
-            <span className={styles.unit}>{symbol || 'ETH'}</span>
+            <img src={getTokenIcon(displaySymbol)} alt={displaySymbol} className={styles.symbol} />
+            <span className={styles.value}>{formatBalance(balance, displaySymbol)}</span>
+            <span className={styles.unit}>{displaySymbol}</span>
           </div>
         </div>
       )}

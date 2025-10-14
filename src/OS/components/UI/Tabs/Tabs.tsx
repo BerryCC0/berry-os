@@ -20,6 +20,7 @@ export interface TabsProps {
   activeTab?: string;
   onChange?: (tabId: string) => void;
   className?: string;
+  lazy?: boolean; // Only render active tab content
 }
 
 export default function Tabs({
@@ -27,6 +28,7 @@ export default function Tabs({
   activeTab: controlledActiveTab,
   onChange,
   className = '',
+  lazy = false,
 }: TabsProps) {
   const [internalActiveTab, setInternalActiveTab] = useState(tabs[0]?.id || '');
   
@@ -66,14 +68,31 @@ export default function Tabs({
       </div>
 
       {/* Tab Content */}
-      <div
-        className={styles.tabContent}
-        role="tabpanel"
-        aria-labelledby={`tab-${activeTab}`}
-        id={`tabpanel-${activeTab}`}
-      >
-        {activeTabData?.content}
-      </div>
+      {lazy ? (
+        // Lazy mode: Only render active tab
+        <div
+          className={styles.tabContent}
+          role="tabpanel"
+          aria-labelledby={`tab-${activeTab}`}
+          id={`tabpanel-${activeTab}`}
+        >
+          {activeTabData?.content}
+        </div>
+      ) : (
+        // Eager mode: Render all tabs but hide inactive ones
+        tabs.map(tab => (
+          <div
+            key={tab.id}
+            className={styles.tabContent}
+            style={{ display: tab.id === activeTab ? 'block' : 'none' }}
+            role="tabpanel"
+            aria-labelledby={`tab-${tab.id}`}
+            id={`tabpanel-${tab.id}`}
+          >
+            {tab.content}
+          </div>
+        ))
+      )}
     </div>
   );
 }

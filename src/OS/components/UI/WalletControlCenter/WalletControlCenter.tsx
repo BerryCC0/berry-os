@@ -2,13 +2,16 @@
  * Wallet Control Center Component
  * macOS Control Center-inspired wallet modal with Mac OS 8 aesthetics
  * Displays wallet info, balance, and provides quick actions
+ * Supports EVM, Solana, and Bitcoin chains
  */
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccount, useEnsName, useBalance, useEnsAvatar, useDisconnect } from 'wagmi';
-import { useAppKit } from '@reown/appkit/react';
+import { useAppKit, useAppKitProvider } from '@reown/appkit/react';
+import { useAppKitMultichain } from '@/app/lib/Appkit/utils/hooks';
+import { formatLamportsToSol, formatSatoshisToBtc } from '@/app/lib/Appkit/utils/balance';
 import type { Address } from 'viem';
 import WalletInfo from './components/WalletInfo';
 import BalanceCard from './components/BalanceCard';
@@ -20,25 +23,98 @@ export interface WalletControlCenterProps {
   onClose: () => void;
 }
 
+type ChainType = 'evm' | 'solana' | 'bitcoin';
+
 export default function WalletControlCenter({ onClose }: WalletControlCenterProps) {
-  const { address, chain } = useAccount();
-  const { open } = useAppKit();
+  // Multi-chain support
+  const { evm, solana, bitcoin } = useAppKitMultichain();
+  const { address: evmAddress, chain } = useAccount();
   const { disconnect } = useDisconnect();
   
-  // Wallet data
+  // Determine active chain type
+  const activeChainType: ChainType | null = evm.isConnected ? 'evm' : 
+                                            solana.isConnected ? 'solana' : 
+                                            bitcoin.isConnected ? 'bitcoin' : null;
+  
+  // Get active address based on chain type
+  const activeAddress = activeChainType === 'evm' ? evm.address :
+                       activeChainType === 'solana' ? solana.address :
+                       activeChainType === 'bitcoin' ? bitcoin.address : null;
+  
+  // Solana and Bitcoin balance state
+  const [solanaBalance, setSolanaBalance] = useState<{ formatted: string; symbol: string } | null>(null);
+  const [bitcoinBalance, setBitcoinBalance] = useState<{ formatted: string; symbol: string } | null>(null);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+  
+  // Providers for non-EVM chains
+  const { walletProvider: solanaProvider } = useAppKitProvider('solana');
+  const { walletProvider: bitcoinProvider } = useAppKitProvider('bip122');
+  
+  // EVM-specific data (only fetch when on EVM)
   const { data: ensName } = useEnsName({
-    address: address as Address,
+    address: evmAddress as Address,
     chainId: 1,
+    query: {
+      enabled: activeChainType === 'evm' && !!evmAddress,
+    },
   });
   
   const { data: ensAvatar } = useEnsAvatar({
     name: ensName ? ensName : undefined,
     chainId: 1,
+    query: {
+      enabled: activeChainType === 'evm' && !!ensName,
+    },
   });
   
-  const { data: balance } = useBalance({
-    address: address as Address,
+  const { data: evmBalance } = useBalance({
+    address: evmAddress as Address,
+    query: {
+      enabled: activeChainType === 'evm' && !!evmAddress,
+    },
   });
+
+  // Fetch Solana balance
+  useEffect(() => {
+    if (activeChainType === 'solana' && solana.address && solanaProvider) {
+      setIsLoadingBalance(true);
+      
+      // Fetch Solana balance using provider
+      const provider = solanaProvider as any;
+      provider.request({ method: 'getBalance' })
+        .then((result: any) => {
+          const lamports = typeof result === 'object' ? result.value : result;
+          const formatted = formatLamportsToSol(lamports, 4);
+          setSolanaBalance({ formatted, symbol: 'SOL' });
+        })
+        .catch((error: Error) => {
+          console.error('Failed to fetch Solana balance:', error);
+          setSolanaBalance({ formatted: '0.0000', symbol: 'SOL' });
+        })
+        .finally(() => setIsLoadingBalance(false));
+    }
+  }, [activeChainType, solana.address, solanaProvider]);
+  
+  // Fetch Bitcoin balance
+  useEffect(() => {
+    if (activeChainType === 'bitcoin' && bitcoin.address && bitcoinProvider) {
+      setIsLoadingBalance(true);
+      
+      // Fetch Bitcoin balance using provider
+      const provider = bitcoinProvider as any;
+      provider.request({ method: 'getBalance' })
+        .then((result: any) => {
+          const satoshis = typeof result === 'object' ? result.value : result;
+          const formatted = formatSatoshisToBtc(satoshis, 8);
+          setBitcoinBalance({ formatted, symbol: 'BTC' });
+        })
+        .catch((error: Error) => {
+          console.error('Failed to fetch Bitcoin balance:', error);
+          setBitcoinBalance({ formatted: '0.00000000', symbol: 'BTC' });
+        })
+        .finally(() => setIsLoadingBalance(false));
+    }
+  }, [activeChainType, bitcoin.address, bitcoinProvider]);
 
   // Close on ESC key
   useEffect(() => {
@@ -65,7 +141,48 @@ export default function WalletControlCenter({ onClose }: WalletControlCenterProp
     onClose();
   };
 
-  if (!address) return null;
+  // Determine which balance to show
+  const getBalanceData = () => {
+    if (activeChainType === 'evm') {
+      return {
+        balance: evmBalance?.formatted,
+        symbol: evmBalance?.symbol,
+        decimals: evmBalance?.decimals,
+        isLoading: false,
+      };
+    } else if (activeChainType === 'solana') {
+      return {
+        balance: solanaBalance?.formatted,
+        symbol: solanaBalance?.symbol || 'SOL',
+        decimals: 9,
+        isLoading: isLoadingBalance,
+      };
+    } else if (activeChainType === 'bitcoin') {
+      return {
+        balance: bitcoinBalance?.formatted,
+        symbol: bitcoinBalance?.symbol || 'BTC',
+        decimals: 8,
+        isLoading: isLoadingBalance,
+      };
+    }
+    return { balance: undefined, symbol: undefined, decimals: undefined, isLoading: false };
+  };
+  
+  // Determine chain name
+  const getChainName = () => {
+    if (activeChainType === 'evm') {
+      return chain?.name || 'Unknown Network';
+    } else if (activeChainType === 'solana') {
+      return 'Solana';
+    } else if (activeChainType === 'bitcoin') {
+      return 'Bitcoin';
+    }
+    return 'Unknown Network';
+  };
+
+  if (!activeAddress) return null;
+
+  const balanceData = getBalanceData();
 
   return (
     <div 
@@ -78,17 +195,20 @@ export default function WalletControlCenter({ onClose }: WalletControlCenterProp
       <div className={styles.controlCenter}>
         {/* Wallet Info Section */}
         <WalletInfo
-          address={address}
-          ensName={ensName || undefined}
-          ensAvatar={ensAvatar || undefined}
-          chainName={chain?.name || 'Unknown Network'}
+          address={activeAddress}
+          ensName={activeChainType === 'evm' ? (ensName || undefined) : undefined}
+          ensAvatar={activeChainType === 'evm' ? (ensAvatar || undefined) : undefined}
+          chainName={getChainName()}
+          chainType={activeChainType}
         />
 
         {/* Balance Section */}
         <BalanceCard
-          balance={balance?.formatted}
-          symbol={balance?.symbol}
-          decimals={balance?.decimals}
+          balance={balanceData.balance}
+          symbol={balanceData.symbol}
+          decimals={balanceData.decimals}
+          isLoading={balanceData.isLoading}
+          chainType={activeChainType}
         />
 
         {/* Quick Actions */}

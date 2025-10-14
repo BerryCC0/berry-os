@@ -1,0 +1,94 @@
+/**
+ * ActivityTab Styles
+ * Unified activity feed display
+ */
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.feed {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Error State */
+.error {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--theme-text, #000000);
+  font-family: var(--font-geneva);
+}
+
+.error p {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+}
+
+.error p:first-child {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Loading State */
+.loading {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--theme-text-secondary, #666666);
+  font-family: var(--font-geneva);
+  font-size: 12px;
+}
+
+.loading p {
+  margin: 0;
+}
+
+/* Empty State */
+.empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--theme-text, #000000);
+  font-family: var(--font-geneva);
+}
+
+.empty p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.empty p:first-child {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.emptyHint {
+  color: var(--theme-text-secondary, #666666);
+  font-size: 11px;
+}
+
+/* Sentinel for infinite scroll */
+.sentinel {
+  height: 1px;
+  width: 100%;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .empty {
+    padding: 80px 20px;
+  }
+}
+
+/* Farcaster miniapp */
+@media (max-width: 480px) {
+  .empty {
+    padding: 60px 16px;
+  }
+}
+

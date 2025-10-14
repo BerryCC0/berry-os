@@ -12,6 +12,7 @@
   color: var(--theme-text, var(--mac-black));
   font-family: var(--font-geneva);
   padding: 20px;
+  overflow: hidden;
 }
 
 .content {

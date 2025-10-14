@@ -13,6 +13,7 @@
   color: var(--theme-text, var(--mac-black));
   padding: var(--spacing-md);
   gap: var(--spacing-md);
+  overflow: hidden;
 }
 
 /* ==================== Display ==================== */

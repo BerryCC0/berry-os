@@ -26,6 +26,11 @@ interface ScrollBarProps {
    * Default: false (always visible, Mac OS 8 style)
    */
   autoHide?: boolean;
+  /**
+   * Space reserved at bottom (e.g., for resize corner)
+   * Default: 0
+   */
+  bottomOffset?: number;
 }
 
 export default function ScrollBar({
@@ -34,6 +39,7 @@ export default function ScrollBar({
   showArrows = true,
   direction = 'vertical',
   autoHide = false,
+  bottomOffset = 0,
 }: ScrollBarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -199,7 +205,13 @@ export default function ScrollBar({
       
       {/* Vertical Scrollbar */}
       {showVertical && (
-        <div className={`${styles.scrollbar} ${styles.vertical} ${isVisible ? styles.visible : ''}`}>
+        <div 
+          className={`${styles.scrollbar} ${styles.vertical} ${isVisible ? styles.visible : ''}`}
+          style={{
+            bottom: `${bottomOffset}px`,
+            height: bottomOffset ? `calc(100% - ${bottomOffset}px)` : '100%',
+          }}
+        >
           {showArrows && (
             <button
               className={styles.scrollArrow}

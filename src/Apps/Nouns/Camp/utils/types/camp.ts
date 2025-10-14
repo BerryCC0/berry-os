@@ -181,3 +181,45 @@ export interface TransactionState {
   error?: string;
 }
 
+// ============================================================================
+// Activity Feed Types
+// ============================================================================
+
+/**
+ * Unified activity feed item type
+ */
+export enum ActivityItemType {
+  PROPOSAL_VOTE = 'proposal_vote',
+  PROPOSAL_FEEDBACK = 'proposal_feedback',
+  CANDIDATE_SIGNATURE = 'candidate_signature',
+  CANDIDATE_FEEDBACK = 'candidate_feedback',
+}
+
+/**
+ * Base activity item
+ */
+export interface BaseActivityItem {
+  id: string;
+  type: ActivityItemType;
+  timestamp: number; // Unix timestamp for sorting
+  voter: string; // Voter/signer address
+  reason?: string;
+  supportDetailed: number; // 0=Against, 1=For, 2=Abstain
+  
+  // Context
+  contextId: string; // Proposal ID or Candidate ID
+  contextTitle?: string; // Proposal title or Candidate slug
+  contextType: 'proposal' | 'candidate';
+  
+  // Original data (for rendering)
+  originalData: any;
+}
+
+/**
+ * Activity feed item with UI state
+ */
+export interface UIActivityItem extends BaseActivityItem {
+  ensName?: string;
+  isLoading?: boolean;
+}
+

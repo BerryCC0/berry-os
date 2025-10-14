@@ -1,0 +1,40 @@
+/**
+ * ProposalDetailsWrapper Styles
+ */
+
+.loading,
+.error {
+  padding: 20px;
+  text-align: center;
+  font-family: var(--font-geneva);
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  border-top: none;
+}
+
+.loading p,
+.error p {
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+}
+
+.closeButton {
+  padding: 6px 12px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  color: var(--theme-text, #000000);
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.closeButton:active {
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+}
+

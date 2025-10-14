@@ -12,6 +12,60 @@
   color: var(--theme-text, #000000);
 }
 
+/* Vote Summary & Transactions Section */
+.summarySection {
+  border: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background, #FFFFFF);
+  margin-bottom: 16px;
+}
+
+.summaryHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: none;
+  border-bottom: 1px solid var(--theme-border, #000000);
+  cursor: pointer;
+  font-family: var(--font-chicago);
+  transition: background 0.2s;
+}
+
+.summaryHeader:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.summaryHeader:active {
+  background: var(--theme-highlight-light, #E8E8FF);
+}
+
+.summaryTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.expandIcon {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  line-height: 1;
+}
+
+.summaryContent {
+  padding: 16px;
+}
+
+/* Ensure nested sections don't have extra borders */
+.summaryContent .metadata,
+.summaryContent .voteSection,
+.summaryContent .votingSection {
+  border: none;
+}
+
 /* Metadata Section (at top) */
 .metadata {
   display: flex;

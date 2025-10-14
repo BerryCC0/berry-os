@@ -17,6 +17,8 @@ import {
   formatVoteCount,
   getActionCount,
   formatProposer,
+  formatTimestamp,
+  estimateBlockTimestamp,
 } from '../../../utils/helpers/proposalHelpers';
 import { useHasVoted, useProposalVotes } from '../../../utils/hooks/useProposals';
 import { useProposalFeedback } from '../../../utils/hooks/useProposalFeedback';
@@ -36,9 +38,10 @@ interface ProposalDetailsProps {
   proposal: UIProposal;
   onClose?: () => void;
   onVote?: (support: number, reason?: string) => void;
+  defaultSummaryCollapsed?: boolean; // Control initial collapsed state
 }
 
-export default function ProposalDetails({ proposal, onClose, onVote }: ProposalDetailsProps) {
+export default function ProposalDetails({ proposal, onClose, onVote, defaultSummaryCollapsed = false }: ProposalDetailsProps) {
   const { address, isConnected } = useAccount();
   const { hasVoted, voteSupport } = useHasVoted(proposal.id, address);
   
@@ -47,6 +50,7 @@ export default function ProposalDetails({ proposal, onClose, onVote }: ProposalD
   const [voteFilter, setVoteFilter] = useState<'all' | 'for' | 'against' | 'abstain'>('all');
   const [isFeedbackCollapsed, setIsFeedbackCollapsed] = useState(true);
   const [isVersionsCollapsed, setIsVersionsCollapsed] = useState(true);
+  const [isSummaryCollapsed, setIsSummaryCollapsed] = useState(defaultSummaryCollapsed);
   const [activeTab, setActiveTab] = useState<'description' | 'votes'>('description');
   
   // Fetch individual votes
@@ -69,6 +73,19 @@ export default function ProposalDetails({ proposal, onClose, onVote }: ProposalD
   const proposerAddress = proposalUtils.getProposer(proposal);
   const { ensName: proposerENS } = useENS(proposerAddress);
   const proposer = formatAddressWithENS(proposerAddress, proposerENS);
+
+  // Calculate timestamps for metadata display
+  const createdTimestamp = parseInt(proposal.createdTimestamp);
+  const startTimestamp = estimateBlockTimestamp(
+    proposal.startBlock,
+    proposal.createdBlock,
+    proposal.createdTimestamp
+  );
+  const endTimestamp = estimateBlockTimestamp(
+    proposal.endBlock,
+    proposal.createdBlock,
+    proposal.createdTimestamp
+  );
 
   const canVote = isConnected && !hasVoted && proposal.status === 'ACTIVE';
 
@@ -98,35 +115,49 @@ export default function ProposalDetails({ proposal, onClose, onVote }: ProposalD
 
   return (
     <div className={styles.details}>
-      {/* Proposal Metadata */}
-      <div className={styles.metadata}>
-        <div className={styles.metadataRow}>
-          <span className={styles.metadataLabel}>Proposer:</span>
-          <span className={styles.metadataValue} title={proposerAddress}>{proposer}</span>
-        </div>
-        <div className={styles.metadataRow}>
-          <span className={styles.metadataLabel}>Created:</span>
-          <span className={styles.metadataValue}>Block {proposal.createdBlock}</span>
-        </div>
-        <div className={styles.metadataRow}>
-          <span className={styles.metadataLabel}>Voting Period:</span>
-          <span className={styles.metadataValue}>
-            Block {proposal.startBlock} - {proposal.endBlock}
-          </span>
-        </div>
-      </div>
+      {/* Collapsible Vote Summary & Transactions Section */}
+      <div className={styles.summarySection}>
+        {/* Summary Header with Toggle */}
+        <button
+          className={styles.summaryHeader}
+          onClick={() => setIsSummaryCollapsed(!isSummaryCollapsed)}
+          aria-expanded={!isSummaryCollapsed}
+        >
+          <h3 className={styles.summaryTitle}>Vote Summary & Transactions</h3>
+          <span className={styles.expandIcon}>{isSummaryCollapsed ? '+' : '−'}</span>
+        </button>
 
-      {/* Proposal Version History (V3 Governance - Updatable Proposals) */}
-      {hasVersions && (
-        <ProposalVersionHistory
-          versions={versions}
-          isCollapsed={isVersionsCollapsed}
-          onToggle={() => setIsVersionsCollapsed(!isVersionsCollapsed)}
-        />
-      )}
+        {/* Summary Content (collapsible) */}
+        {!isSummaryCollapsed && (
+          <div className={styles.summaryContent}>
+            {/* Proposal Metadata */}
+            <div className={styles.metadata}>
+              <div className={styles.metadataRow}>
+                <span className={styles.metadataLabel}>Proposer:</span>
+                <span className={styles.metadataValue} title={proposerAddress}>{proposer}</span>
+              </div>
+              <div className={styles.metadataRow}>
+                <span className={styles.metadataLabel}>Created:</span>
+                <span 
+                  className={styles.metadataValue} 
+                  title={`Block ${proposal.createdBlock}`}
+                >
+                  {formatTimestamp(createdTimestamp)}
+                </span>
+              </div>
+              <div className={styles.metadataRow}>
+                <span className={styles.metadataLabel}>Voting Period:</span>
+                <span 
+                  className={styles.metadataValue}
+                  title={`Block ${proposal.startBlock} - ${proposal.endBlock}`}
+                >
+                  {formatTimestamp(startTimestamp)} - {formatTimestamp(endTimestamp)}
+                </span>
+              </div>
+            </div>
 
-      {/* Vote Summary */}
-      <div className={styles.voteSection}>
+            {/* Vote Summary */}
+            <div className={styles.voteSection}>
         <h3 className={styles.sectionTitle}>Votes</h3>
         
         {/* Vote Bars */}
@@ -245,11 +276,14 @@ export default function ProposalDetails({ proposal, onClose, onVote }: ProposalD
         </div>
       )}
 
-      {!isConnected && proposal.status === 'ACTIVE' && (
-        <div className={styles.connectPrompt}>
-          Connect your wallet to vote on this proposal
-        </div>
-      )}
+            {!isConnected && proposal.status === 'ACTIVE' && (
+              <div className={styles.connectPrompt}>
+                Connect your wallet to vote on this proposal
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Content Tabs */}
       <div className={styles.contentTabs}>
@@ -335,6 +369,15 @@ export default function ProposalDetails({ proposal, onClose, onVote }: ProposalD
             </div>
           )}
         </div>
+      )}
+
+      {/* Proposal Version History (V3 Governance - Updatable Proposals) */}
+      {hasVersions && (
+        <ProposalVersionHistory
+          versions={versions}
+          isCollapsed={isVersionsCollapsed}
+          onToggle={() => setIsVersionsCollapsed(!isVersionsCollapsed)}
+        />
       )}
     </div>
   );

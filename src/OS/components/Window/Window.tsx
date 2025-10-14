@@ -116,6 +116,10 @@ export default function Window({ windowId }: WindowProps) {
       // Menu bar height (20px on desktop, 44px on mobile)
       const menuBarHeight = viewportWidth <= 768 ? 44 : 20;
       
+      // Get dock height for proper bounds
+      const dockElement = document.querySelector('[class*="dock"]');
+      const dockHeight = dockElement ? dockElement.getBoundingClientRect().height : 80;
+      
       // Check for Option/Alt key for snap-to-edge (Mac OS 8 inspired)
       if (e.altKey || e.metaKey) {
         const snapPosition = windowManager.calculateSnapPosition(
@@ -124,7 +128,8 @@ export default function Window({ windowId }: WindowProps) {
           viewportWidth,
           viewportHeight,
           menuBarHeight,
-          30 // Snap threshold in pixels
+          30, // Snap threshold in pixels
+          dockHeight
         );
         
         if (snapPosition) {
@@ -139,7 +144,8 @@ export default function Window({ windowId }: WindowProps) {
         window.size,
         viewportWidth,
         viewportHeight,
-        menuBarHeight
+        menuBarHeight,
+        dockHeight
       );
 
       moveWindow(windowId, clamped.x, clamped.y);
@@ -164,18 +170,47 @@ export default function Window({ windowId }: WindowProps) {
   useEffect(() => {
     if (!isResizing) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = e.clientX - resizeStart.x;
-      const deltaY = e.clientY - resizeStart.y;
-      
-      const newWidth = resizeStart.width + deltaX;
-      const newHeight = resizeStart.height + deltaY;
+    let frameId: number | null = null;
+    let lastUpdate = 0;
+    const throttleMs = 16; // ~60fps
 
-      resizeWindow(windowId, newWidth, newHeight);
+    const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      
+      // Cancel any pending frame
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
+      
+      // Throttle updates for smooth performance
+      if (now - lastUpdate < throttleMs) {
+        frameId = requestAnimationFrame(() => {
+          const deltaX = e.clientX - resizeStart.x;
+          const deltaY = e.clientY - resizeStart.y;
+          
+          const newWidth = resizeStart.width + deltaX;
+          const newHeight = resizeStart.height + deltaY;
+
+          resizeWindow(windowId, newWidth, newHeight);
+          lastUpdate = Date.now();
+        });
+      } else {
+        const deltaX = e.clientX - resizeStart.x;
+        const deltaY = e.clientY - resizeStart.y;
+        
+        const newWidth = resizeStart.width + deltaX;
+        const newHeight = resizeStart.height + deltaY;
+
+        resizeWindow(windowId, newWidth, newHeight);
+        lastUpdate = now;
+      }
     };
 
     const handleMouseUp = () => {
       setIsResizing(false);
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
       // Save window position after resize ends
       saveWindowPosition(windowId);
     };
@@ -184,6 +219,9 @@ export default function Window({ windowId }: WindowProps) {
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => {
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+      }
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
@@ -368,6 +406,7 @@ export default function Window({ windowId }: WindowProps) {
           showArrows={themeCustomization?.scrollbarArrowStyle !== 'none'}
           direction="both"
           autoHide={themeCustomization?.scrollbarAutoHide || false}
+          bottomOffset={window.isResizable && window.state === 'normal' ? 20 : 0}
         >
           {renderAppContent()}
         </ScrollBar>

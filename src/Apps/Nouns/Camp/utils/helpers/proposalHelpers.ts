@@ -126,6 +126,54 @@ export function formatVoteCount(votes: string | number): string {
   return num.toLocaleString();
 }
 
+/**
+ * Format timestamp to user's local date and time
+ */
+export function formatTimestamp(timestamp: string | number): string {
+  const ts = typeof timestamp === 'string' ? parseInt(timestamp) : timestamp;
+  const date = new Date(ts * 1000); // Convert Unix timestamp to milliseconds
+  
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+/**
+ * Estimate timestamp for a block number
+ * Uses Ethereum average block time: 12 seconds per block
+ */
+export function estimateBlockTimestamp(
+  targetBlock: string,
+  referenceBlock: string,
+  referenceTimestamp: string
+): number {
+  const target = parseInt(targetBlock);
+  const reference = parseInt(referenceBlock);
+  const refTimestamp = parseInt(referenceTimestamp);
+  
+  const blockDifference = target - reference;
+  const timeDifference = blockDifference * 12; // 12 seconds per block
+  
+  return refTimestamp + timeDifference;
+}
+
+/**
+ * Format block with estimated date/time
+ */
+export function formatBlockWithTime(
+  blockNumber: string,
+  timestamp: number
+): string {
+  const block = parseInt(blockNumber).toLocaleString();
+  const date = formatTimestamp(timestamp);
+  
+  return `Block ${block} (${date})`;
+}
+
 // ============================================================================
 // Time Calculations
 // ============================================================================
@@ -282,6 +330,7 @@ export function getVotePercentages(proposal: Proposal): {
 
 /**
  * Check if proposal has quorum with formatted status
+ * Dynamic quorum in Nouns = minimum FOR votes needed to pass
  */
 export function getQuorumStatus(proposal: Proposal): {
   hasQuorum: boolean;
@@ -291,16 +340,19 @@ export function getQuorumStatus(proposal: Proposal): {
   formatted: string;
 } {
   const hasQuorum = proposalUtils.hasReachedQuorum(proposal);
-  const totalVotes = Number(proposalUtils.getTotalVotes(proposal));
-  const quorumVotes = Number(proposal.quorumVotes);
-  const percentage = quorumVotes > 0 ? (totalVotes / quorumVotes) * 100 : 0;
+  // Dynamic quorum counts For + Abstain votes
+  const forVotes = Number(proposalUtils.getForVotes(proposal));
+  const abstainVotes = Number(proposalUtils.getAbstainVotes(proposal));
+  const currentQuorumVotes = forVotes + abstainVotes;
+  const requiredQuorumVotes = Number(proposal.quorumVotes);
+  const percentage = requiredQuorumVotes > 0 ? (currentQuorumVotes / requiredQuorumVotes) * 100 : 0;
   
   return {
     hasQuorum,
-    currentVotes: totalVotes,
-    requiredVotes: quorumVotes,
+    currentVotes: currentQuorumVotes,
+    requiredVotes: requiredQuorumVotes,
     percentage,
-    formatted: `${totalVotes.toLocaleString()} / ${quorumVotes.toLocaleString()} votes (${percentage.toFixed(1)}%)`,
+    formatted: `${currentQuorumVotes.toLocaleString()} / ${requiredQuorumVotes.toLocaleString()} votes (${percentage.toFixed(1)}%)`,
   };
 }
 

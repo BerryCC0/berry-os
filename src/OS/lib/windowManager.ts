@@ -14,7 +14,8 @@ export function calculateSmartZoomSize(
   window: Window,
   viewportWidth: number,
   viewportHeight: number,
-  menuBarHeight: number = 20
+  menuBarHeight: number = 20,
+  dockHeight: number = 80
 ): { width: number; height: number; x: number; y: number } {
   // If window is already maximized, restore to default size
   if (window.state === 'maximized') {
@@ -27,18 +28,19 @@ export function calculateSmartZoomSize(
   }
 
   // Windows are positioned relative to Desktop container (top: 20px)
-  const desktopHeight = viewportHeight - menuBarHeight;
+  // Available height accounting for dock at bottom
+  const availableHeight = viewportHeight - menuBarHeight - dockHeight;
   
   // Calculate optimal size based on max constraints
   const maxWidth = window.maxSize?.width || viewportWidth * 0.9;
-  const maxHeight = window.maxSize?.height || desktopHeight * 0.9;
+  const maxHeight = window.maxSize?.height || availableHeight * 0.9;
 
   // Center the window within the desktop area
   const width = Math.min(maxWidth, viewportWidth - 40);
-  const height = Math.min(maxHeight, desktopHeight - 40);
+  const height = Math.min(maxHeight, availableHeight - 40);
   const x = (viewportWidth - width) / 2;
   // Y position relative to desktop container (not viewport)
-  const y = (desktopHeight - height) / 2;
+  const y = (availableHeight - height) / 2;
 
   return { width, height, x, y };
 }
@@ -69,18 +71,22 @@ export function isWindowPositionValid(
 
 /**
  * Clamp window position to valid bounds
- * Ensures window remains accessible
+ * Ensures window remains accessible and doesn't overlap dock
  */
 export function clampWindowPosition(
   position: WindowPosition,
   size: WindowSize,
   viewportWidth: number,
   viewportHeight: number,
-  menuBarHeight: number = 20
+  menuBarHeight: number = 20,
+  dockHeight: number = 80
 ): WindowPosition {
   // Minimum visible area requirements
   const minVisibleWidth = Math.min(200, size.width);
   const minVisibleHeight = 40; // Title bar + some content
+
+  // Available height accounting for dock
+  const availableHeight = viewportHeight - menuBarHeight - dockHeight;
 
   // Calculate bounds
   const minX = -(size.width - minVisibleWidth);
@@ -88,7 +94,7 @@ export function clampWindowPosition(
   // Windows are positioned relative to the Desktop container which already has top: 20px
   // So minY should be 0 to allow windows to touch the top of the desktop area (menubar edge)
   const minY = 0;
-  const maxY = viewportHeight - menuBarHeight - minVisibleHeight;
+  const maxY = availableHeight - minVisibleHeight;
 
   return {
     x: Math.max(minX, Math.min(maxX, position.x)),
@@ -104,7 +110,8 @@ export function calculateCascadePosition(
   existingWindows: Record<string, Window>,
   viewportWidth: number,
   viewportHeight: number,
-  menuBarHeight: number = 20
+  menuBarHeight: number = 20,
+  dockHeight: number = 80
 ): WindowPosition {
   const windowCount = Object.keys(existingWindows).length;
   const cascadeOffset = 30;
@@ -116,9 +123,11 @@ export function calculateCascadePosition(
   let x = baseX + windowCount * cascadeOffset;
   let y = baseY + windowCount * cascadeOffset;
 
+  // Available height accounting for dock
+  const availableHeight = viewportHeight - menuBarHeight - dockHeight;
+
   // Reset cascade if we're getting too far to bottom-right
-  // Account for menubar in viewport calculations
-  if (x > viewportWidth * 0.5 || y > (viewportHeight - menuBarHeight) * 0.5) {
+  if (x > viewportWidth * 0.5 || y > availableHeight * 0.5) {
     x = baseX;
     y = baseY;
   }
@@ -136,20 +145,21 @@ export function calculateSnapPosition(
   viewportWidth: number,
   viewportHeight: number,
   menuBarHeight: number = 20,
-  snapThreshold: number = 20
+  snapThreshold: number = 20,
+  dockHeight: number = 80
 ): WindowPosition | null {
   // Windows are positioned relative to Desktop container (top: 20px)
-  // So snap positions should be relative to that container
-  const desktopHeight = viewportHeight - menuBarHeight;
+  // Available height accounting for dock
+  const availableHeight = viewportHeight - menuBarHeight - dockHeight;
   
   const snapZones = {
     left: position.x < snapThreshold,
     right: position.x + size.width > viewportWidth - snapThreshold,
     top: position.y < snapThreshold, // Top of desktop area
-    bottom: position.y + size.height > desktopHeight - snapThreshold,
+    bottom: position.y + size.height > availableHeight - snapThreshold,
   };
 
-  // Snap to edges (relative to desktop container)
+  // Snap to edges (relative to desktop container, respecting dock)
   if (snapZones.left && snapZones.top) {
     // Top-left corner
     return { x: 0, y: 0 };
@@ -157,11 +167,11 @@ export function calculateSnapPosition(
     // Top-right corner
     return { x: viewportWidth - size.width, y: 0 };
   } else if (snapZones.left && snapZones.bottom) {
-    // Bottom-left corner
-    return { x: 0, y: desktopHeight - size.height };
+    // Bottom-left corner (above dock)
+    return { x: 0, y: availableHeight - size.height };
   } else if (snapZones.right && snapZones.bottom) {
-    // Bottom-right corner
-    return { x: viewportWidth - size.width, y: desktopHeight - size.height };
+    // Bottom-right corner (above dock)
+    return { x: viewportWidth - size.width, y: availableHeight - size.height };
   } else if (snapZones.left) {
     // Left edge
     return { x: 0, y: position.y };
@@ -172,8 +182,8 @@ export function calculateSnapPosition(
     // Top edge (top of desktop area)
     return { x: position.x, y: 0 };
   } else if (snapZones.bottom) {
-    // Bottom edge
-    return { x: position.x, y: desktopHeight - size.height };
+    // Bottom edge (above dock)
+    return { x: position.x, y: availableHeight - size.height };
   }
 
   return null; // No snap
@@ -304,13 +314,14 @@ export function findNonOverlappingPosition(
   existingWindows: Record<string, Window>,
   viewportWidth: number,
   viewportHeight: number,
-  menuBarHeight: number = 20
+  menuBarHeight: number = 20,
+  dockHeight: number = 80
 ): WindowPosition {
   const testWindow: Window = {
     id: 'test',
     appId: 'test',
     title: 'test',
-    position: calculateCascadePosition(existingWindows, viewportWidth, viewportHeight, menuBarHeight),
+    position: calculateCascadePosition(existingWindows, viewportWidth, viewportHeight, menuBarHeight, dockHeight),
     size,
     state: 'normal',
     zIndex: 1,

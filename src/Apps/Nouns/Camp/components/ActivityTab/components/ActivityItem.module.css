@@ -1,0 +1,276 @@
+/**
+ * ActivityItem Styles
+ * Based on VoteItem styling pattern
+ */
+
+.activityItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  border-bottom: none;
+  font-family: var(--font-geneva);
+}
+
+.activityItem:last-child {
+  border-bottom: 1px solid var(--theme-border, #000000);
+}
+
+.activityItem:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.activityItem.clickable {
+  cursor: pointer;
+}
+
+.activityItem.clickable:hover {
+  background: var(--theme-window-background-hover, #F0F0F0);
+}
+
+.activityItem.expanded {
+  background: var(--theme-highlight-light, #E8E8FF);
+  border-color: var(--theme-highlight, #000080);
+}
+
+/* Noun Thumbnails - Fixed width container (3 wide, vertical scroll) */
+.nounsContainer {
+  width: 124px; /* Fixed width: 3 nouns (32px each) + 2 gaps (4px each) + scrollbar (~16px) */
+  height: 72px; /* Height: 2 rows (32px each) + 1 gap (4px) + padding (4px) */
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.nounsScrollWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.nounsScroll {
+  display: flex;
+  flex-wrap: wrap; /* Enable wrapping for 3 columns */
+  align-content: flex-start;
+  gap: 4px;
+  padding: 2px;
+  width: 108px; /* Content width: 3 * 32px + 2 * 4px */
+}
+
+.nounThumbnail {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--theme-border, #000000);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.nounImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+/* Activity Info */
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.voter {
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.voter.loading {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.votingPower {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--theme-text-secondary, #666666);
+  white-space: nowrap;
+}
+
+.action {
+  color: var(--theme-text-secondary, #666666);
+}
+
+.context {
+  color: var(--theme-highlight, #000080);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.proposalTitle {
+  color: var(--theme-text, #000000);
+  font-weight: normal;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Reason */
+.reason {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reasonText {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--theme-text, #000000);
+  margin: 0;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Activity Details */
+.activityDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.supportBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--theme-border, #000000);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.supportIcon {
+  font-size: 12px;
+}
+
+.supportLabel {
+  font-size: 11px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .activityItem {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nounsContainer {
+    order: -1;
+    width: 100%; /* Full width on mobile */
+    max-width: 300px; /* But cap it for very wide screens */
+    height: 72px; /* Maintain height for vertical scrolling */
+  }
+
+  .nounsScroll {
+    width: calc(100% - 16px); /* Full width minus scrollbar */
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .timestamp {
+    margin-left: 0;
+  }
+
+  .activityDetails {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .supportBadge {
+    flex: 1;
+    justify-content: center;
+    padding: 8px;
+    min-height: 44px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .activityItem {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .nounsContainer {
+    width: 108px; /* Smaller thumbnails: 3 * 28px + 2 * 4px + scrollbar */
+    height: 60px; /* 2 rows: 2 * 28px + 1 gap (4px) */
+  }
+
+  .nounsScroll {
+    width: 92px; /* Content width: 3 * 28px + 2 * 4px */
+  }
+
+  .nounThumbnail {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Farcaster miniapp */
+@media (max-width: 480px) {
+  .activityItem {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .nounsContainer {
+    max-width: 250px; /* Smaller max width for compact screens */
+    height: 52px; /* 2 rows: 2 * 24px + 1 gap (4px) */
+  }
+
+  .nounsScroll {
+    width: calc(100% - 14px); /* Full width minus scrollbar */
+  }
+
+  .nounThumbnail {
+    width: 24px;
+    height: 24px;
+  }
+
+  .voter {
+    font-size: 11px;
+  }
+
+  .reasonText {
+    font-size: 10px;
+  }
+}
+

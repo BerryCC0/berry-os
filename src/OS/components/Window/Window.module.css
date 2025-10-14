@@ -11,6 +11,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  pointer-events: auto;
   /* Phase 7.2: Apply advanced customizations */
   border-radius: var(--theme-window-corner-radius, 0px);
   opacity: var(--theme-window-opacity, 1.0);
@@ -167,7 +168,6 @@
   overflow: hidden; /* ScrollBar component handles overflow */
   background: var(--theme-window-background, var(--mac-white));
   color: var(--theme-text, var(--mac-black));
-  position: relative;
 }
 
 .loading {
@@ -187,22 +187,45 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   cursor: nwse-resize;
-  z-index: 10;
+  z-index: 100;
+  background: var(--theme-window-background, var(--mac-white));
+  border-left: 1px solid var(--theme-window-border, var(--mac-black));
+  border-top: 1px solid var(--theme-window-border, var(--mac-black));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+  pointer-events: auto;
+  user-select: none;
+}
+
+.resizeHandle:hover {
+  background: var(--theme-button-background-hover, var(--mac-gray-1));
 }
 
 .resizeHandle::after {
   content: '';
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   background-image: 
-    linear-gradient(135deg, transparent 45%, var(--mac-gray-3) 45%, var(--mac-gray-3) 55%, transparent 55%),
-    linear-gradient(135deg, transparent 40%, var(--mac-gray-3) 40%, var(--mac-gray-3) 50%, transparent 50%);
+    linear-gradient(135deg, 
+      transparent 45%, 
+      var(--theme-text-secondary, var(--mac-gray-3)) 45%, 
+      var(--theme-text-secondary, var(--mac-gray-3)) 55%, 
+      transparent 55%
+    ),
+    linear-gradient(135deg, 
+      transparent 40%, 
+      var(--theme-text-secondary, var(--mac-gray-3)) 40%, 
+      var(--theme-text-secondary, var(--mac-gray-3)) 50%, 
+      transparent 50%
+    );
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* ==================== Mobile Adaptations ==================== */

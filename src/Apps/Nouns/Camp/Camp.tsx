@@ -10,6 +10,7 @@ import { useWriteContract } from 'wagmi';
 import { NounsApolloWrapper } from '@/app/lib/Nouns/Goldsky';
 import { GovernanceActions } from '@/app/lib/Nouns/Contracts';
 import Tabs from '@/src/OS/components/UI/Tabs/Tabs';
+import ActivityTab from './components/ActivityTab/ActivityTab';
 import ProposalsTab from './components/ProposalsTab/ProposalsTab';
 import CandidatesTab from './components/CandidatesTab/CandidatesTab';
 import VotersTab from './components/VotersTab/VotersTab';
@@ -47,6 +48,11 @@ function CampContent({ windowId }: CampProps) {
 
   const tabs = [
     {
+      id: 'activity',
+      label: 'Activity',
+      content: <ActivityTab onVote={handleVote} />,
+    },
+    {
       id: 'proposals',
       label: 'Proposals',
       content: <ProposalsTab onVote={handleVote} />,
@@ -65,7 +71,7 @@ function CampContent({ windowId }: CampProps) {
 
   return (
     <div className={styles.camp}>
-      <Tabs tabs={tabs} />
+      <Tabs tabs={tabs} lazy />
     </div>
   );
 }

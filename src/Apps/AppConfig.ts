@@ -162,7 +162,7 @@ const BASE_APPS: AppConfig[] = [
     name: 'Camp',
     component: Camp,
     icon: getAppIconPath('camp', 'svg'),
-    defaultWindowSize: { width: 1200, height: 800 },
+    defaultWindowSize: { width: 1200, height: 700 },
     minWindowSize: { width: 800, height: 600 },
     // No maxWindowSize - allow full screen resizing
     resizable: true,
@@ -178,7 +178,7 @@ const BASE_APPS: AppConfig[] = [
     name: 'Auction',
     component: Auction,
     icon: getAppIconPath('berry', 'svg'), // TODO: Create auction icon
-    defaultWindowSize: { width: 700, height: 800 },
+    defaultWindowSize: { width: 700, height: 650 },
     minWindowSize: { width: 500, height: 600 },
     // No maxWindowSize - allow full screen resizing
     resizable: true,

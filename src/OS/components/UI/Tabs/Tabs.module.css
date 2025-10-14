@@ -71,7 +71,7 @@
   border-top: none;
   border-radius: 0 0 var(--theme-corner-radius, 0px) var(--theme-corner-radius, 0px);
   padding: 16px;
-  overflow-y: auto;
+  overflow: hidden; /* Let ScrollBar component handle scrolling */
 }
 
 /* Mobile adaptations */
