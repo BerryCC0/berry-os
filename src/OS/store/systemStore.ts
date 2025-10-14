@@ -172,16 +172,35 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
           y: 60 + (Object.keys(get().windows).length * 30)
         });
     
+    // Use saved size but ensure it doesn't exceed new defaults
+    // This handles cases where defaults were reduced (e.g., Camp 800->700px)
+    const windowSize = savedPosition
+      ? {
+          width: savedPosition.width,
+          height: Math.min(savedPosition.height, config.defaultSize.height) // Use smaller height
+        }
+      : config.defaultSize;
+    
+    // Validate saved position - ensure window fits above dock
+    // If saved position would put resize corner below dock, re-center the window
+    let windowPosition = defaultPosition;
+    if (savedPosition) {
+      const wouldFitAboveDock = savedPosition.y + windowSize.height < availableHeight;
+      if (wouldFitAboveDock) {
+        // Saved position is valid, use it
+        windowPosition = { x: savedPosition.x, y: savedPosition.y };
+      } else {
+        // Saved position would hide resize corner, use smart default instead
+        windowPosition = defaultPosition;
+      }
+    }
+    
     const window: Window = {
       id: windowId,
       appId: config.appId,
       title: config.title,
-      position: savedPosition 
-        ? { x: savedPosition.x, y: savedPosition.y }
-        : defaultPosition,
-      size: savedPosition
-        ? { width: savedPosition.width, height: savedPosition.height }
-        : config.defaultSize,
+      position: windowPosition,
+      size: windowSize,
       state: 'normal',
       zIndex,
       isActive: true,

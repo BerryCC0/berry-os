@@ -338,9 +338,15 @@ export async function saveWindowState(
       is_minimized, is_maximized, z_index
     )
     VALUES (
-      ${walletAddress}, ${windowState.app_id}, ${windowState.position_x || null},
-      ${windowState.position_y || null}, ${windowState.width || null}, ${windowState.height || null},
-      ${windowState.is_minimized}, ${windowState.is_maximized}, ${windowState.z_index || null}
+      ${walletAddress}, 
+      ${windowState.app_id}, 
+      ${windowState.position_x ? Math.round(windowState.position_x) : null},
+      ${windowState.position_y ? Math.round(windowState.position_y) : null}, 
+      ${windowState.width ? Math.round(windowState.width) : null}, 
+      ${windowState.height ? Math.round(windowState.height) : null},
+      ${windowState.is_minimized}, 
+      ${windowState.is_maximized}, 
+      ${windowState.z_index || null}
     )
     ON CONFLICT (wallet_address, app_id)
     DO UPDATE SET

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useEnsName } from 'wagmi';
+import { useEnsName, useEnsAvatar } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 
 // In-memory cache for ENS names
@@ -9,6 +9,7 @@ const ensCache = new Map<string, string | null>();
 
 interface UseENSResult {
   ensName: string | null;
+  ensAvatar: string | null;
   isLoading: boolean;
   error: Error | null;
 }
@@ -47,6 +48,15 @@ export function useENS(address: string | undefined): UseENSResult {
     },
   });
 
+  // Fetch ENS avatar
+  const { data: ensAvatar, isLoading: avatarLoading } = useEnsAvatar({
+    name: ensName ? ensName : undefined,
+    chainId: mainnet.id,
+    query: {
+      enabled: !!ensName, // Only fetch if we have an ENS name
+    },
+  });
+
   // Update cache when we get a result
   useEffect(() => {
     if (address && ensName !== undefined && !isCached) {
@@ -57,7 +67,8 @@ export function useENS(address: string | undefined): UseENSResult {
 
   return {
     ensName: isCached ? cachedName : (ensName ?? null),
-    isLoading: !isCached && isLoading,
+    ensAvatar: ensAvatar ?? null,
+    isLoading: (!isCached && isLoading) || avatarLoading,
     error: error || null,
   };
 }

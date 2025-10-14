@@ -1,6 +1,12 @@
 /**
  * useProposals Hook
  * Fetches proposals from Goldsky GraphQL with real-time contract state
+ * 
+ * Features:
+ * - Automatic polling every 30 seconds when tab is active
+ * - Stops polling when tab is inactive (battery efficient)
+ * - Fresh data on component mount
+ * - Seamless background updates
  */
 
 'use client';
@@ -14,6 +20,7 @@ import type { Proposal, Vote } from '@/app/lib/Nouns/Goldsky/utils/types';
 import type { UIProposal } from '../types/camp';
 import { ProposalFilter, ProposalSort } from '../types/camp';
 import { filterProposals, sortProposals } from '../helpers/proposalHelpers';
+import { useSmartPolling } from './useSmartPolling';
 
 interface UseProposalsOptions {
   first?: number;
@@ -44,8 +51,15 @@ export function useProposals(options: UseProposalsOptions = {}): UseProposalsRet
     includeRealTimeState = false,
   } = options;
 
-  // Fetch proposals from Goldsky
-  const { data, loading, error, refetch } = useQuery<{
+  // Fetch proposals from Goldsky with polling
+  const { 
+    data, 
+    loading, 
+    error, 
+    refetch,
+    startPolling,
+    stopPolling,
+  } = useQuery<{
     proposals: Proposal[];
   }>(GET_PROPOSALS, {
     variables: {
@@ -56,6 +70,14 @@ export function useProposals(options: UseProposalsOptions = {}): UseProposalsRet
     },
     client: nounsApolloClient,
     fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+  });
+
+  // Smart polling (30 seconds - important for voting)
+  useSmartPolling({
+    interval: 30000,
+    startPolling,
+    stopPolling,
   });
 
   // State for pagination
@@ -176,14 +198,21 @@ export function useHasVoted(proposalId: string, voterAddress?: string) {
 }
 
 /**
- * Hook to fetch votes for a specific proposal
+ * Hook to fetch votes for a specific proposal with polling
  */
 export function useProposalVotes(proposalId: string, options: { first?: number; skip?: number } = {}) {
   const { first = 20, skip = 0 } = options;
   const [currentSkip, setCurrentSkip] = useState(skip);
   const [allVotes, setAllVotes] = useState<Vote[]>([]);
 
-  const { data, loading, error, fetchMore } = useQuery<{
+  const { 
+    data, 
+    loading, 
+    error, 
+    fetchMore,
+    startPolling,
+    stopPolling,
+  } = useQuery<{
     votes: Vote[];
   }>(GET_VOTES_BY_PROPOSAL, {
     variables: {
@@ -192,7 +221,17 @@ export function useProposalVotes(proposalId: string, options: { first?: number; 
       skip: currentSkip,
     },
     client: nounsApolloClient,
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
     skip: !proposalId,
+  });
+
+  // Smart polling for proposal votes (30 seconds)
+  useSmartPolling({
+    interval: 30000,
+    startPolling,
+    stopPolling,
+    enabled: !!proposalId,
   });
   
   // Update allVotes when data changes

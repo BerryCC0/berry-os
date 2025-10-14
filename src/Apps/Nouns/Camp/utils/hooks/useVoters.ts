@@ -1,6 +1,12 @@
 /**
  * useVoters Hook
  * Fetches delegates/voters from Goldsky GraphQL with contract reads
+ * 
+ * Features:
+ * - Automatic polling every 60 seconds when tab is active
+ * - Stops polling when tab is inactive (battery efficient)
+ * - Fresh data on component mount
+ * - Seamless background updates
  */
 
 'use client';
@@ -14,6 +20,7 @@ import type { Delegate } from '@/app/lib/Nouns/Goldsky/utils/types';
 import type { UIDelegate } from '../types/camp';
 import { VoterFilter, VoterSort } from '../types/camp';
 import { filterDelegates, sortDelegates } from '../helpers/voterHelpers';
+import { useSmartPolling } from './useSmartPolling';
 
 interface UseVotersOptions {
   first?: number;
@@ -49,8 +56,15 @@ export function useVoters(options: UseVotersOptions = {}): UseVotersReturn {
   // Choose query based on topOnly flag
   const query = topOnly ? GET_TOP_DELEGATES : GET_DELEGATES;
 
-  // Fetch delegates from Goldsky
-  const { data, loading, error, refetch } = useQuery<{
+  // Fetch delegates from Goldsky with polling
+  const { 
+    data, 
+    loading, 
+    error, 
+    refetch,
+    startPolling,
+    stopPolling,
+  } = useQuery<{
     delegates: Delegate[];
   }>(query, {
     variables: {
@@ -59,6 +73,14 @@ export function useVoters(options: UseVotersOptions = {}): UseVotersReturn {
     },
     client: nounsApolloClient,
     fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+  });
+
+  // Smart polling (60 seconds - least volatile data)
+  useSmartPolling({
+    interval: 60000,
+    startPolling,
+    stopPolling,
   });
 
   // State for pagination

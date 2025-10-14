@@ -21,6 +21,7 @@ export interface TabsProps {
   onChange?: (tabId: string) => void;
   className?: string;
   lazy?: boolean; // Only render active tab content
+  leftContent?: React.ReactNode; // Content to display left of tabs
 }
 
 export default function Tabs({
@@ -29,6 +30,7 @@ export default function Tabs({
   onChange,
   className = '',
   lazy = false,
+  leftContent,
 }: TabsProps) {
   const [internalActiveTab, setInternalActiveTab] = useState(tabs[0]?.id || '');
   
@@ -48,6 +50,7 @@ export default function Tabs({
     <div className={`${styles.tabsContainer} ${className}`}>
       {/* Tab Headers */}
       <div className={styles.tabHeaders} role="tablist">
+        {leftContent && <div className={styles.leftContent}>{leftContent}</div>}
         {tabs.map((tab) => (
           <button
             key={tab.id}

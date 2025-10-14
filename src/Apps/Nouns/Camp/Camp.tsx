@@ -71,7 +71,17 @@ function CampContent({ windowId }: CampProps) {
 
   return (
     <div className={styles.camp}>
-      <Tabs tabs={tabs} lazy />
+      <Tabs 
+        tabs={tabs} 
+        lazy 
+        leftContent={
+          <img 
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAA/FBMVEX/////wRD+YwwUZjb/vQD/0IL/wiv+loL+aSn+TQAAUQAAZjgtbEOCl4b/wiX/xhD+YAz19fX/+vUASgD+Zwz/YwP/xlz/ow7+WwxceWItZjX+VQz+kg4lZjbjZBv+fw2CZTD/58xVZjT/8eIAXRfM0M3IZCPi5OKHl4ryYxIPXC3/04KtZSr/sQ+rta3/26tyi3dwl4bAl4T/xYL/y3IAHwAAWQOkTwD/tgA7ck0/bEIAbEWtazr/syv/xDk+ZjWiZSzSZCFAaEkAPQAAYin+dw2hrKNqZTP/2aQAFQAlYThdbELzaiz+XSn+lioAQwA5UQD+NgD+kIL+sILGSCDSAAACq0lEQVR4nO3aC0PSUBiAYYcb5SZzylQEp2kgkIJWRppFlJfsfvv//6Wdg+kuZ17IsWnv8wu+F87gY2xiAgAAAAAAAAAAAAAAAAAAAAAAABiHxk4p4umzB0mebxqGsbuW9cwh3Rc9M+LlVJKOpuv63nbWM4d0zf3pkFcHrx8meWMXi309ZwHl6cmQqrU1X1BzOjOaVsxzgFetem+VAa5QyH2AJQ3iAU5NyldAQ2r1vIv5B1u+wbtYgOMuS3uaptm6sSbNZTz/7PtDs1wu1wPH31qZl2JvQGV1RtIkXdjrZx6wdCQ+dCbDAeqrt7KqBdm2XdQWsg+oRz5/rh0gDxIBBBBAAAH3KcDzvKqnDBBbnJPHgIlgwHCLUwVUxBI3dawIyG7y5knXd7J/dP7yWx82pHZ8/uVFoRMN0LT+6bbv9HEGAY2PvbJZNi/OT9V6lLDFubXF4BoXMtzpsviB3DCnw2ucH6C+eGWArhheniKx0+mZBMR/RV4WkDD/2aVAAAEEEEDAJQGFux5wp98Bx3EqTs4CuqWWb+d8i/PXuK0VKT6+25GSFom/dg1hXHcbS4d10zQDN+M8a2O+oFzjHFdL2uJChiudMaaAVl1scV4kQMlxr3rtzw6Rr6+PLcCMnP5/D5ARBBBAAAH/Y4Anbmbd5YDhvSxFgCNUchYwK7V6FwHeulBVBMj/hN3jGwXMSenN31ySAuNb6yttwY2NX1seLjjXnt9XXJDSu03XNOtCcA1db6tPvx9w5QYXJ5P1FAM+RW7GiQD11TtagC2lGPAk/PF56wFDBBBAAAE3CbjN7wEp/e+BgIPPXxKe7Pv6zS6OKMWA79FnK80ftYRnK3+erRIjSDEg+nRrqdRKerr11+9NY0RZ/GUJAAAAAAAAAAAAAAAAAAAAAACA++sP89Z/fummxOwAAAAASUVORK5CYII="
+            alt="Camp Logo"
+            className={styles.logo}
+          />
+        }
+      />
     </div>
   );
 }

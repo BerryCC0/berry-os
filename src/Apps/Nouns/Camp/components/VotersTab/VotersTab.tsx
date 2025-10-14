@@ -28,7 +28,10 @@ export default function VotersTab() {
     topOnly: filter === VoterFilter.ALL,
   });
 
-  const { votingPower, delegate, balance, isSelfDelegated, ownsNouns } = useVotingPower(address);
+  // Only fetch voting power if wallet is connected
+  const { votingPower, delegate, balance, isSelfDelegated, ownsNouns } = useVotingPower(
+    isConnected ? address : undefined
+  );
 
   if (error) {
     return (

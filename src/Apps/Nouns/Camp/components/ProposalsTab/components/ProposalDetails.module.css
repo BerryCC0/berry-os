@@ -240,7 +240,8 @@
 
 /* Voting Interface */
 .votingSection {
-  margin-bottom: 24px;
+  margin-top: 16px;
+  margin-bottom: 16px;
   padding: 16px;
   background: var(--theme-window-background, #EEEEEE);
   border: 1px solid var(--theme-border, #000000);

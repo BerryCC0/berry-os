@@ -13,10 +13,18 @@
 
 .tabHeaders {
   display: flex;
+  align-items: center;
   gap: 0;
   border-bottom: 1px solid var(--theme-tab-border, #000000);
   background: var(--theme-tab-background, #DDDDDD);
   padding: 4px 4px 0 4px;
+}
+
+.leftContent {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  margin-right: 4px;
 }
 
 .tabHeader {

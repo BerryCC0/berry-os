@@ -1,18 +1,64 @@
 /**
  * useCandidates Hook
- * Fetches proposal candidates from Data Proxy contract
+ * Fetches proposal candidates from Goldsky GraphQL
  * 
- * Note: Candidates are stored on-chain via events, not in a subgraph.
- * This is a placeholder implementation - full implementation would require
- * parsing contract events or using a candidate indexer.
+ * Features:
+ * - Automatic polling every 45 seconds when tab is active
+ * - Stops polling when tab is inactive (battery efficient)
+ * - Fresh data on component mount
+ * - Seamless background updates
  */
 
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useQuery } from '@apollo/client/react';
+import { nounsApolloClient } from '@/app/lib/Nouns/Goldsky';
+import { gql } from '@apollo/client';
 import type { Candidate } from '../types/camp';
 import { CandidateFilter, CandidateSort } from '../types/camp';
 import { filterCandidates, sortCandidates } from '../helpers/candidateHelpers';
+import { useSmartPolling } from './useSmartPolling';
+
+const GET_PROPOSAL_CANDIDATES = gql`
+  query GetProposalCandidates(
+    $first: Int = 20
+    $skip: Int = 0
+    $where: ProposalCandidate_filter
+  ) {
+    proposalCandidates(
+      first: $first
+      skip: $skip
+      orderBy: createdTimestamp
+      orderDirection: desc
+      where: $where
+    ) {
+      id
+      proposer
+      slug
+      number
+      createdTimestamp
+      lastUpdatedTimestamp
+      canceled
+      canceledTimestamp
+      latestVersion {
+        id
+        content {
+          title
+          description
+          targets
+          values
+          signatures
+          calldatas
+          proposalIdToUpdate
+        }
+      }
+      versions {
+        id
+      }
+    }
+  }
+`;
 
 interface UseCandidatesOptions {
   filter?: CandidateFilter;
@@ -27,60 +73,74 @@ interface UseCandidatesReturn {
 }
 
 /**
- * Hook to fetch and manage candidates
- * 
- * TODO: Implement actual candidate fetching from Data Proxy contract events
- * This requires either:
- * 1. Reading ProposalCandidateCreated events from the blockchain
- * 2. Using a dedicated candidate indexer/API
- * 3. Building a custom subgraph for candidates
+ * Hook to fetch and manage candidates with polling
  */
 export function useCandidates(options: UseCandidatesOptions = {}): UseCandidatesReturn {
   const { filter = CandidateFilter.ALL, sort = CandidateSort.NEWEST } = options;
 
-  // Placeholder state
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  // Fetch candidates from Goldsky with polling
+  const { 
+    data, 
+    loading, 
+    error, 
+    refetch,
+    startPolling,
+    stopPolling,
+  } = useQuery<{
+    proposalCandidates: any[];
+  }>(GET_PROPOSAL_CANDIDATES, {
+    variables: {
+      first: 100,
+      skip: 0,
+    },
+    client: nounsApolloClient,
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+  });
 
-  // Placeholder candidates data
-  // In production, this would come from contract events or an indexer
-  const mockCandidates: Candidate[] = useMemo(() => {
-    return [
-      // Example candidate structure
-      // {
-      //   proposer: '0x...',
-      //   slug: 'example-candidate',
-      //   description: '# Example Candidate\n\nThis is a draft proposal...',
-      //   targets: ['0x...'],
-      //   values: ['0'],
-      //   signatures: ['transfer(address,uint256)'],
-      //   calldatas: ['0x...'],
-      //   proposalIdToUpdate: '0',
-      //   createdTimestamp: Date.now() / 1000,
-      //   lastUpdatedTimestamp: Date.now() / 1000,
-      //   canceled: false,
-      //   feedbackCount: 5,
-      // }
-    ];
-  }, []);
+  // Smart polling (45 seconds - moderate updates)
+  useSmartPolling({
+    interval: 45000,
+    startPolling,
+    stopPolling,
+  });
+
+  // Transform GraphQL data to Candidate type
+  const candidates = useMemo(() => {
+    if (!data?.proposalCandidates) return [];
+    
+    return data.proposalCandidates.map((candidate: any) => {
+      const content = candidate.latestVersion?.content;
+      
+      return {
+        proposer: candidate.proposer,
+        slug: candidate.slug,
+        description: content?.description || '',
+        createdTimestamp: parseInt(candidate.createdTimestamp),
+        lastUpdatedTimestamp: parseInt(candidate.lastUpdatedTimestamp),
+        canceled: candidate.canceled,
+        feedbackCount: candidate.versions?.length || 0,
+        // Get from latestVersion.content
+        targets: content?.targets || [],
+        values: content?.values?.map((v: string) => v.toString()) || [],
+        signatures: content?.signatures || [],
+        calldatas: content?.calldatas || [],
+        proposalIdToUpdate: content?.proposalIdToUpdate?.toString() || '0',
+        requiredSignatures: 0, // Not in schema, default to 0
+      };
+    });
+  }, [data]);
 
   // Apply filters and sorting
   const processedCandidates = useMemo(() => {
-    let candidates = mockCandidates;
-    candidates = filterCandidates(candidates, filter);
-    candidates = sortCandidates(candidates, sort);
-    return candidates;
-  }, [mockCandidates, filter, sort]);
-
-  const refetch = () => {
-    // Placeholder refetch
-    console.log('Refetching candidates...');
-  };
+    let filtered = filterCandidates(candidates, filter);
+    return sortCandidates(filtered, sort);
+  }, [candidates, filter, sort]);
 
   return {
     candidates: processedCandidates,
     loading,
-    error,
+    error: error || null,
     refetch,
   };
 }

@@ -28,8 +28,11 @@ interface ActivityItemProps {
 }
 
 function ActivityItem({ activity, isExpanded = false, onClick }: ActivityItemProps) {
-  const { ensName, isLoading: ensLoading } = useENS(activity.voter);
+  const { ensName, ensAvatar, isLoading: ensLoading } = useENS(activity.voter);
   const displayName = formatAddressWithENS(activity.voter, ensName);
+  
+  // Determine avatar to show
+  const avatarUrl = ensAvatar || '/icons/apps/berry.svg';
   
   const supportColor = getSupportColor(activity.supportDetailed);
   const supportIcon = getSupportIcon(activity.supportDetailed);
@@ -118,6 +121,17 @@ function ActivityItem({ activity, isExpanded = false, onClick }: ActivityItemPro
       {/* Center: Activity Info */}
       <div className={styles.info}>
         <div className={styles.header}>
+          {/* Avatar */}
+          <img 
+            src={avatarUrl} 
+            alt={displayName}
+            className={styles.avatar}
+            onError={(e) => {
+              // Fallback if ENS avatar fails to load
+              e.currentTarget.src = '/icons/apps/berry.svg';
+            }}
+          />
+          
           <span 
             className={`${styles.voter} ${ensLoading ? styles.loading : ''}`} 
             title={activity.voter}

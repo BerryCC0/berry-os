@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useActivityFeed } from '../../utils/hooks/useActivityFeed';
 import ActivityItem from './components/ActivityItem';
 import ProposalDetailsWrapper from './components/ProposalDetailsWrapper';
@@ -21,6 +21,38 @@ export default function ActivityTab({ onVote }: ActivityTabProps) {
   });
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
+  const feedRef = useRef<HTMLDivElement>(null);
+  const prevActivitiesLengthRef = useRef(activities.length);
+
+  // Preserve scroll position when new items load
+  useEffect(() => {
+    if (activities.length > prevActivitiesLengthRef.current && feedRef.current) {
+      // New items were loaded - do nothing, browser should maintain scroll
+      prevActivitiesLengthRef.current = activities.length;
+    }
+  }, [activities.length]);
+
+  // Memoize activity items to prevent unnecessary re-renders
+  const activityItems = useMemo(() => {
+    return activities.map(activity => (
+      <div key={activity.id}>
+        <ActivityItem 
+          activity={activity}
+          isExpanded={expandedActivityId === activity.id}
+          onClick={() => setExpandedActivityId(
+            expandedActivityId === activity.id ? null : activity.id
+          )}
+        />
+        {expandedActivityId === activity.id && activity.contextType === 'proposal' && (
+          <ProposalDetailsWrapper 
+            proposalId={activity.contextId}
+            onClose={() => setExpandedActivityId(null)}
+            onVote={(support, reason) => onVote?.(activity.contextId, support, reason)}
+          />
+        )}
+      </div>
+    ));
+  }, [activities, expandedActivityId, onVote]);
 
   // Infinite scroll with IntersectionObserver
   useEffect(() => {
@@ -57,7 +89,7 @@ export default function ActivityTab({ onVote }: ActivityTabProps) {
   return (
     <div className={styles.container}>
       {/* Activity Feed */}
-      <div className={styles.feed}>
+      <div className={styles.feed} ref={feedRef}>
         {activities.length === 0 && !loading ? (
           <div className={styles.empty}>
             <p>No activity found</p>
@@ -67,24 +99,7 @@ export default function ActivityTab({ onVote }: ActivityTabProps) {
           </div>
         ) : (
           <>
-            {activities.map(activity => (
-              <div key={activity.id}>
-                <ActivityItem 
-                  activity={activity}
-                  isExpanded={expandedActivityId === activity.id}
-                  onClick={() => setExpandedActivityId(
-                    expandedActivityId === activity.id ? null : activity.id
-                  )}
-                />
-                {expandedActivityId === activity.id && activity.contextType === 'proposal' && (
-                  <ProposalDetailsWrapper 
-                    proposalId={activity.contextId}
-                    onClose={() => setExpandedActivityId(null)}
-                    onVote={(support, reason) => onVote?.(activity.contextId, support, reason)}
-                  />
-                )}
-              </div>
-            ))}
+            {activityItems}
 
             {/* Sentinel for infinite scroll */}
             {hasMore && <div ref={sentinelRef} className={styles.sentinel} />}

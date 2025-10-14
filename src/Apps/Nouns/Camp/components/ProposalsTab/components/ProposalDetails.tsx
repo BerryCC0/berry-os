@@ -228,59 +228,6 @@ export default function ProposalDetails({ proposal, onClose, onVote, defaultSumm
 
       {/* Proposal Actions */}
       <ProposalActions proposal={proposal} />
-
-      {/* Voting Interface */}
-      {canVote && (
-        <div className={styles.votingSection}>
-          <h3 className={styles.sectionTitle}>Cast Your Vote</h3>
-          
-          <div className={styles.voteButtons}>
-            <button
-              className={`${styles.voteButton} ${styles.voteFor} ${selectedSupport === 1 ? styles.selected : ''}`}
-              onClick={() => handleVote(1)}
-            >
-              Vote For
-            </button>
-            <button
-              className={`${styles.voteButton} ${styles.voteAgainst} ${selectedSupport === 0 ? styles.selected : ''}`}
-              onClick={() => handleVote(0)}
-            >
-              Vote Against
-            </button>
-            <button
-              className={`${styles.voteButton} ${styles.voteAbstain} ${selectedSupport === 2 ? styles.selected : ''}`}
-              onClick={() => handleVote(2)}
-            >
-              Abstain
-            </button>
-          </div>
-
-          {selectedSupport !== null && (
-            <>
-              <textarea
-                className={styles.reasonInput}
-                placeholder="Add a reason for your vote (optional)"
-                value={voteReason}
-                onChange={(e) => setVoteReason(e.target.value)}
-                maxLength={1000}
-                rows={3}
-              />
-              <button
-                className={styles.submitButton}
-                onClick={handleSubmitVote}
-              >
-                Submit Vote
-              </button>
-            </>
-          )}
-        </div>
-      )}
-
-            {!isConnected && proposal.status === 'ACTIVE' && (
-              <div className={styles.connectPrompt}>
-                Connect your wallet to vote on this proposal
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -314,9 +261,64 @@ export default function ProposalDetails({ proposal, onClose, onVote, defaultSumm
           </div>
         </>
       ) : (
-        <div className={styles.votesAndSignalsContainer}>
-          {/* Left Column: Individual Votes Section */}
-          <div className={styles.votesColumn}>
+        <>
+          {/* Voting Interface - Full Width Above Columns */}
+          {canVote && (
+            <div className={styles.votingSection}>
+              <h3 className={styles.sectionTitle}>Cast Your Vote</h3>
+              
+              <div className={styles.voteButtons}>
+                <button
+                  className={`${styles.voteButton} ${styles.voteFor} ${selectedSupport === 1 ? styles.selected : ''}`}
+                  onClick={() => handleVote(1)}
+                >
+                  Vote For
+                </button>
+                <button
+                  className={`${styles.voteButton} ${styles.voteAgainst} ${selectedSupport === 0 ? styles.selected : ''}`}
+                  onClick={() => handleVote(0)}
+                >
+                  Vote Against
+                </button>
+                <button
+                  className={`${styles.voteButton} ${styles.voteAbstain} ${selectedSupport === 2 ? styles.selected : ''}`}
+                  onClick={() => handleVote(2)}
+                >
+                  Abstain
+                </button>
+              </div>
+
+              {selectedSupport !== null && (
+                <>
+                  <textarea
+                    className={styles.reasonInput}
+                    placeholder="Add a reason for your vote (optional)"
+                    value={voteReason}
+                    onChange={(e) => setVoteReason(e.target.value)}
+                    maxLength={1000}
+                    rows={3}
+                  />
+                  <button
+                    className={styles.submitButton}
+                    onClick={handleSubmitVote}
+                  >
+                    Submit Vote
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {!isConnected && proposal.status === 'ACTIVE' && (
+            <div className={styles.connectPrompt}>
+              Connect your wallet to vote on this proposal
+            </div>
+          )}
+
+          {/* Two-Column Layout: Votes and Signals */}
+          <div className={styles.votesAndSignalsContainer}>
+            {/* Left Column: Individual Votes Section */}
+            <div className={styles.votesColumn}>
             <div className={styles.votesSection}>
               <h3 className={styles.sectionTitle}>Individual Votes</h3>
               
@@ -368,7 +370,8 @@ export default function ProposalDetails({ proposal, onClose, onVote, defaultSumm
               />
             </div>
           )}
-        </div>
+          </div>
+        </>
       )}
 
       {/* Proposal Version History (V3 Governance - Updatable Proposals) */}

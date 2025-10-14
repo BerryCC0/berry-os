@@ -174,7 +174,7 @@ export default function AboutDialog({ onClose }: AboutDialogProps) {
           {/* Footer - Apple-style but CC0 */}
           <div className={styles.footer}>
             <a 
-              href="https://github.com/BerryOS/berryos" 
+              href="https://github.com/BerryCC0/berry-os" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.link}

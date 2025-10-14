@@ -1,12 +1,19 @@
 /**
  * useActivityFeed Hook
  * Fetches and combines all governance activity into a unified feed
+ * 
+ * Features:
+ * - Automatic polling every 15 seconds when tab is active
+ * - Stops polling when tab is inactive (battery efficient)
+ * - Fresh data on component mount
+ * - Seamless background updates (no loading states)
  */
 
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { useSmartPolling } from './useSmartPolling';
 import { 
   GET_ALL_VOTES, 
   GET_ALL_PROPOSAL_FEEDBACKS,
@@ -114,42 +121,87 @@ export function useActivityFeed(options: UseActivityFeedOptions = {}): UseActivi
   
   const [currentFirst, setCurrentFirst] = useState(first);
 
-  // Fetch all activity types
-  const { data: votesData, loading: votesLoading, error: votesError } = useQuery(
+  // Fetch all activity types with cache-and-network + polling
+  const { 
+    data: votesData, 
+    loading: votesLoading, 
+    error: votesError,
+    startPolling: startVotesPolling,
+    stopPolling: stopVotesPolling,
+  } = useQuery(
     GET_ALL_VOTES,
     {
       variables: { first: currentFirst, skip: 0 },
       client: nounsApolloClient,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
+      nextFetchPolicy: 'cache-first',
     }
   );
 
-  const { data: feedbackData, loading: feedbackLoading, error: feedbackError } = useQuery(
+  const { 
+    data: feedbackData, 
+    loading: feedbackLoading, 
+    error: feedbackError,
+    startPolling: startFeedbackPolling,
+    stopPolling: stopFeedbackPolling,
+  } = useQuery(
     GET_ALL_PROPOSAL_FEEDBACKS,
     {
       variables: { first: currentFirst, skip: 0 },
       client: nounsApolloClient,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
+      nextFetchPolicy: 'cache-first',
     }
   );
 
-  const { data: signaturesData, loading: signaturesLoading, error: signaturesError } = useQuery(
+  const { 
+    data: signaturesData, 
+    loading: signaturesLoading, 
+    error: signaturesError,
+    startPolling: startSignaturesPolling,
+    stopPolling: stopSignaturesPolling,
+  } = useQuery(
     GET_CANDIDATE_SIGNATURES,
     {
       variables: { first: currentFirst, skip: 0 },
       client: nounsApolloClient,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
+      nextFetchPolicy: 'cache-first',
     }
   );
 
-  const { data: candidateFeedbackData, loading: candidateFeedbackLoading, error: candidateFeedbackError } = useQuery(
+  const { 
+    data: candidateFeedbackData, 
+    loading: candidateFeedbackLoading, 
+    error: candidateFeedbackError,
+    startPolling: startCandidateFeedbackPolling,
+    stopPolling: stopCandidateFeedbackPolling,
+  } = useQuery(
     GET_CANDIDATE_FEEDBACKS,
     {
       variables: { first: currentFirst, skip: 0 },
       client: nounsApolloClient,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
+      nextFetchPolicy: 'cache-first',
     }
   );
+
+  // Smart polling for all queries (15 seconds - most volatile data)
+  useSmartPolling({
+    interval: 15000,
+    startPolling: (interval) => {
+      startVotesPolling(interval);
+      startFeedbackPolling(interval);
+      startSignaturesPolling(interval);
+      startCandidateFeedbackPolling(interval);
+    },
+    stopPolling: () => {
+      stopVotesPolling();
+      stopFeedbackPolling();
+      stopSignaturesPolling();
+      stopCandidateFeedbackPolling();
+    },
+  });
 
   // Combine loading states
   const loading = votesLoading || feedbackLoading || signaturesLoading || candidateFeedbackLoading;
