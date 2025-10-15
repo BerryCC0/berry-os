@@ -9,57 +9,6 @@
   font-family: var(--font-geneva);
 }
 
-/* User Section */
-.userSection {
-  padding: 16px;
-  background: #E8F5E9;
-  border-bottom: 2px solid #4CAF50;
-}
-
-.userTitle {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--theme-text, #000000);
-}
-
-.userStats {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.statItem {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-}
-
-.statLabel {
-  color: var(--theme-text-secondary, #666666);
-}
-
-.statValue {
-  font-weight: bold;
-  color: var(--theme-text, #000000);
-}
-
-.delegateButton {
-  width: 100%;
-  padding: 8px;
-  background: var(--theme-button-background, #DDDDDD);
-  border: 1px solid var(--theme-border, #000000);
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.delegateButton:hover {
-  background: var(--theme-button-hover, #CCCCCC);
-}
-
 /* Controls */
 .controls {
   display: flex;

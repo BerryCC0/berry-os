@@ -7,11 +7,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useAccount } from 'wagmi';
-import { useVoters, useVotingPower } from '../../utils/hooks/useVoters';
+import { useVoters } from '../../utils/hooks/useVoters';
 import { useBatchENS } from '../../utils/hooks/useBatchENS';
 import { VoterFilter, VoterSort } from '../../utils/types/camp';
-import { formatVotingPower, formatAddress } from '../../utils/helpers/voterHelpers';
 import VoterCard from './components/VoterCard';
 import VoterDetailView from './components/VoterDetailView';
 import styles from './VotersTab.module.css';
@@ -21,18 +19,12 @@ export default function VotersTab() {
   const [sort, setSort] = useState<VoterSort>(VoterSort.MOST_POWER);
   const [selectedVoter, setSelectedVoter] = useState<string | null>(null);
 
-  const { address, isConnected } = useAccount();
   const { voters, loading, error, hasMore, loadMore } = useVoters({
     first: 20,
     filter,
     sort,
     topOnly: filter === VoterFilter.ALL,
   });
-
-  // Only fetch voting power if wallet is connected
-  const { votingPower, delegate, balance, isSelfDelegated, ownsNouns } = useVotingPower(
-    isConnected ? address : undefined
-  );
 
   // Batch ENS resolution for all voters
   const voterAddresses = useMemo(() => voters.map(v => v.id), [voters]);
@@ -62,40 +54,6 @@ export default function VotersTab() {
 
       {/* Voter List - conditionally visible */}
       <div className={styles.container} style={{ display: selectedVoter ? 'none' : 'flex' }}>
-      {/* User's Voting Power (if connected) */}
-      {isConnected && (
-        <div className={styles.userSection}>
-          <h3 className={styles.userTitle}>Your Voting Power</h3>
-          <div className={styles.userStats}>
-            <div className={styles.statItem}>
-              <span className={styles.statLabel}>Voting Power:</span>
-              <span className={styles.statValue}>
-                {formatVotingPower(votingPower)} votes
-              </span>
-            </div>
-            <div className={styles.statItem}>
-              <span className={styles.statLabel}>Nouns Owned:</span>
-              <span className={styles.statValue}>
-                {balance}
-              </span>
-            </div>
-            {delegate && (
-              <div className={styles.statItem}>
-                <span className={styles.statLabel}>Delegated To:</span>
-                <span className={styles.statValue}>
-                  {isSelfDelegated ? 'Self' : formatAddress(delegate)}
-                </span>
-              </div>
-            )}
-          </div>
-          {ownsNouns && !isSelfDelegated && (
-            <button className={styles.delegateButton}>
-              Change Delegation
-            </button>
-          )}
-        </div>
-      )}
-
       {/* Controls */}
       <div className={styles.controls}>
         <div className={styles.filterGroup}>
