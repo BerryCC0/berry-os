@@ -464,6 +464,7 @@ export const GET_DELEGATE = gql`
 
 export const GET_DELEGATES = gql`
   ${DELEGATE_FRAGMENT}
+  ${NOUN_SEED_FRAGMENT}
   query GetDelegates(
     $first: Int = 10
     $skip: Int = 0
@@ -477,8 +478,16 @@ export const GET_DELEGATES = gql`
       orderDirection: $orderDirection
     ) {
       ...DelegateFields
-      nounsRepresented {
+      nounsRepresented(first: 1000, orderBy: id, orderDirection: desc) {
         id
+        seed {
+          ...NounSeedFields
+        }
+      }
+      tokenHoldersRepresented(first: 1000) {
+        id
+        tokenBalance
+        tokenBalanceRaw
       }
     }
   }
@@ -486,6 +495,7 @@ export const GET_DELEGATES = gql`
 
 export const GET_TOP_DELEGATES = gql`
   ${DELEGATE_FRAGMENT}
+  ${NOUN_SEED_FRAGMENT}
   query GetTopDelegates($first: Int = 20) {
     delegates(
       first: $first
@@ -494,11 +504,16 @@ export const GET_TOP_DELEGATES = gql`
       where: { delegatedVotesRaw_gt: "0" }
     ) {
       ...DelegateFields
-      nounsRepresented {
+      nounsRepresented(first: 1000, orderBy: id, orderDirection: desc) {
         id
+        seed {
+          ...NounSeedFields
+        }
       }
-      tokenHoldersRepresented {
+      tokenHoldersRepresented(first: 1000) {
         id
+        tokenBalance
+        tokenBalanceRaw
       }
     }
   }
@@ -911,6 +926,85 @@ export const GET_ALL_PROPOSAL_FEEDBACKS = gql`
         id
         title
         status
+      }
+    }
+  }
+`;
+
+// ============================================================================
+// Voter Detail Queries
+// ============================================================================
+
+export const GET_DELEGATE_DETAILS = gql`
+  ${NOUN_SEED_FRAGMENT}
+  ${VOTE_FRAGMENT}
+  ${PROPOSAL_FRAGMENT}
+  query GetDelegateDetails(
+    $id: ID!
+    $votesSkip: Int = 0
+    $proposalsSkip: Int = 0
+    $nounsSkip: Int = 0
+  ) {
+    delegate(id: $id) {
+      id
+      delegatedVotes
+      delegatedVotesRaw
+      tokenHoldersRepresentedAmount
+      tokenHoldersRepresented(first: 1000) {
+        id
+        tokenBalance
+        tokenBalanceRaw
+      }
+      nounsRepresented(
+        first: 1000
+        skip: $nounsSkip
+        orderBy: id
+        orderDirection: desc
+      ) {
+        id
+        seed {
+          ...NounSeedFields
+        }
+      }
+      votes(
+        first: 1000
+        skip: $votesSkip
+        orderBy: blockNumber
+        orderDirection: desc
+      ) {
+        ...VoteFields
+        proposal {
+          id
+          title
+          status
+          createdBlock
+          createdTimestamp
+        }
+      }
+      proposals(
+        first: 100
+        skip: $proposalsSkip
+        orderBy: createdBlock
+        orderDirection: desc
+      ) {
+        ...ProposalFields
+      }
+    }
+    account(id: $id) {
+      id
+      tokenBalance
+      tokenBalanceRaw
+      totalTokensHeld
+      totalTokensHeldRaw
+      delegate {
+        id
+        delegatedVotes
+      }
+      nouns(first: 1000, orderBy: id, orderDirection: desc) {
+        id
+        seed {
+          ...NounSeedFields
+        }
       }
     }
   }

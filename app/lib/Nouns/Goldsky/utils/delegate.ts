@@ -56,6 +56,18 @@ export function getTokenHoldersCount(delegate: Delegate): number {
 }
 
 /**
+ * Gets token holders represented (filtered for non-zero balances)
+ * Filters out dirty data where tokenBalance is 0
+ */
+export function getActiveTokenHoldersCount(delegate: Delegate): number {
+  const holders = delegate.tokenHoldersRepresented || [];
+  return holders.filter(holder => {
+    const balance = Number(holder.tokenBalance || 0);
+    return balance > 0;
+  }).length;
+}
+
+/**
  * Checks if delegate has voting power
  */
 export function hasVotingPower(delegate: Delegate): boolean {
@@ -92,6 +104,18 @@ export function getNounsCount(delegate: Delegate): number {
  */
 export function getTokenHoldersRepresented(delegate: Delegate): Account[] {
   return delegate.tokenHoldersRepresented || [];
+}
+
+/**
+ * Gets token holders represented with non-zero balances only
+ * Filters out dirty data from Goldsky
+ */
+export function getActiveTokenHoldersRepresented(delegate: Delegate): Account[] {
+  const holders = getTokenHoldersRepresented(delegate);
+  return holders.filter(holder => {
+    const balance = Number(holder.tokenBalance || 0);
+    return balance > 0;
+  });
 }
 
 /**

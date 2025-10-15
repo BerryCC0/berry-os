@@ -413,6 +413,169 @@ export function getDelegationStats(delegates: Delegate[]): {
 }
 
 // ============================================================================
+// Voter Detail Helpers
+// ============================================================================
+
+/**
+ * Get voter statistics for display
+ * Uses active token holders count (filters out 0 balance holders from dirty Goldsky data)
+ */
+export function getVoterStats(delegate: Delegate, account?: any): {
+  votingPower: number;
+  nounsOwned: number;
+  tokenHoldersRepresented: number;
+  proposalsCreated: number;
+  votescast: number;
+  participationRate: number;
+} {
+  const votingPower = Number(delegateUtils.getDelegatedVotes(delegate));
+  
+  // Nouns Owned = actual tokens in their wallet (from account.tokenBalance)
+  // This is NOT the same as nounsRepresented (which includes delegations)
+  const nounsOwned = account?.tokenBalance ? Number(account.tokenBalance) : 0;
+  
+  const tokenHoldersRepresented = delegateUtils.getActiveTokenHoldersCount(delegate);
+  const proposalsCreated = delegateUtils.getProposalCount(delegate);
+  const votesCast = delegateUtils.getVoteCount(delegate);
+  
+  // Estimate participation rate (we'd need total proposals count for accuracy)
+  // For now, if they have votes, assume some participation
+  const participationRate = votesCast > 0 ? Math.min((votesCast / 100) * 100, 100) : 0;
+  
+  return {
+    votingPower,
+    nounsOwned,
+    tokenHoldersRepresented,
+    proposalsCreated,
+    votescast: votesCast,
+    participationRate,
+  };
+}
+
+/**
+ * Format delegation status for display
+ * Shows both who is delegating TO this delegate AND who the account delegates to
+ */
+export function formatDelegationStatus(account: any, delegate: Delegate): {
+  isSelfDelegated: boolean;
+  hasExternalDelegators: boolean;
+  externalDelegators: Array<{ address: string; nounCount: number }>;
+  totalExternalDelegators: number;
+  isDelegatingTo: string | null; // Who the account is delegating to
+  isDelegatingToSelf: boolean; // Whether account delegates to themselves
+  description: string;
+} {
+  const delegateAddress = delegate.id.toLowerCase();
+  const accountAddress = account?.id?.toLowerCase();
+  
+  // Check who the account is delegating to
+  const isDelegatingTo = account?.delegate?.id || null;
+  const isDelegatingToSelf = isDelegatingTo && isDelegatingTo.toLowerCase() === accountAddress;
+  
+  // Self-delegated means they're delegating to themselves (not delegating to someone else)
+  const isSelfDelegated = isDelegatingToSelf && account?.tokenBalance > 0;
+  
+  // Get all token holders delegating to this delegate (excluding self)
+  const tokenHolders = delegate.tokenHoldersRepresented || [];
+  const externalDelegators = tokenHolders
+    .filter(holder => {
+      const holderAddress = holder.id.toLowerCase();
+      const balance = Number(holder.tokenBalance || 0);
+      // Exclude self-delegation and zero balances
+      return holderAddress !== delegateAddress && balance > 0;
+    })
+    .map(holder => ({
+      address: holder.id,
+      nounCount: Number(holder.tokenBalance || 0),
+    }))
+    .sort((a, b) => b.nounCount - a.nounCount); // Sort by noun count descending
+  
+  const hasExternalDelegators = externalDelegators.length > 0;
+  
+  // Build description based on delegation direction (mutually exclusive)
+  let description = '';
+  
+  if (isDelegatingTo && !isDelegatingToSelf) {
+    // Account is delegating to someone else
+    description = `Delegating to ${formatAddress(isDelegatingTo)}`;
+  } else if (isSelfDelegated) {
+    // Self-delegated (may also have external delegators)
+    description = 'Self-delegated';
+  } else if (hasExternalDelegators) {
+    // Only external delegators (account has no tokens or not delegating)
+    const totalNouns = externalDelegators.reduce((sum, d) => sum + d.nounCount, 0);
+    description = `${externalDelegators.length} delegator${externalDelegators.length > 1 ? 's' : ''} (${totalNouns} Noun${totalNouns > 1 ? 's' : ''})`;
+  } else {
+    // No delegations at all
+    description = 'No active delegations';
+  }
+  
+  return {
+    isSelfDelegated,
+    hasExternalDelegators,
+    externalDelegators,
+    totalExternalDelegators: externalDelegators.length,
+    isDelegatingTo,
+    isDelegatingToSelf,
+    description,
+  };
+}
+
+/**
+ * Group votes by proposal for display
+ */
+export function groupVotesByProposal(votes: Vote[]): Map<string, Vote[]> {
+  const grouped = new Map<string, Vote[]>();
+  
+  votes.forEach(vote => {
+    const proposalId = (vote as any).proposal?.id || 'unknown';
+    if (!grouped.has(proposalId)) {
+      grouped.set(proposalId, []);
+    }
+    grouped.get(proposalId)!.push(vote);
+  });
+  
+  return grouped;
+}
+
+/**
+ * Calculate vote distribution for a voter
+ */
+export function getVoteDistribution(votes: Vote[]): {
+  forCount: number;
+  againstCount: number;
+  abstainCount: number;
+  forPercentage: number;
+  againstPercentage: number;
+  abstainPercentage: number;
+} {
+  const grouped = groupVotesBySupport(votes);
+  const total = votes.length;
+  
+  return {
+    forCount: grouped.for.length,
+    againstCount: grouped.against.length,
+    abstainCount: grouped.abstain.length,
+    forPercentage: total > 0 ? (grouped.for.length / total) * 100 : 0,
+    againstPercentage: total > 0 ? (grouped.against.length / total) * 100 : 0,
+    abstainPercentage: total > 0 ? (grouped.abstain.length / total) * 100 : 0,
+  };
+}
+
+/**
+ * Get recent voting activity (last N votes)
+ */
+export function getRecentVotes(votes: Vote[], count: number = 5): Vote[] {
+  return [...votes]
+    .sort((a, b) => {
+      const blockA = a.blockNumber ? Number(a.blockNumber) : 0;
+      const blockB = b.blockNumber ? Number(b.blockNumber) : 0;
+      return blockB - blockA;
+    })
+    .slice(0, count);
+}
+
+// ============================================================================
 // Re-export useful Goldsky utilities
 // ============================================================================
 

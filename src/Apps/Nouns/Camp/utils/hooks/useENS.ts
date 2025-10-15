@@ -73,41 +73,9 @@ export function useENS(address: string | undefined): UseENSResult {
   };
 }
 
-/**
- * Hook to resolve multiple ENS names at once
- * More efficient than calling useENS multiple times
- */
-export function useBatchENS(addresses: string[]): Map<string, string | null> {
-  const [results, setResults] = useState<Map<string, string | null>>(new Map());
-
-  useEffect(() => {
-    const resolveAddresses = async () => {
-      const newResults = new Map<string, string | null>();
-
-      for (const address of addresses) {
-        if (!address) continue;
-
-        const lowerAddress = address.toLowerCase();
-        
-        // Check cache first
-        if (ensCache.has(lowerAddress)) {
-          newResults.set(address, ensCache.get(lowerAddress)!);
-          continue;
-        }
-
-        // If not cached, we'll need to fetch
-        // For now, just mark as null and let individual useENS hooks handle it
-        newResults.set(address, null);
-      }
-
-      setResults(newResults);
-    };
-
-    resolveAddresses();
-  }, [addresses]);
-
-  return results;
-}
+// Note: For batch ENS resolution, use the dedicated useBatchENS hook
+// from './useBatchENS.ts' which includes proper ENS name fetching,
+// caching, error handling, and progress tracking.
 
 /**
  * Utility function to format address with ENS fallback

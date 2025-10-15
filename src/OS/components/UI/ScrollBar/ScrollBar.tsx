@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './ScrollBar.module.css';
 
 interface ScrollBarProps {
@@ -58,16 +58,19 @@ export default function ScrollBar({
   const [isVisible, setIsVisible] = useState(!autoHide);
   
   // Calculate scrollbar thumb size and position
-  const updateScrollbar = () => {
+  const updateScrollbar = useCallback(() => {
     if (!containerRef.current || !contentRef.current) return;
     
     const container = containerRef.current;
     const { scrollTop, scrollHeight, clientHeight, scrollLeft, scrollWidth, clientWidth } = container;
     
-    // Vertical scrollbar
+    // Batch all state updates together using React 18's automatic batching
+    // Calculate vertical scrollbar
     if (direction === 'vertical' || direction === 'both') {
       const canScrollV = scrollHeight > clientHeight;
-      setVCanScroll(canScrollV);
+      
+      // Only update if changed to prevent unnecessary re-renders
+      setVCanScroll(prev => prev !== canScrollV ? canScrollV : prev);
       
       if (canScrollV) {
         // Calculate thumb height (proportional to visible content)
@@ -75,21 +78,24 @@ export default function ScrollBar({
           (clientHeight / scrollHeight) * clientHeight,
           20 // Minimum thumb height
         );
-        setVThumbHeight(thumbHeight);
+        setVThumbHeight(prev => Math.abs(prev - thumbHeight) > 0.5 ? thumbHeight : prev);
         
         // Calculate thumb position
         const maxScroll = scrollHeight - clientHeight;
-        const scrollPercent = scrollTop / maxScroll;
+        const scrollPercent = maxScroll > 0 ? scrollTop / maxScroll : 0;
         const trackHeight = clientHeight - (showArrows ? 30 : 0); // Account for arrow buttons
         const maxThumbTop = trackHeight - thumbHeight;
-        setVThumbTop(scrollPercent * maxThumbTop + (showArrows ? 15 : 0));
+        const newThumbTop = scrollPercent * maxThumbTop + (showArrows ? 15 : 0);
+        setVThumbTop(prev => Math.abs(prev - newThumbTop) > 0.5 ? newThumbTop : prev);
       }
     }
     
-    // Horizontal scrollbar
+    // Calculate horizontal scrollbar
     if (direction === 'horizontal' || direction === 'both') {
       const canScrollH = scrollWidth > clientWidth;
-      setHCanScroll(canScrollH);
+      
+      // Only update if changed
+      setHCanScroll(prev => prev !== canScrollH ? canScrollH : prev);
       
       if (canScrollH) {
         // Calculate thumb width (proportional to visible content)
@@ -97,17 +103,18 @@ export default function ScrollBar({
           (clientWidth / scrollWidth) * clientWidth,
           20 // Minimum thumb width
         );
-        setHThumbWidth(thumbWidth);
+        setHThumbWidth(prev => Math.abs(prev - thumbWidth) > 0.5 ? thumbWidth : prev);
         
         // Calculate thumb position
         const maxScroll = scrollWidth - clientWidth;
-        const scrollPercent = scrollLeft / maxScroll;
+        const scrollPercent = maxScroll > 0 ? scrollLeft / maxScroll : 0;
         const trackWidth = clientWidth - (showArrows ? 30 : 0);
         const maxThumbLeft = trackWidth - thumbWidth;
-        setHThumbLeft(scrollPercent * maxThumbLeft + (showArrows ? 15 : 0));
+        const newThumbLeft = scrollPercent * maxThumbLeft + (showArrows ? 15 : 0);
+        setHThumbLeft(prev => Math.abs(prev - newThumbLeft) > 0.5 ? newThumbLeft : prev);
       }
     }
-  };
+  }, [direction, showArrows]);
   
   // Handle scroll events
   useEffect(() => {

@@ -112,6 +112,9 @@ export function useBatchENS(
   // Track which addresses we've started resolving
   const resolvedAddresses = useRef<Set<string>>(new Set());
   
+  // Stable reference for addresses array to prevent infinite loops
+  const addressesKey = JSON.stringify([...new Set(addresses.map(a => a.toLowerCase()))].sort());
+  
   useEffect(() => {
     if (!enabled || !publicClient || addresses.length === 0) {
       setIsLoading(false);
@@ -127,13 +130,23 @@ export function useBatchENS(
     
     if (newAddresses.length === 0) {
       // All addresses already resolved, just populate map from cache
-      const newMap = new Map(ensMap);
-      uniqueAddresses.forEach(addr => {
-        if (ensCache.has(addr)) {
-          newMap.set(addr, ensCache.get(addr)!);
-        }
+      setEnsMap(prev => {
+        // Only update if there are changes
+        let hasChanges = false;
+        const newMap = new Map(prev);
+        
+        uniqueAddresses.forEach(addr => {
+          if (ensCache.has(addr)) {
+            const cachedValue = ensCache.get(addr)!;
+            if (newMap.get(addr) !== cachedValue) {
+              newMap.set(addr, cachedValue);
+              hasChanges = true;
+            }
+          }
+        });
+        
+        return hasChanges ? newMap : prev;
       });
-      setEnsMap(newMap);
       setIsLoading(false);
       setProgress(1);
       return;
@@ -191,7 +204,8 @@ export function useBatchENS(
       setProgress(1);
     })();
     
-  }, [addresses, enabled, publicClient, batchSize, delayMs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressesKey, enabled, publicClient, batchSize, delayMs]);
   
   return {
     ensMap,

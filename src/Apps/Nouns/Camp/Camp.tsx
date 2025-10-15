@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useWriteContract } from 'wagmi';
+import { useWriteContract, useAccount } from 'wagmi';
 import { NounsApolloWrapper } from '@/app/lib/Nouns/Goldsky';
 import { GovernanceActions } from '@/app/lib/Nouns/Contracts';
 import Tabs from '@/src/OS/components/UI/Tabs/Tabs';
@@ -14,6 +14,8 @@ import ActivityTab from './components/ActivityTab/ActivityTab';
 import ProposalsTab from './components/ProposalsTab/ProposalsTab';
 import CandidatesTab from './components/CandidatesTab/CandidatesTab';
 import VotersTab from './components/VotersTab/VotersTab';
+import AccountTab from './components/AccountTab/AccountTab';
+import { useENS } from './utils/hooks/useENS';
 import styles from './Camp.module.css';
 
 interface CampProps {
@@ -22,6 +24,8 @@ interface CampProps {
 
 function CampContent({ windowId }: CampProps) {
   const { writeContractAsync } = useWriteContract();
+  const { address, isConnected } = useAccount();
+  const { ensName, ensAvatar } = useENS(address);
   const [isVoting, setIsVoting] = useState(false);
 
   // Handle voting on proposals
@@ -69,10 +73,40 @@ function CampContent({ windowId }: CampProps) {
     },
   ];
 
+  // Account tab (pinned to the right)
+  const accountTab = {
+    id: 'account',
+    label: isConnected && ensName ? ensName : 'Account',
+    content: <AccountTab />,
+    renderLabel: () => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        {isConnected && ensAvatar && (
+          <img 
+            src={ensAvatar} 
+            alt="Account" 
+            style={{ 
+              width: '16px', 
+              height: '16px', 
+              borderRadius: '3px',
+              objectFit: 'cover'
+            }}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        )}
+        <span className={styles.accountLabel}>
+          {isConnected && ensName ? ensName : 'Account'}
+        </span>
+      </div>
+    ),
+  };
+
   return (
     <div className={styles.camp}>
       <Tabs 
-        tabs={tabs} 
+        tabs={tabs}
+        pinnedTabs={[accountTab]}
         lazy 
         leftContent={
           <img 

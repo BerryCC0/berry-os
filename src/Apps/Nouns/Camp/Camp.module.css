@@ -22,6 +22,14 @@
   margin-right: 8px;
 }
 
+/* Account tab label */
+.accountLabel {
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Mobile adaptations */
 @media (max-width: 768px) {
   .camp {

@@ -13,10 +13,12 @@ export interface Tab {
   icon?: string;
   content: React.ReactNode;
   disabled?: boolean;
+  renderLabel?: () => React.ReactNode; // Custom label renderer
 }
 
 export interface TabsProps {
   tabs: Tab[];
+  pinnedTabs?: Tab[]; // Tabs pinned to the right
   activeTab?: string;
   onChange?: (tabId: string) => void;
   className?: string;
@@ -26,13 +28,15 @@ export interface TabsProps {
 
 export default function Tabs({
   tabs,
+  pinnedTabs = [],
   activeTab: controlledActiveTab,
   onChange,
   className = '',
   lazy = false,
   leftContent,
 }: TabsProps) {
-  const [internalActiveTab, setInternalActiveTab] = useState(tabs[0]?.id || '');
+  const allTabs = [...tabs, ...pinnedTabs];
+  const [internalActiveTab, setInternalActiveTab] = useState(allTabs[0]?.id || '');
   
   // Use controlled or uncontrolled state
   const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
@@ -44,13 +48,15 @@ export default function Tabs({
     onChange?.(tabId);
   };
 
-  const activeTabData = tabs.find(tab => tab.id === activeTab);
+  const activeTabData = allTabs.find(tab => tab.id === activeTab);
 
   return (
     <div className={`${styles.tabsContainer} ${className}`}>
       {/* Tab Headers */}
       <div className={styles.tabHeaders} role="tablist">
         {leftContent && <div className={styles.leftContent}>{leftContent}</div>}
+        
+        {/* Regular tabs */}
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -62,12 +68,47 @@ export default function Tabs({
             aria-controls={`tabpanel-${tab.id}`}
             id={`tab-${tab.id}`}
           >
-            {tab.icon && (
-              <img src={tab.icon} alt="" className={styles.tabIcon} />
+            {tab.renderLabel ? (
+              tab.renderLabel()
+            ) : (
+              <>
+                {tab.icon && (
+                  <img src={tab.icon} alt="" className={styles.tabIcon} />
+                )}
+                <span className={styles.tabLabel}>{tab.label}</span>
+              </>
             )}
-            <span className={styles.tabLabel}>{tab.label}</span>
           </button>
         ))}
+        
+        {/* Pinned tabs */}
+        {pinnedTabs.length > 0 && (
+          <div className={styles.pinnedTabsContainer}>
+            {pinnedTabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`${styles.tabHeader} ${styles.pinnedTab} ${tab.id === activeTab ? styles.active : ''} ${tab.disabled ? styles.disabled : ''}`}
+                onClick={() => !tab.disabled && handleTabClick(tab.id)}
+                disabled={tab.disabled}
+                role="tab"
+                aria-selected={tab.id === activeTab}
+                aria-controls={`tabpanel-${tab.id}`}
+                id={`tab-${tab.id}`}
+              >
+                {tab.renderLabel ? (
+                  tab.renderLabel()
+                ) : (
+                  <>
+                    {tab.icon && (
+                      <img src={tab.icon} alt="" className={styles.tabIcon} />
+                    )}
+                    <span className={styles.tabLabel}>{tab.label}</span>
+                  </>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Tab Content */}
@@ -83,7 +124,7 @@ export default function Tabs({
         </div>
       ) : (
         // Eager mode: Render all tabs but hide inactive ones
-        tabs.map(tab => (
+        allTabs.map(tab => (
           <div
             key={tab.id}
             className={styles.tabContent}

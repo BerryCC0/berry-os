@@ -1,0 +1,109 @@
+/**
+ * AccountTab Styles
+ * Mac OS 8 themed empty state and container
+ */
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 20px;
+  background: var(--theme-window-background, #FFFFFF);
+}
+
+.emptyStateContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+  text-align: center;
+}
+
+.iconWrapper {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-window-background, #EEEEEE);
+  border: 2px solid var(--theme-border, #000000);
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  opacity: 0.6;
+}
+
+.title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  font-family: var(--font-chicago);
+}
+
+.message {
+  margin: 0 0 24px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--theme-text-secondary, #666666);
+  font-family: var(--font-geneva);
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #FFF9E6;
+  border: 1px solid #F0E68C;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #8B7500;
+}
+
+.hintIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.hintText {
+  font-family: var(--font-geneva);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .emptyState {
+    padding: 24px 16px;
+  }
+
+  .iconWrapper {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+  }
+
+  .icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .message {
+    font-size: 12px;
+  }
+
+  .hint {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+}
+

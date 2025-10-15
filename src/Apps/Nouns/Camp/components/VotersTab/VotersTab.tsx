@@ -1,24 +1,25 @@
 /**
  * VotersTab Component
  * Delegates and voters list with voting power
+ * Now with detailed voter views
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { useVoters, useVotingPower } from '../../utils/hooks/useVoters';
+import { useBatchENS } from '../../utils/hooks/useBatchENS';
 import { VoterFilter, VoterSort } from '../../utils/types/camp';
-import {
-  formatVotingPower,
-  formatAddress,
-  getDelegateDisplayName,
-} from '../../utils/helpers/voterHelpers';
+import { formatVotingPower, formatAddress } from '../../utils/helpers/voterHelpers';
+import VoterCard from './components/VoterCard';
+import VoterDetailView from './components/VoterDetailView';
 import styles from './VotersTab.module.css';
 
 export default function VotersTab() {
   const [filter, setFilter] = useState<VoterFilter>(VoterFilter.ALL);
   const [sort, setSort] = useState<VoterSort>(VoterSort.MOST_POWER);
+  const [selectedVoter, setSelectedVoter] = useState<string | null>(null);
 
   const { address, isConnected } = useAccount();
   const { voters, loading, error, hasMore, loadMore } = useVoters({
@@ -33,7 +34,14 @@ export default function VotersTab() {
     isConnected ? address : undefined
   );
 
-  if (error) {
+  // Batch ENS resolution for all voters
+  const voterAddresses = useMemo(() => voters.map(v => v.id), [voters]);
+  const { ensMap } = useBatchENS(voterAddresses, {
+    enabled: !selectedVoter, // Only resolve when showing list
+  });
+
+  // Error state
+  if (error && !selectedVoter) {
     return (
       <div className={styles.error}>
         <p>Error loading voters:</p>
@@ -43,7 +51,17 @@ export default function VotersTab() {
   }
 
   return (
-    <div className={styles.container}>
+    <>
+      {/* Voter Detail View - conditionally visible */}
+      {selectedVoter && (
+        <VoterDetailView
+          address={selectedVoter}
+          onBack={() => setSelectedVoter(null)}
+        />
+      )}
+
+      {/* Voter List - conditionally visible */}
+      <div className={styles.container} style={{ display: selectedVoter ? 'none' : 'flex' }}>
       {/* User's Voting Power (if connected) */}
       {isConnected && (
         <div className={styles.userSection}>
@@ -125,40 +143,12 @@ export default function VotersTab() {
         ) : (
           <>
             {voters.map((voter, index) => (
-              <div 
+              <VoterCard
                 key={voter.id}
-                className={`${styles.voterCard} ${voter.isCurrentUser ? styles.currentUser : ''}`}
-              >
-                <div className={styles.voterHeader}>
-                  <span className={styles.voterRank}>#{index + 1}</span>
-                  <span className={styles.voterAddress}>
-                    {getDelegateDisplayName(voter, voter.ensName)}
-                  </span>
-                  {voter.isCurrentUser && (
-                    <span className={styles.youBadge}>YOU</span>
-                  )}
-                </div>
-                <div className={styles.voterStats}>
-                  <div className={styles.voterStat}>
-                    <span className={styles.voterStatLabel}>Voting Power:</span>
-                    <span className={styles.voterStatValue}>
-                      {formatVotingPower(voter.delegatedVotes)} votes
-                    </span>
-                  </div>
-                  <div className={styles.voterStat}>
-                    <span className={styles.voterStatLabel}>Nouns:</span>
-                    <span className={styles.voterStatValue}>
-                      {voter.nounsRepresented?.length || 0}
-                    </span>
-                  </div>
-                  <div className={styles.voterStat}>
-                    <span className={styles.voterStatLabel}>Token Holders:</span>
-                    <span className={styles.voterStatValue}>
-                      {voter.tokenHoldersRepresentedAmount}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                voter={voter}
+                rank={index + 1}
+                onClick={() => setSelectedVoter(voter.id)}
+              />
             ))}
 
             {/* Load More */}
@@ -175,6 +165,7 @@ export default function VotersTab() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

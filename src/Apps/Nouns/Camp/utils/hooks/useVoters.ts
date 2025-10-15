@@ -92,6 +92,12 @@ export function useVoters(options: UseVotersOptions = {}): UseVotersReturn {
 
     let delegates = data.delegates as Delegate[];
 
+    // Filter out Nouns Treasury (nouns.eth)
+    const NOUNS_TREASURY_ADDRESS = '0xb1a32FC9F9D8b2cf86C068Cae13108809547ef71';
+    delegates = delegates.filter(
+      delegate => delegate.id.toLowerCase() !== NOUNS_TREASURY_ADDRESS.toLowerCase()
+    );
+
     // Apply filter
     delegates = filterDelegates(delegates, filter);
 
@@ -139,7 +145,7 @@ export function useVotingPower(address?: string) {
 
   // Get current votes (voting power)
   const { data: votingPower, isLoading: votingPowerLoading } = useReadContract({
-    ...TokenActions.getCurrentVotes(targetAddress as `0x${string}`),
+    ...(targetAddress ? TokenActions.getCurrentVotes(targetAddress as `0x${string}`) : {}),
     query: {
       enabled: !!targetAddress,
     },
@@ -147,7 +153,7 @@ export function useVotingPower(address?: string) {
 
   // Get current delegate
   const { data: delegate, isLoading: delegateLoading } = useReadContract({
-    ...TokenActions.delegates(targetAddress as `0x${string}`),
+    ...(targetAddress ? TokenActions.delegates(targetAddress as `0x${string}`) : {}),
     query: {
       enabled: !!targetAddress,
     },
@@ -155,7 +161,7 @@ export function useVotingPower(address?: string) {
 
   // Get token balance
   const { data: balance, isLoading: balanceLoading } = useReadContract({
-    ...TokenActions.balanceOf(targetAddress as `0x${string}`),
+    ...(targetAddress ? TokenActions.balanceOf(targetAddress as `0x${string}`) : {}),
     query: {
       enabled: !!targetAddress,
     },
