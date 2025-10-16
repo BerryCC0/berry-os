@@ -1,0 +1,31 @@
+/**
+ * TraitsList Styles
+ * Theme-aware styling for trait display
+ */
+
+.traitsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--theme-border, var(--mac-gray-3));
+}
+
+.traitItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-geneva);
+  font-size: 12px;
+}
+
+.traitLabel {
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  font-weight: bold;
+}
+
+.traitValue {
+  color: var(--theme-text, var(--mac-black));
+  text-align: right;
+}
+

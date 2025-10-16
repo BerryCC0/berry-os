@@ -1,0 +1,33 @@
+/**
+ * BidderDisplay Styles
+ * Theme-aware styling for bidder information
+ */
+
+.bidderDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  object-fit: cover;
+  border: 1px solid var(--theme-border, var(--mac-gray-3));
+}
+
+.avatarPlaceholder {
+  width: 24px;
+  height: 24px;
+  background: var(--theme-hover-background, rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--theme-border, var(--mac-gray-3));
+  border-radius: 3px;
+}
+
+.name {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  color: var(--theme-text, var(--mac-black));
+}
+

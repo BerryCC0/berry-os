@@ -60,6 +60,8 @@ export const BID_FRAGMENT = gql`
     blockNumber
     blockTimestamp
     txIndex
+    txHash
+    clientId
     bidder {
       ...AccountFields
     }

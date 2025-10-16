@@ -108,7 +108,7 @@ const INITIAL_STATE: SystemState = {
   dockPreferences: {
     position: 'bottom',
     size: 64,
-    pinnedApps: ['finder', 'calculator', 'text-editor'],
+    pinnedApps: ['finder', 'camp', 'calculator', 'text-editor'],
     autoHide: false,
   },
   activeMenu: null,

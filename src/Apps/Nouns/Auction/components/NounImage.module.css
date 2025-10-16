@@ -1,0 +1,16 @@
+/**
+ * NounImage Styles
+ * Theme-aware styling for Noun display
+ */
+
+.nounImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--theme-border, var(--mac-black));
+  background: var(--theme-window-background, var(--mac-gray-1));
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+

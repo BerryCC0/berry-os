@@ -1,0 +1,74 @@
+/**
+ * AuctionNavigation Styles
+ * Theme-aware styling for auction navigation
+ */
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--theme-border, var(--mac-gray-3));
+  flex-wrap: wrap;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navButton {
+  min-width: 32px;
+  padding: 4px 8px;
+  font-size: 16px;
+}
+
+.date {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  color: var(--theme-text, var(--mac-black));
+  white-space: nowrap;
+}
+
+.searchForm {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+}
+
+.searchInput {
+  width: 100%;
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  padding: 4px 6px;
+  border: 1px solid var(--theme-border, var(--mac-black));
+  background: var(--theme-window-background, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
+}
+
+.searchInput:focus {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: -2px;
+}
+
+.currentButton {
+  white-space: nowrap;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .navigation {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls {
+    justify-content: space-between;
+  }
+
+  .searchForm {
+    order: 3;
+  }
+}
+

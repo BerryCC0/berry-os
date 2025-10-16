@@ -120,6 +120,10 @@ export interface Bid {
   blockNumber: string;
   blockTimestamp: string;
   txIndex: string;
+  txHash?: string; // Transaction hash
+  
+  // Client tracking
+  clientId?: number; // The ID of the client that facilitated this bid
   
   // Auction relationship
   auction: Auction;

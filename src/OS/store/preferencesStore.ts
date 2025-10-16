@@ -489,7 +489,13 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
     // Reset system store to defaults
     useSystemStore.setState({
       wallpaper: '/filesystem/System/Desktop Pictures/Classic.png',
-      pinnedApps: ['finder', 'calculator', 'text-editor'],
+      pinnedApps: ['finder', 'camp', 'calculator', 'text-editor'],
+      dockPreferences: {
+        position: 'bottom',
+        size: 64,
+        pinnedApps: ['finder', 'camp', 'calculator', 'text-editor'],
+        autoHide: false,
+      },
       activeTheme: 'classic',
       accentColor: null,
       themeCustomization: {},

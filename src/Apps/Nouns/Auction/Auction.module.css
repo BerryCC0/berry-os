@@ -11,61 +11,113 @@
   background: var(--theme-window-background, var(--mac-gray-1));
   color: var(--theme-text, var(--mac-black));
   font-family: var(--font-geneva);
-  padding: 20px;
   overflow: hidden;
 }
 
 .content {
   flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Left column: Noun image and traits */
+.imageSection {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  gap: 0;
 }
 
-.content h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: var(--theme-text, var(--mac-black));
+/* Right column: Auction details */
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0; /* Allow text truncation */
 }
 
-.content p {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: var(--theme-text, var(--mac-black));
-}
-
-.comingSoon {
+.title {
+  font-family: var(--font-chicago);
   font-size: 18px;
   font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin: 0;
+  padding: 0 0 12px 0;
+  border-bottom: 1px solid var(--theme-border, var(--mac-gray-3));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.endDate {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  font-family: var(--font-geneva);
   color: var(--theme-text-secondary, var(--mac-gray-3));
-  margin: 20px 0;
+  font-weight: normal;
+  margin-top: 4px;
 }
 
-.features {
-  margin-top: 30px;
-  text-align: left;
+.endDateLabel {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.features h2 {
+.statusGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--theme-border, var(--mac-gray-3));
+}
+
+.statusItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statusLabel {
+  font-family: var(--font-chicago);
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  letter-spacing: 0.5px;
+}
+
+.statusValue {
+  font-family: var(--font-geneva);
   font-size: 16px;
-  margin-bottom: 10px;
+  font-weight: bold;
   color: var(--theme-text, var(--mac-black));
+  word-break: break-all;
 }
 
-.features ul {
-  list-style: none;
-  padding: 0;
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .imageSection {
+    max-width: 100%;
+  }
+
+  .statusGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
-.features li {
-  padding: 5px 0;
-  font-size: 14px;
-  color: var(--theme-text, var(--mac-black));
-}
-
-.features li:before {
-  content: "⌐◨-◨ ";
-  margin-right: 8px;
+/* Tablet responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .content {
+    grid-template-columns: 280px 1fr;
+  }
 }
