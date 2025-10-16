@@ -44,6 +44,9 @@ export default function ScrollBar({
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   
+  // Track previous content height for scroll position preservation
+  const prevContentHeightRef = useRef<number>(0);
+  
   // Vertical scrollbar state
   const [vThumbHeight, setVThumbHeight] = useState(0);
   const [vThumbTop, setVThumbTop] = useState(0);
@@ -140,12 +143,36 @@ export default function ScrollBar({
   useEffect(() => {
     updateScrollbar();
     
-    const resizeObserver = new ResizeObserver(updateScrollbar);
+    const resizeObserver = new ResizeObserver(() => {
+      if (!containerRef.current || !contentRef.current) return;
+      
+      const container = containerRef.current;
+      const content = contentRef.current;
+      const newHeight = content.scrollHeight;
+      const prevHeight = prevContentHeightRef.current;
+      
+      // If content height increased (items added), preserve scroll position
+      if (newHeight > prevHeight && prevHeight > 0) {
+        const currentScroll = container.scrollTop;
+        
+        // Only adjust if we're not at the very top (user is scrolled down)
+        if (currentScroll > 10) {
+          // Maintain the same visual position by keeping scrollTop unchanged
+          // The browser will naturally maintain the position, we just need to
+          // ensure our updateScrollbar doesn't interfere
+          container.scrollTop = currentScroll;
+        }
+      }
+      
+      prevContentHeightRef.current = newHeight;
+      updateScrollbar();
+    });
+    
     if (containerRef.current) resizeObserver.observe(containerRef.current);
     if (contentRef.current) resizeObserver.observe(contentRef.current);
     
     return () => resizeObserver.disconnect();
-  }, [children, direction, showArrows]);
+  }, [children, direction, showArrows, updateScrollbar]);
   
   // Arrow button handlers
   const scrollBy = (deltaX: number, deltaY: number) => {

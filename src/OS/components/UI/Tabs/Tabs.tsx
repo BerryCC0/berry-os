@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import ScrollBar from '@/src/OS/components/UI/ScrollBar/ScrollBar';
 import styles from './Tabs.module.css';
 
 export interface Tab {
@@ -24,6 +25,7 @@ export interface TabsProps {
   className?: string;
   lazy?: boolean; // Only render active tab content
   leftContent?: React.ReactNode; // Content to display left of tabs
+  wrapContentInScrollBar?: boolean; // Wrap tab content in ScrollBar component
 }
 
 export default function Tabs({
@@ -34,6 +36,7 @@ export default function Tabs({
   className = '',
   lazy = false,
   leftContent,
+  wrapContentInScrollBar = false,
 }: TabsProps) {
   const allTabs = [...tabs, ...pinnedTabs];
   const [internalActiveTab, setInternalActiveTab] = useState(allTabs[0]?.id || '');
@@ -112,30 +115,63 @@ export default function Tabs({
       </div>
 
       {/* Tab Content */}
-      {lazy ? (
-        // Lazy mode: Only render active tab
-        <div
-          className={styles.tabContent}
-          role="tabpanel"
-          aria-labelledby={`tab-${activeTab}`}
-          id={`tabpanel-${activeTab}`}
-        >
-          {activeTabData?.content}
-        </div>
+      {wrapContentInScrollBar ? (
+        <ScrollBar direction="vertical" className={styles.tabContentScrollWrapper}>
+          {lazy ? (
+            // Lazy mode: Only render active tab
+            <div
+              className={styles.tabContent}
+              role="tabpanel"
+              aria-labelledby={`tab-${activeTab}`}
+              id={`tabpanel-${activeTab}`}
+            >
+              {activeTabData?.content}
+            </div>
+          ) : (
+            // Eager mode: Render all tabs but hide inactive ones
+            allTabs.map(tab => (
+              <div
+                key={tab.id}
+                className={styles.tabContent}
+                style={{ display: tab.id === activeTab ? 'block' : 'none' }}
+                role="tabpanel"
+                aria-labelledby={`tab-${tab.id}`}
+                id={`tabpanel-${tab.id}`}
+              >
+                {tab.content}
+              </div>
+            ))
+          )}
+        </ScrollBar>
       ) : (
-        // Eager mode: Render all tabs but hide inactive ones
-        allTabs.map(tab => (
-          <div
-            key={tab.id}
-            className={styles.tabContent}
-            style={{ display: tab.id === activeTab ? 'block' : 'none' }}
-            role="tabpanel"
-            aria-labelledby={`tab-${tab.id}`}
-            id={`tabpanel-${tab.id}`}
-          >
-            {tab.content}
-          </div>
-        ))
+        // Without ScrollBar wrapper (original behavior)
+        <>
+          {lazy ? (
+            // Lazy mode: Only render active tab
+            <div
+              className={styles.tabContent}
+              role="tabpanel"
+              aria-labelledby={`tab-${activeTab}`}
+              id={`tabpanel-${activeTab}`}
+            >
+              {activeTabData?.content}
+            </div>
+          ) : (
+            // Eager mode: Render all tabs but hide inactive ones
+            allTabs.map(tab => (
+              <div
+                key={tab.id}
+                className={styles.tabContent}
+                style={{ display: tab.id === activeTab ? 'block' : 'none' }}
+                role="tabpanel"
+                aria-labelledby={`tab-${tab.id}`}
+                id={`tabpanel-${tab.id}`}
+              >
+                {tab.content}
+              </div>
+            ))
+          )}
+        </>
       )}
     </div>
   );

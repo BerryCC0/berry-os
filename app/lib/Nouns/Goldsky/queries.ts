@@ -651,6 +651,7 @@ export const GET_PROPOSAL_CANDIDATE = gql`
 `;
 
 export const GET_PROPOSAL_CANDIDATES = gql`
+  ${PROPOSAL_VERSION_FRAGMENT}
   query GetProposalCandidates(
     $first: Int = 10
     $skip: Int = 0
@@ -664,18 +665,22 @@ export const GET_PROPOSAL_CANDIDATES = gql`
       where: $where
     ) {
       id
-      proposer {
-        id
-      }
+      proposer
       slug
-      description
-      requiredSignatures
       createdTimestamp
-      signatures {
-        id
-        signer {
-          id
-        }
+      createdBlock
+      createdTransactionHash
+      lastUpdatedTimestamp
+      lastUpdatedBlock
+      canceled
+      canceledTimestamp
+      canceledBlock
+      number
+      latestVersion {
+        ...ProposalVersionFields
+      }
+      versions {
+        ...ProposalVersionFields
       }
     }
   }
@@ -824,6 +829,48 @@ export const GET_DAO_STATS = gql`
 // ============================================================================
 // Activity Feed Queries (All Votes & Signals)
 // ============================================================================
+
+export const GET_RECENT_PROPOSALS = gql`
+  ${PROPOSAL_FRAGMENT}
+  query GetRecentProposals(
+    $first: Int = 100
+    $skip: Int = 0
+  ) {
+    proposals(
+      first: $first
+      skip: $skip
+      orderBy: createdTimestamp
+      orderDirection: desc
+    ) {
+      ...ProposalFields
+    }
+  }
+`;
+
+export const GET_RECENT_PROPOSAL_VERSIONS = gql`
+  ${PROPOSAL_VERSION_FRAGMENT}
+  query GetRecentProposalVersions(
+    $first: Int = 100
+    $skip: Int = 0
+  ) {
+    proposalVersions(
+      first: $first
+      skip: $skip
+      orderBy: createdAt
+      orderDirection: desc
+    ) {
+      ...ProposalVersionFields
+      proposal {
+        id
+        title
+        status
+        proposer {
+          id
+        }
+      }
+    }
+  }
+`;
 
 export const GET_CANDIDATE_FEEDBACKS = gql`
   query GetCandidateFeedbacks(

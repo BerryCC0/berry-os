@@ -193,6 +193,15 @@ export enum ActivityItemType {
   PROPOSAL_FEEDBACK = 'proposal_feedback',
   CANDIDATE_SIGNATURE = 'candidate_signature',
   CANDIDATE_FEEDBACK = 'candidate_feedback',
+  
+  // Lifecycle events
+  PROPOSAL_CREATED = 'proposal_created',
+  PROPOSAL_UPDATED = 'proposal_updated',
+  PROPOSAL_ENDED = 'proposal_ended',
+  PROPOSAL_QUEUED = 'proposal_queued',
+  PROPOSAL_EXECUTED = 'proposal_executed',
+  CANDIDATE_CREATED = 'candidate_created',
+  CANDIDATE_UPDATED = 'candidate_updated',
 }
 
 /**
@@ -213,6 +222,14 @@ export interface BaseActivityItem {
   
   // Original data (for rendering)
   originalData: any;
+  
+  // Lifecycle event specific fields
+  statusInfo?: string; // For proposal status changes (SUCCEEDED, DEFEATED, etc.)
+  updateMessage?: string; // For proposal/candidate updates
+  
+  // Consolidation support
+  consolidatedEvents?: BaseActivityItem[]; // Multiple events within time window
+  consolidatedCount?: number; // Number of consolidated events
 }
 
 /**
