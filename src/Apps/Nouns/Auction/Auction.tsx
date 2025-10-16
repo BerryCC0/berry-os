@@ -7,9 +7,9 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { GET_CURRENT_AUCTION, GET_AUCTION } from '@/app/lib/Nouns/Goldsky/queries';
+import { GET_CURRENT_AUCTION, GET_AUCTION, GET_NOUN } from '@/app/lib/Nouns/Goldsky/queries';
 import { NounsApolloWrapper } from '@/app/lib/Nouns/Goldsky';
-import type { Auction as AuctionType } from '@/app/lib/Nouns/Goldsky/utils/types';
+import type { Auction as AuctionType, Noun } from '@/app/lib/Nouns/Goldsky/utils/types';
 import NounImage from './components/NounImage';
 import TraitsList from './components/TraitsList';
 import AuctionNavigation from './components/AuctionNavigation';
@@ -38,6 +38,10 @@ interface SingleAuctionQueryResult {
   auction: AuctionType;
 }
 
+interface NounQueryResult {
+  noun: Noun;
+}
+
 function AuctionContent({ windowId }: AuctionProps) {
   const [viewingNounId, setViewingNounId] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<string>('');
@@ -49,21 +53,42 @@ function AuctionContent({ windowId }: AuctionProps) {
   const { 
     data: currentData, 
     loading: currentLoading, 
-    error: currentError 
+    error: currentError,
+    networkStatus: currentNetworkStatus,
   } = useQuery<AuctionQueryResult>(GET_CURRENT_AUCTION, {
     pollInterval: isViewingCurrent ? 5000 : 0,
     fetchPolicy: 'cache-and-network',
     nextFetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   });
 
-  // Query historical auction
+  // Check if viewing a Nounder Noun
+  const isNounder = viewingNounId ? isNounderNoun(viewingNounId) : false;
+
+  // Query historical auction (skip if Nounder Noun)
   const { 
     data: historicalData, 
-    loading: historicalLoading 
+    loading: historicalLoading,
+    networkStatus: historicalNetworkStatus,
   } = useQuery<SingleAuctionQueryResult>(GET_AUCTION, {
     variables: { id: viewingNounId },
-    skip: !viewingNounId || isNounderNoun(viewingNounId),
+    skip: !viewingNounId || isNounder,
     fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  // Query Nounder Noun directly (only for Nounder Nouns)
+  const {
+    data: nounderNounData,
+    loading: nounderNounLoading,
+    networkStatus: nounderNounNetworkStatus,
+  } = useQuery<NounQueryResult>(GET_NOUN, {
+    variables: { id: viewingNounId },
+    skip: !viewingNounId || !isNounder,
+    fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   });
 
   // Get current auction for navigation reference
@@ -75,11 +100,32 @@ function AuctionContent({ windowId }: AuctionProps) {
     if (isViewingCurrent) {
       return currentAuction;
     }
+    
+    // For Nounder Nouns, create a fake auction structure from the Noun data
+    if (isNounder && nounderNounData?.noun) {
+      return {
+        id: nounderNounData.noun.id,
+        amount: '0',
+        startTime: '0',
+        endTime: '0',
+        settled: true,
+        noun: nounderNounData.noun,
+        bids: [],
+      } as AuctionType;
+    }
+    
     return historicalData?.auction || null;
-  }, [isViewingCurrent, currentAuction, historicalData]);
+  }, [isViewingCurrent, currentAuction, historicalData, isNounder, nounderNounData]);
 
-  const loading = isViewingCurrent ? currentLoading : historicalLoading;
-  const isNounder = viewingNounId ? isNounderNoun(viewingNounId) : false;
+  // Only show loading on initial fetch (networkStatus 1), not on polling (networkStatus 6)
+  // NetworkStatus: 1 = loading, 6 = poll, 7 = ready, 2 = setVariables
+  const isInitialLoad = isViewingCurrent 
+    ? (currentNetworkStatus === 1 && !currentData)
+    : isNounder
+      ? (nounderNounNetworkStatus === 1 && !nounderNounData)
+      : (historicalNetworkStatus === 1 && !historicalData);
+  
+  const loading = isInitialLoad;
 
   // Update countdown timer for active auctions
   useEffect(() => {
@@ -140,9 +186,12 @@ function AuctionContent({ windowId }: AuctionProps) {
     : '0';
 
   const ownerAddress = useMemo(() => {
-    if (isNounder) return '0x2573C60a6D127755aA2DC85e342F7da2378a0Cc5';
+    // Nounder Nouns always go to nounders.eth
+    if (viewingNounId && isNounderNoun(viewingNounId)) {
+      return '0x2573C60a6D127755aA2DC85e342F7da2378a0Cc5';
+    }
     return displayAuction?.noun?.owner?.id || '';
-  }, [isNounder, displayAuction]);
+  }, [viewingNounId, displayAuction]);
 
   return (
     <div className={styles.auction}>

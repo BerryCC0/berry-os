@@ -13,6 +13,7 @@ import { usePreferencesStore } from '../../store/preferencesStore';
 import { getAppsFromURL } from '../../../../app/lib/utils/stateUtils';
 import { getAppById, REGISTERED_APPS } from '../../../Apps/AppConfig';
 import { setupKeyboardShortcuts } from '../../lib/menuActions';
+import { getAppIcon } from '../../../../app/lib/utils/iconUtils';
 import {
   useBootSequence,
   useDeviceDetection,
@@ -21,6 +22,7 @@ import {
   useWalletSync,
   useFarcasterSync,
 } from '../../lib/hooks';
+import { useAuctionIconUpdater } from '../../lib/hooks/useAuctionIconUpdater';
 import MenuBar from '../UI/MenuBar/MenuBar';
 import Window from '../Window/Window';
 import Dock from '../UI/Dock/Dock';
@@ -32,6 +34,7 @@ export default function Desktop() {
   // ==================== System Store ====================
   const wallpaper = useSystemStore((state) => state.wallpaper);
   const desktopIcons = useSystemStore((state) => state.desktopIcons);
+  const dynamicAppIcons = useSystemStore((state) => state.dynamicAppIcons);
   const windows = useSystemStore((state) => state.windows);
   const runningApps = useSystemStore((state) => state.runningApps);
   const launchApp = useSystemStore((state) => state.launchApp);
@@ -62,6 +65,9 @@ export default function Desktop() {
 
   // Farcaster Mini App sync - wait for SDK to be ready
   const { isFarcasterReady, isInFarcaster } = useFarcasterSync();
+
+  // Background service: Updates Auction app icon with current Noun
+  useAuctionIconUpdater();
 
   // Boot sequence - manages OS boot timing
   const isBooting = useBootSequence({
@@ -219,27 +225,34 @@ export default function Desktop() {
 
       {/* Desktop Icons (works on both desktop and mobile) */}
       <div className={styles.iconContainer}>
-        {visibleDesktopIcons.map((icon) => (
-          <div
-            key={icon.id}
-            className={`${styles.icon} ${draggingIconId === icon.id ? styles.dragging : ''}`}
-            style={{
-              left: icon.position.x,
-              top: icon.position.y,
-              cursor: draggingIconId === icon.id ? 'grabbing' : 'pointer',
-            }}
-            onMouseDown={(e) => handleIconDragStart(e, icon.id)}
-            onTouchStart={(e) => handleIconDragStart(e, icon.id)}
-          >
-            <img 
-              src={icon.icon} 
-              alt={icon.name}
-              className={styles.iconImage}
-              draggable={false}
-            />
-            <span className={styles.iconLabel}>{icon.name}</span>
-          </div>
-        ))}
+        {visibleDesktopIcons.map((icon) => {
+          // Get dynamic icon if available, fallback to static
+          const iconSrc = icon.appId 
+            ? getAppIcon(icon.appId, dynamicAppIcons, icon.icon)
+            : icon.icon;
+          
+          return (
+            <div
+              key={icon.id}
+              className={`${styles.icon} ${draggingIconId === icon.id ? styles.dragging : ''}`}
+              style={{
+                left: icon.position.x,
+                top: icon.position.y,
+                cursor: draggingIconId === icon.id ? 'grabbing' : 'pointer',
+              }}
+              onMouseDown={(e) => handleIconDragStart(e, icon.id)}
+              onTouchStart={(e) => handleIconDragStart(e, icon.id)}
+            >
+              <img 
+                src={iconSrc} 
+                alt={icon.name}
+                className={styles.iconImage}
+                draggable={false}
+              />
+              <span className={styles.iconLabel}>{icon.name}</span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Windows */}

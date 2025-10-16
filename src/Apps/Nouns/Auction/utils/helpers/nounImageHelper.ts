@@ -76,3 +76,33 @@ export function getNounTraits(noun: Noun): NounTraits | null {
   }
 }
 
+/**
+ * Generate Noun icon as data URL for use as app icon
+ * Takes raw seed data from subgraph and returns SVG data URL
+ */
+export function generateNounIconDataURL(seed: {
+  background: number | string;
+  body: number | string;
+  accessory: number | string;
+  head: number | string;
+  glasses: number | string;
+}): string {
+  try {
+    const traits: NounTraits = {
+      background: typeof seed.background === 'string' ? parseInt(seed.background) : seed.background,
+      body: typeof seed.body === 'string' ? parseInt(seed.body) : seed.body,
+      accessory: typeof seed.accessory === 'string' ? parseInt(seed.accessory) : seed.accessory,
+      head: typeof seed.head === 'string' ? parseInt(seed.head) : seed.head,
+      glasses: typeof seed.glasses === 'string' ? parseInt(seed.glasses) : seed.glasses,
+    };
+    
+    const svg = generateNounSVG(traits);
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  } catch (error) {
+    console.error('Error generating Noun icon data URL:', error);
+    // Return placeholder on error
+    const placeholder = generatePlaceholderSVG();
+    return `data:image/svg+xml,${encodeURIComponent(placeholder)}`;
+  }
+}
+

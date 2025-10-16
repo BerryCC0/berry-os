@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useSystemStore } from '../../../store/systemStore';
 import { REGISTERED_APPS } from '../../../../Apps/AppConfig';
 import type { AppConfig } from '../../../../Apps/AppConfig';
+import { getAppIcon } from '../../../../../app/lib/utils/iconUtils';
 import styles from './AppsLaunchpad.module.css';
 
 export interface AppsLaunchpadProps {
@@ -18,6 +19,7 @@ export interface AppsLaunchpadProps {
 
 export default function AppsLaunchpad({ onClose }: AppsLaunchpadProps) {
   const launchApp = useSystemStore((state) => state.launchApp);
+  const dynamicAppIcons = useSystemStore((state) => state.dynamicAppIcons);
 
   // Get all apps except the 'apps' app itself (which is now removed)
   const availableApps = REGISTERED_APPS.filter((app) => app.id !== 'apps');
@@ -72,7 +74,7 @@ export default function AppsLaunchpad({ onClose }: AppsLaunchpadProps) {
             >
               <div className={styles.iconWrapper}>
                 <img
-                  src={app.icon}
+                  src={getAppIcon(app.id, dynamicAppIcons, app.icon)}
                   alt=""
                   className={styles.appIcon}
                   aria-hidden="true"

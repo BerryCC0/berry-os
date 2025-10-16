@@ -102,6 +102,9 @@ export interface SystemState {
   // Desktop Management
   desktopIcons: DesktopIcon[];
   wallpaper: string;
+  
+  // Dynamic App Icons (live-updating icons)
+  dynamicAppIcons: Record<string, string>; // appId -> icon data URL
   desktopPreferences: DesktopPreferences; // Desktop behavior preferences
   
   // Dock

@@ -84,3 +84,27 @@ export async function validateIcon(iconPath: string): Promise<boolean> {
   }
 }
 
+/**
+ * Get dynamic app icon from system store, with fallback to static icon
+ * Used by UI components to access live-updating icons
+ * 
+ * @param appId - The unique app identifier
+ * @param dynamicIcons - Dynamic icon map from system store
+ * @param staticIcon - Fallback static icon path
+ * @returns Icon path or data URL
+ */
+export function getAppIcon(
+  appId: string,
+  dynamicIcons: Record<string, string>,
+  staticIcon: string
+): string {
+  // Check for dynamic icon first
+  const dynamicIcon = dynamicIcons[appId];
+  if (dynamicIcon) {
+    return dynamicIcon;
+  }
+  
+  // Fallback to static icon
+  return staticIcon;
+}
+

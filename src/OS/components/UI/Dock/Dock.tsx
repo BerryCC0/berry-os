@@ -8,6 +8,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSystemStore } from '../../../store/systemStore';
 import { REGISTERED_APPS, getAppById } from '../../../../Apps/AppConfig';
+import { getAppIcon } from '../../../../../app/lib/utils/iconUtils';
 import DockContextMenu from './DockContextMenu';
 import AppsLaunchpad from '../AppsLaunchpad/AppsLaunchpad';
 import styles from './Dock.module.css';
@@ -15,6 +16,7 @@ import styles from './Dock.module.css';
 export default function Dock() {
   // ==================== Store State ====================
   const dockPreferences = useSystemStore((state) => state.dockPreferences);
+  const dynamicAppIcons = useSystemStore((state) => state.dynamicAppIcons);
   const runningApps = useSystemStore((state) => state.runningApps);
   const windows = useSystemStore((state) => state.windows);
   const activeWindowId = useSystemStore((state) => state.activeWindowId);
@@ -355,7 +357,7 @@ export default function Dock() {
               >
                 <div className={styles.iconWrapper}>
                   <img
-                    src={item.config.icon}
+                    src={getAppIcon(item.appId, dynamicAppIcons, item.config.icon)}
                     alt=""
                     className={styles.dockIcon}
                     aria-hidden="true"

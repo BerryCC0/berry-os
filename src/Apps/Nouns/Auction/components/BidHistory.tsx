@@ -9,6 +9,7 @@ import type { Bid } from '@/app/lib/Nouns/Goldsky/utils/types';
 import { formatBidAmount } from '../utils/helpers/auctionHelpers';
 import { getClientName, isBerryOSBid } from '../utils/helpers/clientNames';
 import BidderDisplay from './BidderDisplay';
+import ScrollBar from '@/src/OS/components/UI/ScrollBar/ScrollBar';
 import styles from './BidHistory.module.css';
 
 interface BidHistoryProps {
@@ -78,38 +79,42 @@ export default function BidHistory({ bids, isNounderNoun = false, loading = fals
   return (
     <div className={styles.bidHistory}>
       <h2 className={styles.title}>Bid History</h2>
-      <div className={styles.bidsList}>
-        {bids.map((bid) => {
-          const clientName = getClientName(bid.clientId);
-          const isBerryBid = isBerryOSBid(bid.clientId);
-          
-          return (
-            <div key={bid.id} className={styles.bidItem}>
-              <div className={styles.bidderSection}>
-                <BidderDisplay address={bid.bidder.id} />
-                {clientName && (
-                  <div className={`${styles.clientBadge} ${isBerryBid ? styles.berryBadge : ''}`}>
-                    {clientName}
+      <div className={styles.scrollContainer}>
+        <ScrollBar>
+          <div className={styles.bidsList}>
+            {bids.map((bid) => {
+              const clientName = getClientName(bid.clientId);
+              const isBerryBid = isBerryOSBid(bid.clientId);
+              
+              return (
+                <div key={bid.id} className={styles.bidItem}>
+                  <div className={styles.bidderSection}>
+                    <BidderDisplay address={bid.bidder.id} />
+                    {clientName && (
+                      <div className={`${styles.clientBadge} ${isBerryBid ? styles.berryBadge : ''}`}>
+                        {clientName}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className={styles.bidDetails}>
-                <div className={styles.bidAmount}>
-                  Ξ {formatBidAmount(bid.amount)}
+                  <div className={styles.bidDetails}>
+                    <div className={styles.bidAmount}>
+                      Ξ {formatBidAmount(bid.amount)}
+                    </div>
+                    <a
+                      href={`https://etherscan.io/tx/${bid.txHash || '#'}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.viewTx}
+                      aria-label="View transaction"
+                    >
+                      ↗
+                    </a>
+                  </div>
                 </div>
-                <a
-                  href={`https://etherscan.io/tx/${bid.txHash || '#'}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.viewTx}
-                  aria-label="View transaction"
-                >
-                  ↗
-                </a>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        </ScrollBar>
       </div>
     </div>
   );

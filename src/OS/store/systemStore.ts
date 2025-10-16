@@ -41,6 +41,7 @@ interface SystemActions {
   removeDesktopIcon: (iconId: string) => void;
   moveDesktopIcon: (iconId: string, x: number, y: number) => void;
   setWallpaper: (wallpaper: string) => void;
+  updateAppIcon: (appId: string, iconDataURL: string) => void;
   initializeDesktopIcons: (apps: AppConfig[]) => void;
   updateDesktopPreferences: (prefs: Partial<SystemState['desktopPreferences']>) => void;
   
@@ -98,6 +99,7 @@ const INITIAL_STATE: SystemState = {
   runningApps: {},
   desktopIcons: [],
   wallpaper: '/filesystem/System/Desktop Pictures/Classic.svg',
+  dynamicAppIcons: {}, // Initialize empty - will be populated by background services
   desktopPreferences: {
     gridSpacing: 80,
     snapToGrid: false, // Free-form by default
@@ -108,7 +110,7 @@ const INITIAL_STATE: SystemState = {
   dockPreferences: {
     position: 'bottom',
     size: 64,
-    pinnedApps: ['finder', 'camp', 'calculator', 'text-editor'],
+    pinnedApps: ['finder', 'camp', 'auction', 'calculator', 'text-editor'],
     autoHide: false,
   },
   activeMenu: null,
@@ -627,6 +629,18 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     
     // Announce change for accessibility
     eventBus.publish('WALLPAPER_CHANGE', { wallpaper });
+  },
+
+  updateAppIcon: (appId: string, iconDataURL: string) => {
+    set((state) => ({
+      dynamicAppIcons: {
+        ...state.dynamicAppIcons,
+        [appId]: iconDataURL,
+      },
+    }));
+    
+    // Announce icon change
+    eventBus.publish('APP_ICON_UPDATE', { appId, iconDataURL });
   },
 
   // ==================== Theme Management ====================

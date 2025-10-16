@@ -7,6 +7,8 @@
 
 import { useState, useRef } from 'react';
 import { REGISTERED_APPS } from '../../../../Apps/AppConfig';
+import { useSystemStore } from '../../../store/systemStore';
+import { getAppIcon } from '../../../../../app/lib/utils/iconUtils';
 import styles from './PinnedAppsManager.module.css';
 
 export interface PinnedAppsManagerProps {
@@ -18,6 +20,7 @@ export default function PinnedAppsManager({
   pinnedApps,
   onChange,
 }: PinnedAppsManagerProps) {
+  const dynamicAppIcons = useSystemStore((state) => state.dynamicAppIcons);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const dragStartY = useRef<number>(0);
@@ -110,7 +113,7 @@ export default function PinnedAppsManager({
                 >
                   <div className={styles.dragHandle}>⋮⋮</div>
                   <img
-                    src={app.icon}
+                    src={getAppIcon(app.id, dynamicAppIcons, app.icon)}
                     alt=""
                     className={styles.appIcon}
                   />
@@ -153,7 +156,7 @@ export default function PinnedAppsManager({
                 aria-label={`Add ${app.name} to Dock`}
               >
                 <img
-                  src={app.icon}
+                  src={getAppIcon(app.id, dynamicAppIcons, app.icon)}
                   alt=""
                   className={styles.appIconSmall}
                 />

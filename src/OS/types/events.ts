@@ -14,6 +14,7 @@ export type EventType =
   | 'APP_LAUNCH'
   | 'APP_TERMINATE'
   | 'APP_ERROR'
+  | 'APP_ICON_UPDATE'
   | 'MENU_OPEN'
   | 'MENU_CLOSE'
   | 'MENU_SELECT'
