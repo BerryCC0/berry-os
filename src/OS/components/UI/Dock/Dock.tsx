@@ -252,6 +252,33 @@ export default function Dock() {
     };
   }, [isDraggingDivider, dragStartY, dragStartSize, updateDockPreferences]);
 
+  // ==================== Mobile Dock Height Sync (for Window positioning) ====================
+  
+  useEffect(() => {
+    if (!dockRef.current) return;
+    
+    const updateDockHeight = () => {
+      if (dockRef.current) {
+        // Only set on mobile (≤768px), but check on every call
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          const height = dockRef.current.getBoundingClientRect().height;
+          document.documentElement.style.setProperty('--dock-height-mobile', `${height}px`);
+        }
+      }
+    };
+    
+    // Initial measurement
+    updateDockHeight();
+    
+    // Update on resize (orientation change, keyboard open/close, viewport changes)
+    window.addEventListener('resize', updateDockHeight);
+    
+    return () => {
+      window.removeEventListener('resize', updateDockHeight);
+    };
+  }, []);
+
   // ==================== Helper Functions ====================
   
   const isAppRunning = (appId: string) => appId in runningApps;

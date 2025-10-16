@@ -305,6 +305,7 @@ body {
   
   /* Mobile/Touch */
   --menubar-height-mobile: 44px;
+  --dock-height-mobile: 72px; /* Default: 48px icons + 16px padding + 8px margin */
   --mobile-icon-size: 88px;
   --mobile-touch-target: 44px;
   

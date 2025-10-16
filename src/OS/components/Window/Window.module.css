@@ -232,14 +232,14 @@
 
 @media (max-width: 768px) {
   .window {
-    /* Fullscreen on mobile with safe areas */
+    /* Fullscreen on mobile with safe areas and dock spacing */
     position: fixed !important;
     top: calc(var(--menubar-height-mobile) + var(--safe-area-top)) !important;
     left: var(--safe-area-left) !important;
     right: var(--safe-area-right) !important;
-    bottom: var(--safe-area-bottom) !important;
+    bottom: calc(var(--dock-height-mobile, 72px) + var(--safe-area-bottom)) !important;
     width: calc(100% - var(--safe-area-left) - var(--safe-area-right)) !important;
-    height: calc(100% - var(--menubar-height-mobile) - var(--safe-area-top) - var(--safe-area-bottom)) !important;
+    height: calc(100% - var(--menubar-height-mobile) - var(--dock-height-mobile, 72px) - var(--safe-area-top) - var(--safe-area-bottom)) !important;
     box-shadow: none;
     border: none;
     transition: none; /* Disable transitions during keyboard open/close */
