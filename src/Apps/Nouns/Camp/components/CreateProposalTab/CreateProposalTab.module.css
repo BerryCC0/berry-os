@@ -44,12 +44,64 @@
   background: var(--theme-window-background, #DDDDDD);
 }
 
+.headerTop {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .title {
   font-family: var(--font-chicago, 'Chicago', monospace);
   font-size: 16px;
   font-weight: bold;
   margin: 0;
   color: var(--theme-text, #000000);
+}
+
+.draftIndicator {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  color: #666666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.draftName {
+  font-weight: bold;
+  color: #0066CC;
+}
+
+.proposalTitle {
+  color: #000000;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.separator {
+  color: #AAAAAA;
+}
+
+.savingIndicator {
+  color: #FF9900;
+  font-style: italic;
+}
+
+.savedIndicator {
+  color: #00AA00;
+}
+
+.unsavedIndicator {
+  color: #FFCC00;
+  font-weight: bold;
+}
+
+.errorIndicator {
+  color: #FF0000;
+  font-weight: bold;
 }
 
 .warning {

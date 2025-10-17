@@ -10,7 +10,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const walletAddress = searchParams.get('wallet');
-    const draftName = searchParams.get('name');
+    const draftSlug = searchParams.get('slug');
 
     if (!walletAddress) {
       return NextResponse.json(
@@ -19,9 +19,9 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    if (!draftName) {
+    if (!draftSlug) {
       return NextResponse.json(
-        { error: 'Missing draft name' },
+        { error: 'Missing draft slug' },
         { status: 400 }
       );
     }
@@ -39,7 +39,7 @@ export async function DELETE(request: NextRequest) {
     // In production, you should verify the signature
 
     // Delete draft
-    await deleteDraft(walletAddress, draftName);
+    await deleteDraft(walletAddress, draftSlug);
 
     return NextResponse.json({
       success: true,

@@ -11,36 +11,56 @@ import styles from './DraftSelector.module.css';
 
 interface DraftSelectorProps {
   drafts: ProposalDraft[];
+  currentDraft: ProposalDraft | null; // NEW: current draft object
   onLoad: (draft: ProposalDraft) => void;
-  onDelete: (draftName: string) => void;
+  onDelete: (draftSlug: string) => void; // Changed from draftName to draftSlug
+  onRename: (draftSlug: string, newTitle: string) => void; // NEW
   onNew: () => void;
   disabled?: boolean;
-  currentDraftName?: string;
 }
 
 export function DraftSelector({
   drafts,
+  currentDraft,
   onLoad,
   onDelete,
+  onRename,
   onNew,
   disabled = false,
-  currentDraftName
 }: DraftSelectorProps) {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [editingDraftSlug, setEditingDraftSlug] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
 
-  const formatDate = (date: Date | undefined) => {
+  const formatRelativeTime = (date: Date | undefined) => {
     if (!date) return '';
-    const d = new Date(date);
-    return d.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    
+    const now = new Date();
+    const diff = now.getTime() - new Date(date).getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    
+    return new Date(date).toLocaleDateString();
   };
 
-  const currentDraft = drafts.find(d => d.draft_name === currentDraftName);
+  const startRename = (draftSlug: string, currentTitle: string) => {
+    setEditingDraftSlug(draftSlug);
+    setEditingTitle(currentTitle);
+  };
+
+  const handleRename = (draftSlug: string, newTitle: string) => {
+    if (newTitle.trim() && newTitle.trim() !== currentDraft?.draft_title) {
+      onRename(draftSlug, newTitle.trim());
+    }
+    setEditingDraftSlug(null);
+    setEditingTitle('');
+  };
 
   return (
     <div className={styles.container}>
@@ -76,11 +96,11 @@ export function DraftSelector({
                 {currentDraft ? (
                   <>
                     <span className={styles.dropdownTitle}>
-                      {currentDraft.title || 'Untitled'}
+                      {currentDraft.draft_title}
                     </span>
                     {currentDraft.kyc_verified && <span className={styles.kycBadge}>✓ KYC</span>}
                     <span className={styles.dropdownDate}>
-                      · {formatDate(currentDraft.updated_at)}
+                      · {formatRelativeTime(currentDraft.updated_at)}
                     </span>
                   </>
                 ) : (
@@ -93,45 +113,77 @@ export function DraftSelector({
             {showDropdown && (
               <div className={styles.dropdownMenu}>
                 {drafts.map((draft) => (
-                  <div key={draft.draft_name} className={styles.draftItem}>
-                    <div 
-                      className={`${styles.draftInfo} ${draft.draft_name === currentDraftName ? styles.active : ''}`}
-                      onClick={() => {
-                        onLoad(draft);
-                        setShowDropdown(false);
-                      }}
-                    >
-                      <div className={styles.draftName}>
-                        {draft.title || 'Untitled'}
-                        {draft.kyc_verified && <span className={styles.kycBadge}>✓ KYC</span>}
-                      </div>
-                      <div className={styles.draftMeta}>
-                        <span className={styles.draftDate}>
-                          {formatDate(draft.updated_at)}
-                        </span>
-                        <span className={styles.draftType}>
-                          {draft.proposal_type === 'timelock_v1' 
-                            ? 'TimelockV1' 
-                            : draft.proposal_type === 'candidate'
-                              ? 'Candidate'
-                              : 'Standard'}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className={styles.deleteButton}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm(`Delete this draft: "${draft.title || 'Untitled'}"?`)) {
-                          onDelete(draft.draft_name);
-                        }
-                      }}
-                      disabled={disabled}
-                      title="Delete draft"
-                    >
-                      ×
-                    </button>
+                  <div key={draft.draft_slug} className={styles.draftItem}>
+                    {editingDraftSlug === draft.draft_slug ? (
+                      <input
+                        className={styles.draftTitleInput}
+                        value={editingTitle}
+                        onChange={(e) => setEditingTitle(e.target.value)}
+                        onBlur={() => handleRename(draft.draft_slug, editingTitle)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleRename(draft.draft_slug, editingTitle);
+                          if (e.key === 'Escape') setEditingDraftSlug(null);
+                        }}
+                        autoFocus
+                        disabled={disabled}
+                      />
+                    ) : (
+                      <>
+                        <div 
+                          className={`${styles.draftInfo} ${draft.draft_slug === currentDraft?.draft_slug ? styles.active : ''}`}
+                          onClick={() => {
+                            onLoad(draft);
+                            setShowDropdown(false);
+                          }}
+                        >
+                          <div className={styles.draftName}>
+                            <span className={styles.draftTitleText}>{draft.draft_title}</span>
+                            <button
+                              type="button"
+                              className={styles.renameButton}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startRename(draft.draft_slug, draft.draft_title);
+                              }}
+                              disabled={disabled}
+                              title="Rename draft"
+                            >
+                              ✏️
+                            </button>
+                            {draft.kyc_verified && <span className={styles.kycBadge}>✓ KYC</span>}
+                          </div>
+                          <div className={styles.draftMeta}>
+                            <span className={styles.proposalTitleSmall}>
+                              Proposal: {draft.title || 'Untitled'}
+                            </span>
+                            <span className={styles.draftDate}>
+                              {formatRelativeTime(draft.updated_at)}
+                            </span>
+                            <span className={styles.draftType}>
+                              {draft.proposal_type === 'timelock_v1' 
+                                ? 'TimelockV1' 
+                                : draft.proposal_type === 'candidate'
+                                  ? 'Candidate'
+                                  : 'Standard'}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className={styles.deleteButton}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Delete this draft: "${draft.draft_title}"?`)) {
+                              onDelete(draft.draft_slug);
+                            }
+                          }}
+                          disabled={disabled}
+                          title="Delete draft"
+                        >
+                          ×
+                        </button>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>

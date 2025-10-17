@@ -12,6 +12,7 @@ import {
   getTemplatesByCategory,
   ProposalAction,
 } from '@/src/Apps/Nouns/Camp/utils/actionTemplates';
+import { ActionTemplateState } from '@/app/lib/Persistence/proposalDrafts';
 import { useActionTemplate } from '@/src/Apps/Nouns/Camp/utils/hooks/useActionTemplate';
 import { GroupedSelect } from '@/src/OS/components/UI';
 import type { SelectOptionGroup } from '@/src/OS/components/UI';
@@ -24,17 +25,15 @@ import styles from './ActionTemplateEditor.module.css';
 
 interface ActionTemplateEditorProps {
   index: number;
-  action: ProposalAction;
-  onUpdate: (field: string, value: string) => void;
-  onActionsGenerated?: (actions: ProposalAction[]) => void; // For multi-action templates
+  templateState: ActionTemplateState; // NEW: full template state
+  onUpdateTemplateState: (state: ActionTemplateState) => void; // NEW
   disabled?: boolean;
 }
 
 export function ActionTemplateEditor({
   index,
-  action,
-  onUpdate,
-  onActionsGenerated,
+  templateState,
+  onUpdateTemplateState,
   disabled = false,
 }: ActionTemplateEditorProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -50,48 +49,42 @@ export function ActionTemplateEditor({
     updateField,
   } = useActionTemplate();
 
-  // Track previous generated actions to prevent infinite loop
-  const prevActionsRef = React.useRef<string>('');
+  // Track if we've initialized from template state
+  const initializedRef = React.useRef(false);
   
-  // Update parent action when generated actions change
+  // Initialize from saved template state on mount
   React.useEffect(() => {
-    console.log('[ActionTemplateEditor] Effect triggered');
-    
-    // Serialize actions to compare with previous
-    const actionsKey = JSON.stringify(generatedActions);
-    
-    // Only update if actions actually changed
-    if (actionsKey === prevActionsRef.current) {
-      console.log('[ActionTemplateEditor] Actions unchanged, skipping');
-      return;
+    if (!initializedRef.current && templateState.templateId) {
+      console.log('[ActionTemplateEditor] Initializing from saved state:', templateState.templateId);
+      setSelectedTemplate(templateState.templateId);
+      
+      // Restore field values
+      Object.entries(templateState.fieldValues).forEach(([field, value]) => {
+        if (value) {
+          updateField(field, value);
+        }
+      });
+      
+      initializedRef.current = true;
     }
-    prevActionsRef.current = actionsKey;
+  }, []);
+  
+  // Update parent template state when fields or actions change
+  React.useEffect(() => {
+    if (!initializedRef.current) return; // Skip during initialization
     
-    console.log('[ActionTemplateEditor] Actions changed:', {
-      count: generatedActions.length,
-      isMultiAction: selectedTemplate && typeof selectedTemplate !== 'string' && selectedTemplate.isMultiAction,
-      template: selectedTemplate && typeof selectedTemplate !== 'string' ? selectedTemplate.id : selectedTemplate
+    console.log('[ActionTemplateEditor] Updating template state:', {
+      templateId: selectedTemplate?.id || 'custom',
+      fieldCount: Object.keys(fieldValues).length,
+      actionCount: generatedActions.length
     });
     
-    // Check if this is a multi-action template
-    const isMultiActionTemplate = selectedTemplate && typeof selectedTemplate !== 'string' && selectedTemplate.isMultiAction;
-    
-    if (isMultiActionTemplate && onActionsGenerated) {
-      // Multi-action template - always use parent handler
-      console.log('[ActionTemplateEditor] Calling onActionsGenerated with', generatedActions.length, 'actions');
-      onActionsGenerated(generatedActions);
-    } else if (generatedActions.length === 1) {
-      // Single action template - update in place
-      console.log('[ActionTemplateEditor] Updating single action in place');
-      const generatedAction = generatedActions[0];
-      onUpdate('target', generatedAction.target);
-      onUpdate('value', generatedAction.value);
-      onUpdate('signature', generatedAction.signature);
-      onUpdate('calldata', generatedAction.calldata);
-    } else if (generatedActions.length === 0) {
-      console.log('[ActionTemplateEditor] No actions generated (incomplete form)');
-    }
-  }, [generatedActions, selectedTemplate, onUpdate, onActionsGenerated]);
+    onUpdateTemplateState({
+      templateId: selectedTemplate?.id || 'custom',
+      fieldValues: fieldValues,
+      generatedActions: generatedActions
+    });
+  }, [fieldValues, generatedActions, selectedTemplate]);
 
   const handleTemplateSelect = (templateId: string) => {
     if (templateId === '') {
@@ -153,14 +146,25 @@ export function ActionTemplateEditor({
     if (!selectedTemplate) return null;
 
     if (selectedTemplate.id === 'custom') {
+      // For custom templates, use the first generated action (or empty defaults)
+      const customAction = templateState.generatedActions[0] || { target: '', value: '0', signature: '', calldata: '0x' };
+      
       return (
         <SmartActionEditor
           index={index}
-          target={action.target}
-          value={action.value}
-          signature={action.signature}
-          calldata={action.calldata}
-          onUpdate={onUpdate}
+          target={customAction.target}
+          value={customAction.value}
+          signature={customAction.signature}
+          calldata={customAction.calldata}
+          onUpdate={(field, value) => {
+            // Update the template state's generated action
+            const updatedAction = { ...customAction, [field]: value };
+            onUpdateTemplateState({
+              templateId: 'custom',
+              fieldValues: {},
+              generatedActions: [updatedAction]
+            });
+          }}
           disabled={disabled}
         />
       );

@@ -208,6 +208,11 @@ export function useActionTemplate(): UseActionTemplateReturn {
       return;
     }
 
+    // Skip generation for custom template - actions are managed manually via SmartActionEditor
+    if (selectedTemplate.id === 'custom') {
+      return;
+    }
+
     // Generate actions
     try {
       const actions = generateActionsFromTemplate(selectedTemplate.id, fieldValues);

@@ -176,6 +176,51 @@
   gap: 6px;
 }
 
+.draftTitleText {
+  flex: 1;
+}
+
+.draftTitleInput {
+  width: 100%;
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 11px;
+  padding: 8px;
+  border: 2px solid var(--theme-highlight, #000080);
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.draftTitleInput:focus {
+  outline: none;
+}
+
+.renameButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.renameButton:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.renameButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.proposalTitleSmall {
+  font-size: 9px;
+  color: #666666;
+  font-style: italic;
+  display: block;
+  margin-bottom: 2px;
+}
+
 .kycBadge {
   font-size: 9px;
   padding: 2px 4px;

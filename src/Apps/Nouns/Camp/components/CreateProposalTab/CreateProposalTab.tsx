@@ -8,7 +8,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { GovernanceActions, DataProxyActions } from '@/app/lib/Nouns/Contracts';
-import { ProposalDraft, ProposalAction } from '@/app/lib/Persistence/proposalDrafts';
+import { 
+  ProposalDraft, 
+  ProposalAction, 
+  ActionTemplateState,
+  generateSlug,
+  generateUniqueSlug
+} from '@/app/lib/Persistence/proposalDrafts';
 import { PersonaKYC } from './components/PersonaKYC';
 import { ActionTemplateEditor } from './components/ActionTemplateEditor';
 import { MarkdownEditor } from './components/MarkdownEditor';
@@ -141,16 +147,40 @@ function formatAmount(value: bigint, type: string): string {
   return value.toString();
 }
 
+// Helper to flatten action templates into single actions array for submission
+function flattenActionTemplates(templateStates: ActionTemplateState[]): ProposalAction[] {
+  return templateStates.flatMap(state => state.generatedActions);
+}
+
+// Helper to format relative time
+function formatRelativeTime(date: Date | undefined): string {
+  if (!date) return '';
+  
+  const now = new Date();
+  const diff = now.getTime() - new Date(date).getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  
+  return new Date(date).toLocaleDateString();
+}
+
 export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
   const { address, isConnected } = useAccount();
   const { writeContractAsync, isPending } = useWriteContract();
 
-  // Form state
-  const [draftName, setDraftName] = useState('');
-  const [title, setTitle] = useState('');
+  // Form state - NEW: Using template states instead of raw actions
+  const [draftSlug, setDraftSlug] = useState('');
+  const [draftTitle, setDraftTitle] = useState(''); // NEW: Draft name (separate from proposal title)
+  const [title, setTitle] = useState(''); // Proposal title
   const [description, setDescription] = useState('');
-  const [actions, setActions] = useState<ProposalAction[]>([
-    { target: '', value: '0', signature: '', calldata: '0x' }
+  const [actionTemplateStates, setActionTemplateStates] = useState<ActionTemplateState[]>([
+    { templateId: 'custom', fieldValues: {}, generatedActions: [{ target: '', value: '0', signature: '', calldata: '0x' }] }
   ]);
   const [proposalType, setProposalType] = useState<'standard' | 'timelock_v1' | 'candidate'>('standard');
   
@@ -177,6 +207,8 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
   const [drafts, setDrafts] = useState<ProposalDraft[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved' | 'error'>('unsaved');
 
   // Load drafts on mount and select the most recent one
   useEffect(() => {
@@ -187,7 +219,7 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
 
   // Auto-load most recent draft when drafts are loaded
   useEffect(() => {
-    if (drafts.length > 0 && !draftName && address) {
+    if (drafts.length > 0 && !draftSlug && address) {
       // Load the most recent draft (first in list, sorted by updated_at DESC)
       const mostRecent = drafts[0];
       handleLoadDraft(mostRecent);
@@ -196,55 +228,72 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
 
   // Auto-save draft as user types (debounced)
   useEffect(() => {
-    if (!address || !title.trim()) {
-      // Don't auto-save if no wallet connected or no title
+    if (!address) return;
+    
+    // Generate draft title if empty (only on first keystroke in proposal title)
+    if (!draftTitle && title.trim()) {
+      const autoTitle = `Proposal: ${title.substring(0, 30)}${title.length > 30 ? '...' : ''}`;
+      setDraftTitle(autoTitle);
+    }
+    
+    // Don't save completely empty drafts
+    if (!draftTitle && !title.trim()) {
+      setSaveStatus('unsaved');
       return;
     }
 
-    // Generate draft name from title (slugified)
-    const generatedDraftName = title
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .substring(0, 50);
+    // Mark as unsaved when content changes
+    setSaveStatus('unsaved');
 
-    if (!generatedDraftName) return;
-
-    // Debounce auto-save by 2 seconds
-    const timeoutId = setTimeout(() => {
+    // Debounce auto-save by 5 seconds
+    const timeoutId = setTimeout(async () => {
+      const currentDraftTitle = draftTitle || 'Untitled Proposal';
+      const currentDraftSlug = draftSlug || generateUniqueSlug(generateSlug(currentDraftTitle));
+      
       const draft: ProposalDraft = {
         wallet_address: address,
-        draft_name: generatedDraftName,
+        draft_slug: currentDraftSlug,
+        draft_title: currentDraftTitle,
         title,
         description,
-        actions,
+        actions: flattenActionTemplates(actionTemplateStates),
+        action_templates: actionTemplateStates,
         proposal_type: proposalType,
         kyc_verified: kycVerified,
         kyc_inquiry_id: kycInquiryId,
       };
 
-      // Auto-save silently in background
-      fetch('/api/proposals/drafts/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(draft),
-      })
-        .then(() => {
-          // Update draft name if it changed
-          if (draftName !== generatedDraftName) {
-            setDraftName(generatedDraftName);
-          }
-          // Reload drafts list to show updated timestamp
-          loadUserDrafts();
-        })
-        .catch(err => {
-          console.error('Auto-save failed:', err);
+      setSaveStatus('saving');
+
+      try {
+        // Auto-save silently in background
+        await fetch('/api/proposals/drafts/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(draft),
         });
-    }, 2000); // 2 second debounce
+        
+        // Update slug if it was just generated
+        if (!draftSlug) {
+          setDraftSlug(currentDraftSlug);
+        }
+        if (!draftTitle) {
+          setDraftTitle(currentDraftTitle);
+        }
+        
+        setLastSaved(new Date());
+        setSaveStatus('saved');
+        
+        // Reload drafts list to show updated timestamp
+        loadUserDrafts();
+      } catch (err) {
+        console.error('Auto-save failed:', err);
+        setSaveStatus('error');
+      }
+    }, 5000); // 5 second debounce
 
     return () => clearTimeout(timeoutId);
-  }, [title, description, actions, proposalType, kycVerified, kycInquiryId, address]);
+  }, [draftTitle, title, description, actionTemplateStates, proposalType, kycVerified, kycInquiryId, address]);
 
   // Listen for menu actions
   useEffect(() => {
@@ -278,8 +327,8 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
       return;
     }
 
-    if (!draftName.trim()) {
-      setErrorMessage('Please enter a draft name');
+    if (!draftTitle.trim()) {
+      setErrorMessage('Please enter a draft title');
       return;
     }
 
@@ -287,12 +336,16 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
     setErrorMessage(null);
 
     try {
+      const currentDraftSlug = draftSlug || generateUniqueSlug(generateSlug(draftTitle));
+      
       const draft: ProposalDraft = {
         wallet_address: address,
-        draft_name: draftName.trim(),
+        draft_slug: currentDraftSlug,
+        draft_title: draftTitle.trim(),
         title,
         description,
-        actions,
+        actions: flattenActionTemplates(actionTemplateStates),
+        action_templates: actionTemplateStates,
         proposal_type: proposalType,
         kyc_verified: kycVerified,
         kyc_inquiry_id: kycInquiryId,
@@ -307,6 +360,11 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
       const data = await response.json();
 
       if (data.success) {
+        // Update slug if it was just generated
+        if (!draftSlug) {
+          setDraftSlug(currentDraftSlug);
+        }
+        
         await loadUserDrafts();
         setErrorMessage(null);
         // Show success message briefly
@@ -329,21 +387,42 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
   };
 
   const handleLoadDraft = (draft: ProposalDraft) => {
-    setDraftName(draft.draft_name);
+    setDraftSlug(draft.draft_slug);
+    setDraftTitle(draft.draft_title);
     setTitle(draft.title);
     setDescription(draft.description);
-    setActions(draft.actions.length > 0 ? draft.actions : [{ target: '', value: '0', signature: '', calldata: '0x' }]);
+    
+    // Load action templates if available, otherwise convert actions to custom templates
+    if (draft.action_templates && draft.action_templates.length > 0) {
+      setActionTemplateStates(draft.action_templates);
+    } else if (draft.actions && draft.actions.length > 0) {
+      // Fallback for old drafts: convert actions to custom templates
+      const customTemplates: ActionTemplateState[] = draft.actions.map(action => ({
+        templateId: 'custom' as const,
+        fieldValues: {},
+        generatedActions: [action]
+      }));
+      setActionTemplateStates(customTemplates);
+    } else {
+      // Empty draft
+      setActionTemplateStates([
+        { templateId: 'custom', fieldValues: {}, generatedActions: [{ target: '', value: '0', signature: '', calldata: '0x' }] }
+      ]);
+    }
+    
     setProposalType(draft.proposal_type);
     setKycVerified(draft.kyc_verified);
     setKycInquiryId(draft.kyc_inquiry_id);
     setErrorMessage(null);
+    setLastSaved(draft.updated_at || null);
+    setSaveStatus('saved');
   };
 
-  const handleDeleteDraft = async (draftNameToDelete: string) => {
+  const handleDeleteDraft = async (draftSlugToDelete: string) => {
     if (!address) return;
 
     try {
-      const response = await fetch(`/api/proposals/drafts/delete?wallet=${address}&name=${encodeURIComponent(draftNameToDelete)}`, {
+      const response = await fetch(`/api/proposals/drafts/delete?wallet=${address}&slug=${encodeURIComponent(draftSlugToDelete)}`, {
         method: 'DELETE',
       });
 
@@ -353,7 +432,7 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
         await loadUserDrafts();
         
         // Clear form if deleting current draft
-        if (draftName === draftNameToDelete) {
+        if (draftSlug === draftSlugToDelete) {
           handleNewDraft();
         }
       } else {
@@ -365,11 +444,48 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
     }
   };
 
+  const handleRenameDraft = async (draftSlugToRename: string, newTitle: string) => {
+    if (!address) return;
+
+    try {
+      const response = await fetch('/api/proposals/drafts/rename', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          wallet_address: address,
+          draft_slug: draftSlugToRename,
+          new_title: newTitle,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Update local state if renaming current draft
+        if (draftSlug === draftSlugToRename) {
+          setDraftTitle(newTitle);
+        }
+        
+        // Reload drafts list
+        await loadUserDrafts();
+      } else {
+        setErrorMessage(data.error || 'Failed to rename draft');
+      }
+    } catch (error) {
+      console.error('Error renaming draft:', error);
+      setErrorMessage('Failed to rename draft');
+    }
+  };
+
   const handleNewDraft = () => {
-    // Don't clear draftName - it will be auto-generated from title
+    // Clear all state for a fresh draft
+    setDraftSlug('');
+    setDraftTitle('');
     setTitle('');
     setDescription('');
-    setActions([{ target: '', value: '0', signature: '', calldata: '0x' }]);
+    setActionTemplateStates([
+      { templateId: 'custom', fieldValues: {}, generatedActions: [{ target: '', value: '0', signature: '', calldata: '0x' }] }
+    ]);
     setProposalType('standard');
     setKycVerified(false);
     setKycInquiryId(undefined);
@@ -377,6 +493,8 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
     setProposalState('idle');
     setTimelockV1State('idle');
     setCandidateState('idle');
+    setLastSaved(null);
+    setSaveStatus('unsaved');
   };
 
   const handleKYCComplete = (data: { inquiryId: string; status: string; fields: Record<string, unknown> }) => {
@@ -391,90 +509,27 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
   };
 
   const addAction = () => {
-    setActions([...actions, { target: '', value: '0', signature: '', calldata: '0x' }]);
+    setActionTemplateStates([
+      ...actionTemplateStates, 
+      { templateId: 'custom', fieldValues: {}, generatedActions: [{ target: '', value: '0', signature: '', calldata: '0x' }] }
+    ]);
   };
 
   const removeAction = (index: number) => {
-    if (actions.length > 1) {
-      setActions(prevActions => {
-        const action = prevActions[index];
-        
-        // If removing a multi-action parent, remove entire group
-        if (action.isPartOfMultiAction && action.multiActionGroupId) {
-          const groupId = action.multiActionGroupId;
-          return prevActions.filter(a => a.multiActionGroupId !== groupId);
-        }
-        
-        // Otherwise, remove single action
-        return prevActions.filter((_, i) => i !== index);
-      });
+    if (actionTemplateStates.length > 1) {
+      setActionTemplateStates(prevStates => prevStates.filter((_, i) => i !== index));
     }
   };
 
-  const updateAction = React.useCallback((index: number, field: string, value: string) => {
-    setActions(prevActions => {
-      const updatedActions = [...prevActions];
-      updatedActions[index] = { ...updatedActions[index], [field]: value };
-      return updatedActions;
+  const updateTemplateState = React.useCallback((index: number, newState: ActionTemplateState) => {
+    setActionTemplateStates(prevStates => {
+      const updatedStates = [...prevStates];
+      updatedStates[index] = newState;
+      return updatedStates;
     });
   }, []);
 
-  // Ref to prevent double-execution of action generation
-  const processingActionsRef = React.useRef(false);
-  
-  // Handle multi-action templates (e.g., Noun swap)
-  const handleActionsGenerated = React.useCallback((index: number, generatedActions: ProposalAction[]) => {
-    // Prevent concurrent calls
-    if (processingActionsRef.current) {
-      console.log('[CreateProposalTab] Already processing, skipping duplicate call');
-      return;
-    }
-    
-    console.log('[CreateProposalTab] handleActionsGenerated called:', {
-      index,
-      generatedCount: generatedActions.length
-    });
-    
-    processingActionsRef.current = true;
-    
-    setActions(prevActions => {
-      if (generatedActions.length === 0) {
-        // No actions generated yet - keep the placeholder
-        return prevActions;
-      } else if (generatedActions.length === 1) {
-        // Single action - replace at index
-        const updatedActions = [...prevActions];
-        updatedActions[index] = generatedActions[0];
-        return updatedActions;
-      } else {
-        // Multiple actions - replace existing multi-action group or insert new one
-        const updatedActions = [...prevActions];
-        
-        // Check if we're replacing an existing multi-action group at this index
-        const existingAction = prevActions[index];
-        if (existingAction?.isPartOfMultiAction && existingAction.multiActionGroupId) {
-          // Find all actions in the existing group
-          const existingGroupId = existingAction.multiActionGroupId;
-          const groupStartIndex = prevActions.findIndex(a => a.multiActionGroupId === existingGroupId);
-          const groupEndIndex = prevActions.findLastIndex(a => a.multiActionGroupId === existingGroupId);
-          const groupSize = groupEndIndex - groupStartIndex + 1;
-          
-          // Replace the entire existing group with the new actions
-          updatedActions.splice(groupStartIndex, groupSize, ...generatedActions);
-        } else {
-          // No existing group - replace single action with multiple
-          updatedActions.splice(index, 1, ...generatedActions);
-        }
-        
-        return updatedActions;
-      }
-    });
-    
-    // Reset the flag after a brief delay to allow React to finish batching
-    setTimeout(() => {
-      processingActionsRef.current = false;
-    }, 50);
-  }, []); // Empty deps - we use functional setState so we don't need actions in deps
+  // Note: We no longer need handleActionsGenerated - template states are updated directly via updateTemplateState
 
   const validateForm = (requireKYC: boolean = true) => {
     if (!title.trim()) {
@@ -493,9 +548,10 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
       return false;
     }
 
-    // Validate each action
-    for (let i = 0; i < actions.length; i++) {
-      const action = actions[i];
+    // Flatten and validate all actions from template states
+    const allActions = flattenActionTemplates(actionTemplateStates);
+    for (let i = 0; i < allActions.length; i++) {
+      const action = allActions[i];
       if (!action.target.trim()) {
         setErrorMessage(`Action ${i + 1}: Target address is required`);
         return false;
@@ -530,11 +586,12 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
       const baseSlug = generateSlugFromTitle(title);
       const uniqueSlug = makeSlugUnique(baseSlug);
 
-      // Prepare proposal data
-      const targets = actions.map(action => action.target as `0x${string}`);
-      const values = actions.map(action => BigInt(action.value));
-      const signatures = actions.map(action => action.signature);
-      const calldatas = actions.map(action => {
+      // Prepare proposal data - flatten template states to actions
+      const allActions = flattenActionTemplates(actionTemplateStates);
+      const targets = allActions.map(action => action.target as `0x${string}`);
+      const values = allActions.map(action => BigInt(action.value));
+      const signatures = allActions.map(action => action.signature);
+      const calldatas = allActions.map(action => {
         const data = action.calldata;
         return (data.startsWith('0x') ? data : `0x${data}`) as `0x${string}`;
       });
@@ -598,11 +655,12 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
     setState('confirming');
 
     try {
-      // Prepare proposal data
-      const targets = actions.map(action => action.target as `0x${string}`);
-      const values = actions.map(action => BigInt(action.value));
-      const signatures = actions.map(action => action.signature);
-      const calldatas = actions.map(action => {
+      // Prepare proposal data - flatten template states to actions
+      const allActions = flattenActionTemplates(actionTemplateStates);
+      const targets = allActions.map(action => action.target as `0x${string}`);
+      const values = allActions.map(action => BigInt(action.value));
+      const signatures = allActions.map(action => action.signature);
+      const calldatas = allActions.map(action => {
         const data = action.calldata;
         return (data.startsWith('0x') ? data : `0x${data}`) as `0x${string}`;
       });
@@ -651,7 +709,23 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
       )}
 
       <div className={styles.header}>
-        <h2 className={styles.title}>Create Proposal</h2>
+        <div className={styles.headerTop}>
+          <h2 className={styles.title}>Create Proposal</h2>
+          {draftTitle && (
+            <div className={styles.draftIndicator}>
+              <span className={styles.draftName}>Draft: {draftTitle}</span>
+              {title && <span className={styles.separator}>•</span>}
+              {title && <span className={styles.proposalTitle}>Proposal: {title.substring(0, 40)}{title.length > 40 ? '...' : ''}</span>}
+              <span className={styles.separator}>•</span>
+              {saveStatus === 'saving' && <span className={styles.savingIndicator}>💾 Saving...</span>}
+              {saveStatus === 'saved' && lastSaved && (
+                <span className={styles.savedIndicator}>✓ Saved {formatRelativeTime(lastSaved)}</span>
+              )}
+              {saveStatus === 'unsaved' && <span className={styles.unsavedIndicator}>● Unsaved changes</span>}
+              {saveStatus === 'error' && <span className={styles.errorIndicator}>⚠️ Save failed</span>}
+            </div>
+          )}
+        </div>
       </div>
 
       {!isConnected && (
@@ -664,11 +738,12 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
         {/* Draft Management */}
         <DraftSelector
           drafts={drafts}
+          currentDraft={drafts.find(d => d.draft_slug === draftSlug) || null}
           onLoad={handleLoadDraft}
           onDelete={handleDeleteDraft}
+          onRename={handleRenameDraft}
           onNew={handleNewDraft}
           disabled={isCreating}
-          currentDraftName={draftName}
         />
 
         {/* Proposal Type */}
@@ -764,20 +839,13 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
                 </button>
               </div>
 
-              {actions.map((action, index) => {
-                // Skip rendering child actions separately - they'll be shown in the parent
-                if (action.isPartOfMultiAction && action.multiActionIndex! > 0) {
-                  return null;
-                }
-                
-                // Get all actions in this group if it's a multi-action
-                const groupActions = action.isPartOfMultiAction && action.multiActionGroupId
-                  ? actions.filter(a => a.multiActionGroupId === action.multiActionGroupId)
-                  : [action];
+              {actionTemplateStates.map((templateState, index) => {
+                // Get generated actions from this template state
+                const groupActions = templateState.generatedActions;
                 
                 return (
                   <div key={index} className={styles.actionContainer}>
-                    {actions.length > 1 && !action.isPartOfMultiAction && (
+                    {actionTemplateStates.length > 1 && (
                       <button
                         type="button"
                         className={styles.removeActionButton}
@@ -789,12 +857,11 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
                       </button>
                     )}
                     
-                    {/* Render full ActionTemplateEditor */}
+                    {/* Render full ActionTemplateEditor with template state */}
                     <ActionTemplateEditor
                       index={index}
-                      action={action}
-                      onUpdate={(field, value) => updateAction(index, field, value)}
-                      onActionsGenerated={(generatedActions) => handleActionsGenerated(index, generatedActions)}
+                      templateState={templateState}
+                      onUpdateTemplateState={(newState) => updateTemplateState(index, newState)}
                       disabled={isCreating}
                     />
                     

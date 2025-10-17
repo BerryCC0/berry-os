@@ -252,7 +252,7 @@ export function PersonaKYC({
       <div className={styles.section}>
         <label className={styles.label}>Identity Verification</label>
         <p className={styles.description}>
-          KYC is optional to submit proposals. If your proposal succeeds and you have not KYC'd, your proposal may not be executed. Contact the Nouns DUNA Admins for more information.
+          KYC is optional to submit proposals. If your proposal succeeds and you have not KYC'd, your proposal may not be executed. Contact the Nouns DUNA Admins for more information about KYC and your personal information. Berry OS saves your wallet address only for theme and other system preference settings.
         </p>
         
         <button

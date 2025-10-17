@@ -1326,6 +1326,16 @@ export function generateActionsFromTemplate(
         calldata: encodeAdminAddress('_setPendingAdmin(address)', fieldValues.address as Address)
       }];
 
+    case 'custom':
+      // Custom template - return empty action that will be manually edited
+      // Or if there are already generated actions in the template state, return those
+      return [{
+        target: fieldValues.target as string || '',
+        value: fieldValues.value as string || '0',
+        signature: fieldValues.signature as string || '',
+        calldata: fieldValues.calldata as string || '0x'
+      }];
+
     default:
       throw new Error(`Template not implemented: ${templateId}`);
   }
