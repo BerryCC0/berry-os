@@ -1,0 +1,167 @@
+/* GroupedSelect - Mac OS 8 Style with Option Groups */
+
+.select {
+  position: relative;
+  width: 100%;
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+}
+
+.selectButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: #FFF;
+  border: 1px solid #000;
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: inset 1px 1px 0 #888;
+}
+
+.selectButton:hover:not(:disabled) {
+  background: #F5F5F5;
+}
+
+.selectButton:active:not(:disabled) {
+  background: #EEE;
+}
+
+.selectButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #EEE;
+}
+
+.placeholder {
+  color: #888;
+}
+
+.arrow {
+  margin-left: 8px;
+  font-size: 8px;
+  color: #000;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  image-rendering: pixelated;
+}
+
+/* Dropdown Menu */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background: #FFF;
+  border: 1px solid #000;
+  box-shadow: 2px 2px 0 #888;
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Group Container */
+.group {
+  /* No extra styling needed, just a wrapper */
+}
+
+/* Group Label */
+.groupLabel {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 6px 8px 4px 8px;
+  background: #DDD;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-top: 1px solid #CCC;
+}
+
+.group:first-child .groupLabel {
+  border-top: none;
+}
+
+/* Option */
+.option {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px 4px 16px; /* Extra left padding for grouped items */
+  cursor: pointer;
+  font-size: 11px;
+  background: #FFF;
+}
+
+.option:hover {
+  background: #000;
+  color: #FFF;
+}
+
+.option.selected {
+  background: #00C;
+  color: #FFF;
+}
+
+.option.selected:hover {
+  background: #008;
+}
+
+/* Divider between groups */
+.divider {
+  height: 1px;
+  background: #888;
+  margin: 2px 0;
+}
+
+/* Scrollbar styling (Mac OS 8) */
+.dropdown::-webkit-scrollbar {
+  width: 15px;
+}
+
+.dropdown::-webkit-scrollbar-track {
+  background: #DDD;
+}
+
+.dropdown::-webkit-scrollbar-thumb {
+  background: #888;
+  border: 1px solid #000;
+}
+
+.dropdown::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Disabled state */
+.select.disabled .selectButton {
+  background: #EEE;
+  cursor: not-allowed;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .selectButton {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 8px 12px;
+  }
+
+  .option {
+    padding: 8px 12px 8px 20px;
+    font-size: 16px;
+  }
+
+  .groupLabel {
+    font-size: 12px;
+    padding: 8px 12px 6px 12px;
+  }
+
+  .dropdown {
+    max-height: 300px;
+  }
+}
+

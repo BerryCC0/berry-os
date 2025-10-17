@@ -10,6 +10,7 @@ import { useQuery } from '@apollo/client/react';
 import { GET_CURRENT_AUCTION, GET_AUCTION, GET_NOUN } from '@/app/lib/Nouns/Goldsky/queries';
 import { NounsApolloWrapper } from '@/app/lib/Nouns/Goldsky';
 import type { Auction as AuctionType, Noun } from '@/app/lib/Nouns/Goldsky/utils/types';
+import { useNounData } from './utils/hooks/useNounData';
 import NounImage from './components/NounImage';
 import TraitsList from './components/TraitsList';
 import AuctionNavigation from './components/AuctionNavigation';
@@ -95,15 +96,19 @@ function AuctionContent({ windowId }: AuctionProps) {
   const currentAuction = currentData?.auctions?.[0];
   const currentAuctionId = currentAuction?.noun?.id;
 
-  // Determine which auction to display
+  // NEW: Fetch Noun data from database (traits, SVG, owner)
+  const displayNounId = viewingNounId || currentAuctionId || null;
+  const { noun: dbNoun, svgData: dbSvgData, source: dataSource } = useNounData(displayNounId);
+
+  // Determine which auction to display (merged with database Noun data)
   const displayAuction = useMemo(() => {
+    let auction: AuctionType | null = null;
+
     if (isViewingCurrent) {
-      return currentAuction;
-    }
-    
-    // For Nounder Nouns, create a fake auction structure from the Noun data
-    if (isNounder && nounderNounData?.noun) {
-      return {
+      auction = currentAuction || null;
+    } else if (isNounder && nounderNounData?.noun) {
+      // For Nounder Nouns, create a fake auction structure from the Noun data
+      auction = {
         id: nounderNounData.noun.id,
         amount: '0',
         startTime: '0',
@@ -112,10 +117,24 @@ function AuctionContent({ windowId }: AuctionProps) {
         noun: nounderNounData.noun,
         bids: [],
       } as AuctionType;
+    } else {
+      auction = historicalData?.auction || null;
     }
-    
-    return historicalData?.auction || null;
-  }, [isViewingCurrent, currentAuction, historicalData, isNounder, nounderNounData]);
+
+    // If no auction, return null
+    if (!auction) return null;
+
+    // Merge with database Noun data if available
+    // Priority: database Noun > GraphQL Noun
+    if (dbNoun) {
+      return {
+        ...auction,
+        noun: dbNoun,
+      };
+    }
+
+    return auction;
+  }, [isViewingCurrent, currentAuction, historicalData, isNounder, nounderNounData, dbNoun]);
 
   // Only show loading on initial fetch (networkStatus 1), not on polling (networkStatus 6)
   // NetworkStatus: 1 = loading, 6 = poll, 7 = ready, 2 = setVariables
@@ -208,7 +227,8 @@ function AuctionContent({ windowId }: AuctionProps) {
         {/* Left: Noun Image & Traits */}
         <div className={styles.imageSection}>
           <NounImage 
-            noun={displayAuction?.noun || null} 
+            noun={displayAuction?.noun || null}
+            svgData={dbSvgData} 
             width={320} 
             height={320}
           />

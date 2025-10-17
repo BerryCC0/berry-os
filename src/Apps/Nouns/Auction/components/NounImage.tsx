@@ -12,18 +12,26 @@ import styles from './NounImage.module.css';
 
 interface NounImageProps {
   noun: Noun | null;
+  svgData?: string | null; // NEW: SVG data from database
   width?: number;
   height?: number;
   className?: string;
 }
 
 export default function NounImage({ 
-  noun, 
+  noun,
+  svgData,
   width = 320, 
   height = 320, 
   className = '' 
 }: NounImageProps) {
   const svgDataURL = useMemo(() => {
+    // Priority 1: Use database SVG if available
+    if (svgData) {
+      return `data:image/svg+xml,${encodeURIComponent(svgData)}`;
+    }
+
+    // Priority 2: Generate from Noun traits (fallback)
     if (!noun) {
       const placeholder = generatePlaceholderSVG();
       return `data:image/svg+xml,${encodeURIComponent(placeholder)}`;
@@ -37,7 +45,7 @@ export default function NounImage({
 
     const svg = generateNounSVG(traits);
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-  }, [noun]);
+  }, [noun, svgData]);
 
   return (
     <img

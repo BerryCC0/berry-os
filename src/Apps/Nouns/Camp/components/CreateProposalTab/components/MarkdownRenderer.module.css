@@ -1,0 +1,176 @@
+/* Full-featured markdown renderer styles */
+
+.markdown {
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--theme-text, #000000);
+  padding: 12px;
+}
+
+/* Headings */
+.markdown h1 {
+  font-family: var(--font-chicago);
+  font-size: 18px;
+  margin: 16px 0 8px 0;
+  border-bottom: 1px solid var(--theme-window-border, #000000);
+  padding-bottom: 4px;
+}
+
+.markdown h2 {
+  font-family: var(--font-chicago);
+  font-size: 16px;
+  margin: 14px 0 6px 0;
+  border-bottom: 1px solid var(--mac-gray-2, #888888);
+  padding-bottom: 3px;
+}
+
+.markdown h3 {
+  font-family: var(--font-chicago);
+  font-size: 14px;
+  margin: 12px 0 6px 0;
+}
+
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  margin: 10px 0 5px 0;
+}
+
+/* Paragraphs */
+.markdown p {
+  margin: 8px 0;
+}
+
+/* Lists */
+.markdown ul,
+.markdown ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.markdown li {
+  margin: 4px 0;
+}
+
+/* Task lists */
+.markdown input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+/* Code */
+.markdown code {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 11px;
+  background: var(--mac-gray-1, #DDDDDD);
+  padding: 2px 4px;
+  border: 1px solid var(--mac-gray-2, #888888);
+}
+
+.markdown pre {
+  background: var(--mac-gray-1, #DDDDDD);
+  border: 1px solid var(--theme-window-border, #000000);
+  padding: 8px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.markdown pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Blockquotes */
+.markdown blockquote {
+  border-left: 3px solid var(--mac-gray-2, #888888);
+  padding-left: 12px;
+  margin: 8px 0;
+  color: var(--mac-gray-3, #555555);
+}
+
+/* Links */
+.markdown a {
+  color: #0000EE;
+  text-decoration: underline;
+}
+
+.markdown a:visited {
+  color: #551A8B;
+}
+
+.markdown a:hover {
+  background: #FFFF00;
+}
+
+/* Images */
+.image {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--theme-window-border, #000000);
+  margin: 8px 0;
+}
+
+/* Tables */
+.tableWrapper {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--theme-window-border, #000000);
+}
+
+.table th,
+.table td {
+  border: 1px solid var(--theme-window-border, #000000);
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.table th {
+  background: var(--mac-gray-1, #DDDDDD);
+  font-family: var(--font-chicago);
+  font-weight: bold;
+}
+
+.table tr:nth-child(even) {
+  background: var(--mac-gray-1, #DDDDDD);
+}
+
+/* Horizontal rule */
+.markdown hr {
+  border: none;
+  border-top: 1px solid var(--theme-window-border, #000000);
+  margin: 16px 0;
+}
+
+/* Mermaid diagrams */
+.markdown .mermaid {
+  background: #FFFFFF;
+  padding: 12px;
+  border: 1px solid var(--theme-window-border, #000000);
+  margin: 12px 0;
+  text-align: center;
+}
+
+/* Math (KaTeX) */
+.markdown .katex {
+  font-size: 1.1em;
+}
+
+.markdown .katex-display {
+  margin: 12px 0;
+  text-align: center;
+}
+
+/* Strikethrough */
+.markdown del {
+  text-decoration: line-through;
+  color: var(--mac-gray-3, #555555);
+}
+

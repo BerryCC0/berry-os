@@ -1,0 +1,206 @@
+/**
+ * PersonaKYC Component Styles
+ * Mac OS 8 themed KYC verification interface
+ */
+
+.container {
+  width: 100%;
+  margin: 16px 0;
+}
+
+.section {
+  padding: 12px;
+  border: 1px solid var(--theme-window-border, #000000);
+  background: var(--theme-window-background, #DDDDDD);
+}
+
+.label {
+  display: block;
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--theme-text, #000000);
+}
+
+.description {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 11px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  color: var(--theme-text, #000000);
+}
+
+.kycButton {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 11px;
+  padding: 6px 12px;
+  border: 2px outset var(--theme-window-border, #000000);
+  background: var(--theme-button-background, #DDDDDD);
+  color: var(--theme-text, #000000);
+  cursor: pointer;
+  transition: all 0.1s;
+  min-width: 200px;
+}
+
+.kycButton:hover:not(:disabled) {
+  background: var(--theme-button-background-hover, #EEEEEE);
+  border-style: outset;
+}
+
+.kycButton:active:not(:disabled) {
+  border-style: inset;
+  background: var(--theme-button-background-active, #CCCCCC);
+}
+
+.kycButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.kycButton.loading {
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+}
+
+.kycButton.completed {
+  background: #008000;
+  color: #FFFFFF;
+  border-color: #006000;
+}
+
+.kycButton.error {
+  background: #C00000;
+  color: #FFFFFF;
+  border-color: #800000;
+}
+
+.kycModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modalContent {
+  position: relative;
+  background: var(--theme-window-background, #DDDDDD);
+  border: 2px solid var(--theme-window-border, #000000);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  min-width: 400px;
+  max-width: 600px;
+  z-index: 10000;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--theme-title-bar-active, #000000);
+  color: #FFFFFF;
+  border-bottom: 1px solid var(--theme-window-border, #000000);
+}
+
+.modalHeader h3 {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.closeButton {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 16px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.loadingState {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.loadingState p {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text, #000000);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--theme-window-border, #888888);
+  border-top-color: var(--theme-highlight, #000080);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  margin-top: 8px;
+  padding: 8px;
+  background: #FFE0E0;
+  border: 1px solid #FF0000;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  color: #800000;
+}
+
+.success {
+  margin-top: 8px;
+  padding: 8px;
+  background: #E0FFE0;
+  border: 1px solid #00AA00;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  color: #006000;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .modalContent {
+    min-width: 90%;
+    max-width: 90%;
+  }
+
+  .kycButton {
+    width: 100%;
+  }
+}
+

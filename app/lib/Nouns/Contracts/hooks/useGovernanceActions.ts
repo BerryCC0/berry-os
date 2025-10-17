@@ -115,6 +115,21 @@ export function useGovernanceActions() {
   };
   
   /**
+   * Create a proposal on TimelockV1
+   * Automatically includes Berry OS Client ID (11)
+   */
+  const proposeOnTimelockV1 = async (
+    targets: Address[],
+    values: bigint[],
+    signatures: string[],
+    calldatas: `0x${string}`[],
+    description: string
+  ) => {
+    const config = GovernanceActions.proposeOnTimelockV1(targets, values, signatures, calldatas, description);
+    return await writeContractAsync(config as any);
+  };
+  
+  /**
    * Propose by signatures (multi-signer proposal)
    * Automatically includes Berry OS Client ID (11)
    */
@@ -255,6 +270,7 @@ export function useGovernanceActions() {
     
     // Proposal Actions (all with Berry OS Client ID 11)
     propose,
+    proposeOnTimelockV1,
     proposeBySigs,
     queue,
     execute,

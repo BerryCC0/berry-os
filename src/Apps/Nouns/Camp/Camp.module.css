@@ -12,6 +12,14 @@
   color: var(--theme-text, #000000);
   font-family: var(--font-geneva);
   overflow: hidden;
+  
+  /* CRITICAL: Allow resize corner to receive events */
+  pointer-events: none;
+}
+
+/* Re-enable pointer events for all children */
+.camp > * {
+  pointer-events: auto;
 }
 
 /* Logo to the left of tabs */

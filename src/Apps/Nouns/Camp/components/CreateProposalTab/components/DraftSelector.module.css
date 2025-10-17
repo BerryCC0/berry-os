@@ -1,0 +1,267 @@
+/**
+ * DraftSelector Component Styles
+ * Mac OS 8 themed draft selector
+ */
+
+.container {
+  padding: 12px;
+  border: 1px solid var(--theme-window-border, #000000);
+  background: var(--theme-window-background, #DDDDDD);
+  margin-bottom: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.label {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.count {
+  font-weight: normal;
+  opacity: 0.7;
+}
+
+.newButton {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 10px;
+  padding: 4px 8px;
+  border: 2px outset var(--theme-window-border, #000000);
+  background: var(--theme-button-background, #0066CC);
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.newButton:hover:not(:disabled) {
+  background: #0088FF;
+}
+
+.newButton:active:not(:disabled) {
+  border-style: inset;
+}
+
+.newButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.noDrafts {
+  padding: 16px;
+  text-align: center;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 11px;
+  color: #666666;
+  background: #F8F8F8;
+  border: 1px solid #CCCCCC;
+  line-height: 1.5;
+}
+
+.draftsList {
+  position: relative;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownButton {
+  width: 100%;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 11px;
+  padding: 8px 10px;
+  border: 2px inset var(--theme-window-border, #888888);
+  background: #FFFFFF;
+  color: #000000;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdownButton:hover:not(:disabled) {
+  background: #F8F8F8;
+}
+
+.dropdownLabel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.dropdownTitle {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownDate {
+  font-size: 10px;
+  color: #666666;
+  white-space: nowrap;
+}
+
+.dropdownButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dropdownArrow {
+  font-size: 8px;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #FFFFFF;
+  border: 2px solid var(--theme-window-border, #000000);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  margin-top: 2px;
+}
+
+.draftItem {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid #EEEEEE;
+}
+
+.draftItem:last-child {
+  border-bottom: none;
+}
+
+.draftInfo {
+  flex: 1;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.draftInfo:hover {
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+}
+
+.draftInfo.active {
+  background: #E0E0E0;
+}
+
+.draftInfo:hover .draftMeta,
+.draftInfo:hover .draftDate,
+.draftInfo:hover .draftType {
+  color: #FFFFFF;
+}
+
+.draftName {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kycBadge {
+  font-size: 9px;
+  padding: 2px 4px;
+  background: #00AA00;
+  color: #FFFFFF;
+  border-radius: 3px;
+}
+
+.draftMeta {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 9px;
+  color: #666666;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.draftDate {
+  font-size: 9px;
+  color: #888888;
+  white-space: nowrap;
+}
+
+.draftType {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 9px;
+  color: #888888;
+}
+
+.deleteButton {
+  width: 32px;
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-left: 1px solid #EEEEEE;
+  background: #FFFFFF;
+  color: #C00000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background: #FF0000;
+  color: #FFFFFF;
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.autoSaveIndicator {
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: #E8F4FF;
+  border: 1px solid #0066CC;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  color: #004080;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .newButton {
+    width: 100%;
+  }
+
+  .draftMeta {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .draftDate {
+    white-space: normal;
+  }
+}
+

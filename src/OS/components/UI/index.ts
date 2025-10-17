@@ -40,6 +40,9 @@ export type { TextAreaProps } from './TextArea/TextArea';
 export { default as Select } from './Select/Select';
 export type { SelectProps, SelectOption } from './Select/Select';
 
+export { default as GroupedSelect } from './Select/GroupedSelect';
+export type { GroupedSelectProps, SelectOptionGroup } from './Select/GroupedSelect';
+
 export { default as Checkbox } from './Checkbox/Checkbox';
 export type { CheckboxProps } from './Checkbox/Checkbox';
 

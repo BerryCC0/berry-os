@@ -204,7 +204,7 @@ export const GET_NOUNS_BY_OWNER = gql`
       where: { owner: $owner }
       first: $first
       skip: $skip
-      orderBy: createdAtTimestamp
+      orderBy: id
       orderDirection: desc
     ) {
       ...NounFields

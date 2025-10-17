@@ -1,0 +1,197 @@
+/* ActionTemplateEditor - Mac OS 8 Style */
+
+.container {
+  border: 1px solid #000;
+  background: #DDD;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #888;
+}
+
+.actionLabel {
+  font-family: 'Chicago', 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.toggleButton {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 11px;
+  padding: 4px 12px;
+  background: #FFF;
+  border: 1px solid #000;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #888;
+}
+
+.toggleButton:hover:not(:disabled) {
+  background: #EEE;
+}
+
+.toggleButton:active:not(:disabled) {
+  box-shadow: inset 1px 1px 0 #888;
+}
+
+.toggleButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.inputGroup {
+  margin-bottom: 12px;
+}
+
+.label {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 11px;
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.required {
+  color: #C00;
+}
+
+.select,
+.input {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 11px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #000;
+  background: #FFF;
+  box-shadow: inset 1px 1px 0 #888;
+}
+
+.select {
+  cursor: pointer;
+}
+
+.select:disabled,
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #EEE;
+}
+
+.templateDescription {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #444;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.multiActionBadge {
+  color: #00C;
+  font-weight: bold;
+}
+
+.simpleForm {
+  margin-top: 8px;
+}
+
+.helpText {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #666;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.error {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #C00;
+  margin-top: 2px;
+  font-weight: bold;
+}
+
+/* Advanced Mode */
+.advancedSection {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #888;
+}
+
+.advancedHeader {
+  font-family: 'Chicago', 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.generatedAction {
+  background: #EEE;
+  border: 1px solid #888;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.actionNumber {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #00C;
+}
+
+.generatedField {
+  margin-bottom: 6px;
+}
+
+.generatedLabel {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  display: block;
+  margin-bottom: 2px;
+  font-weight: bold;
+}
+
+.generatedInput,
+.generatedTextarea {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #888;
+  background: #FFF;
+  color: #333;
+}
+
+.generatedTextarea {
+  resize: vertical;
+  font-family: 'Courier New', monospace;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 8px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .toggleButton {
+    align-self: flex-end;
+  }
+
+  .select,
+  .input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+

@@ -154,6 +154,46 @@ export function propose(
 }
 
 /**
+ * Create a proposal to be executed on TimelockV1
+ * Automatically includes Berry OS Client ID (11)
+ * 
+ * @param targets - Target contract addresses
+ * @param values - ETH values to send (in wei)
+ * @param signatures - Function signatures
+ * @param calldatas - Encoded function call data
+ * @param description - Proposal description
+ * @returns Transaction config for wagmi useWriteContract
+ * @throws Error if validation fails
+ * 
+ * @example
+ * const config = proposeOnTimelockV1(
+ *   ['0x...'],
+ *   [BigInt(0)],
+ *   ['transfer(address,uint256)'],
+ *   ['0x...'],
+ *   '# My TimelockV1 Proposal\n\nThis proposal executes on TimelockV1...'
+ * );
+ * await writeContractAsync(config);
+ */
+export function proposeOnTimelockV1(
+  targets: Address[],
+  values: bigint[],
+  signatures: string[],
+  calldatas: `0x${string}`[],
+  description: string
+) {
+  validateProposalActions(targets, values, signatures, calldatas);
+  validateProposalDescription(description);
+  
+  return {
+    address: NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address,
+    abi: NounsDAOLogicV3ABI,
+    functionName: 'proposeOnTimelockV1' as const,
+    args: [targets, values, signatures, calldatas, description, BERRY_OS_CLIENT_ID] as const,
+  };
+}
+
+/**
  * Propose by signatures (multi-signer proposal)
  * Automatically includes Berry OS Client ID (11)
  * Allows multiple Noun holders to co-sign a proposal before submission

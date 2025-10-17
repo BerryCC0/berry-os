@@ -34,6 +34,7 @@ export type EventType =
   | 'AUTOSAVE_COMPLETE'
   | 'AUTOSAVE_ERROR'
   | 'DRAG_START'
+  | 'CAMP_NEW_PROPOSAL'
   | 'DRAG_END'
   | 'DROP'
   | 'SELECTION_CHANGE';

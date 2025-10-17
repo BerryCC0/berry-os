@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWriteContract, useAccount } from 'wagmi';
 import { NounsApolloWrapper } from '@/app/lib/Nouns/Goldsky';
 import { GovernanceActions } from '@/app/lib/Nouns/Contracts';
@@ -15,7 +15,9 @@ import ProposalsTab from './components/ProposalsTab/ProposalsTab';
 import CandidatesTab from './components/CandidatesTab/CandidatesTab';
 import VotersTab from './components/VotersTab/VotersTab';
 import AccountTab from './components/AccountTab/AccountTab';
+import CreateProposalTab from './components/CreateProposalTab/CreateProposalTab';
 import { useENS } from './utils/hooks/useENS';
+import { eventBus } from '@/src/OS/lib/eventBus';
 import styles from './Camp.module.css';
 
 interface CampProps {
@@ -50,6 +52,28 @@ function CampContent({ windowId }: CampProps) {
     }
   };
 
+  const [activeTab, setActiveTab] = useState('activity');
+
+  // Handle menu actions
+  useEffect(() => {
+    const subscription = eventBus.subscribe('MENU_ACTION', (payload) => {
+      const { action } = payload as any;
+      
+      switch (action) {
+        case 'camp:create-proposal':
+          setActiveTab('create');
+          break;
+        case 'camp:new-proposal':
+          setActiveTab('create');
+          // Trigger new proposal action
+          eventBus.publish('CAMP_NEW_PROPOSAL', {});
+          break;
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const tabs = [
     {
       id: 'activity',
@@ -72,6 +96,13 @@ function CampContent({ windowId }: CampProps) {
       content: <VotersTab />,
     },
   ];
+
+  // Create tab (pinned, only visible when wallet connected)
+  const createTab = isConnected ? {
+    id: 'create',
+    label: 'Create',
+    content: <CreateProposalTab />,
+  } : null;
 
   // Account tab (pinned to the right)
   const accountTab = {
@@ -102,12 +133,17 @@ function CampContent({ windowId }: CampProps) {
     ),
   };
 
+  // Build pinned tabs array - Create tab comes before Account tab
+  const pinnedTabs = createTab ? [createTab, accountTab] : [accountTab];
+
   return (
     <div className={styles.camp}>
       <Tabs 
         tabs={tabs}
-        pinnedTabs={[accountTab]}
+        pinnedTabs={pinnedTabs}
         wrapContentInScrollBar={true}
+        activeTab={activeTab}
+        onChange={setActiveTab}
         leftContent={
           <img 
             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAA/FBMVEX/////wRD+YwwUZjb/vQD/0IL/wiv+loL+aSn+TQAAUQAAZjgtbEOCl4b/wiX/xhD+YAz19fX/+vUASgD+Zwz/YwP/xlz/ow7+WwxceWItZjX+VQz+kg4lZjbjZBv+fw2CZTD/58xVZjT/8eIAXRfM0M3IZCPi5OKHl4ryYxIPXC3/04KtZSr/sQ+rta3/26tyi3dwl4bAl4T/xYL/y3IAHwAAWQOkTwD/tgA7ck0/bEIAbEWtazr/syv/xDk+ZjWiZSzSZCFAaEkAPQAAYin+dw2hrKNqZTP/2aQAFQAlYThdbELzaiz+XSn+lioAQwA5UQD+NgD+kIL+sILGSCDSAAACq0lEQVR4nO3aC0PSUBiAYYcb5SZzylQEp2kgkIJWRppFlJfsfvv//6Wdg+kuZ17IsWnv8wu+F87gY2xiAgAAAAAAAAAAAAAAAAAAAAAAABiHxk4p4umzB0mebxqGsbuW9cwh3Rc9M+LlVJKOpuv63nbWM4d0zf3pkFcHrx8meWMXi309ZwHl6cmQqrU1X1BzOjOaVsxzgFetem+VAa5QyH2AJQ3iAU5NyldAQ2r1vIv5B1u+wbtYgOMuS3uaptm6sSbNZTz/7PtDs1wu1wPH31qZl2JvQGV1RtIkXdjrZx6wdCQ+dCbDAeqrt7KqBdm2XdQWsg+oRz5/rh0gDxIBBBBAAAH3KcDzvKqnDBBbnJPHgIlgwHCLUwVUxBI3dawIyG7y5knXd7J/dP7yWx82pHZ8/uVFoRMN0LT+6bbv9HEGAY2PvbJZNi/OT9V6lLDFubXF4BoXMtzpsviB3DCnw2ucH6C+eGWArhheniKx0+mZBMR/RV4WkDD/2aVAAAEEEEDAJQGFux5wp98Bx3EqTs4CuqWWb+d8i/PXuK0VKT6+25GSFom/dg1hXHcbS4d10zQDN+M8a2O+oFzjHFdL2uJChiudMaaAVl1scV4kQMlxr3rtzw6Rr6+PLcCMnP5/D5ARBBBAAAH/Y4Anbmbd5YDhvSxFgCNUchYwK7V6FwHeulBVBMj/hN3jGwXMSenN31ySAuNb6yttwY2NX1seLjjXnt9XXJDSu03XNOtCcA1db6tPvx9w5QYXJ5P1FAM+RW7GiQD11TtagC2lGPAk/PF56wFDBBBAAAE3CbjN7wEp/e+BgIPPXxKe7Pv6zS6OKMWA79FnK80ftYRnK3+erRIjSDEg+nRrqdRKerr11+9NY0RZ/GUJAAAAAAAAAAAAAAAAAAAAAACA++sP89Z/fummxOwAAAAASUVORK5CYII="

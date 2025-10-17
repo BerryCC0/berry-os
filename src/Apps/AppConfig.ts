@@ -172,6 +172,13 @@ const BASE_APPS: AppConfig[] = [
     category: 'web3',
     description: 'View and interact with Nouns governance: proposals, candidates, and voters',
     version: '1.0.0',
+    menus: {
+      File: [
+        { label: 'New Proposal', action: 'camp:new-proposal', shortcut: '⌘N' },
+        { divider: true },
+        { label: 'Switch to Create Tab', action: 'camp:create-proposal', shortcut: '⌘T' },
+      ],
+    },
   },
   {
     id: 'auction',

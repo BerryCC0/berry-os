@@ -1,0 +1,217 @@
+/**
+ * SmartActionEditor Component Styles
+ * Mac OS 8 themed action editor
+ */
+
+.container {
+  padding: 12px;
+  border: 2px inset var(--theme-window-border, #888888);
+  background: var(--theme-window-background, #FFFFFF);
+  margin-bottom: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--theme-window-border, #000000);
+}
+
+.actionLabel {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.toggleButton {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 10px;
+  padding: 4px 8px;
+  border: 1px outset var(--theme-window-border, #000000);
+  background: var(--theme-button-background, #DDDDDD);
+  color: var(--theme-text, #000000);
+  cursor: pointer;
+}
+
+.toggleButton:hover:not(:disabled) {
+  background: var(--theme-button-background-hover, #EEEEEE);
+}
+
+.toggleButton:active:not(:disabled) {
+  border-style: inset;
+}
+
+.inputGroup {
+  margin-bottom: 12px;
+}
+
+.label {
+  display: block;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--theme-text, #000000);
+}
+
+.input,
+.select {
+  width: 100%;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 11px;
+  padding: 4px;
+  border: 1px solid var(--theme-window-border, #000000);
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.input:focus,
+.select:focus {
+  outline: 2px solid var(--theme-highlight, #000080);
+  outline-offset: -2px;
+}
+
+.status {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  color: var(--theme-highlight, #000080);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.contractName {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  margin-top: 4px;
+  padding: 6px;
+  background: #F0F0F0;
+  border: 1px solid #CCCCCC;
+}
+
+.highlight {
+  font-weight: bold;
+  color: var(--theme-highlight, #000080);
+}
+
+.proxyInfo {
+  margin-top: 4px;
+  font-size: 9px;
+  color: #666666;
+}
+
+.implementationInfo {
+  margin-top: 2px;
+  font-family: monospace;
+}
+
+.error {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  color: #C00000;
+  margin-top: 4px;
+  padding: 4px;
+  background: #FFE0E0;
+  border: 1px solid #FF0000;
+}
+
+.modeIndicator {
+  padding: 6px 8px;
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+  margin-bottom: 12px;
+  border: 1px solid var(--theme-window-border, #000000);
+}
+
+.modeLabel {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.proxyIndicator {
+  font-weight: normal;
+  opacity: 0.9;
+}
+
+.parametersSection {
+  margin-top: 12px;
+  padding: 8px;
+  background: #F8F8F8;
+  border: 1px solid #CCCCCC;
+}
+
+.parameterGroup {
+  margin-bottom: 8px;
+}
+
+.parameterGroup:last-child {
+  margin-bottom: 0;
+}
+
+.parameterLabel {
+  display: block;
+  font-family: monospace;
+  font-size: 10px;
+  margin-bottom: 4px;
+  color: #333333;
+}
+
+.generatedInfo {
+  margin-top: 12px;
+  padding: 8px;
+  background: #E8F4E8;
+  border: 1px solid #00AA00;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+}
+
+.generatedLabel {
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #006000;
+}
+
+.generatedValue {
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.generatedValue:last-child {
+  margin-bottom: 0;
+}
+
+.noFunctionsMessage,
+.noAbiMessage {
+  padding: 12px;
+  background: #FFF8E0;
+  border: 1px solid #CCAA00;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+}
+
+.noFunctionsMessage p,
+.noAbiMessage p {
+  margin: 8px 0 0 0;
+  line-height: 1.4;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .container {
+    padding: 8px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .toggleButton {
+    width: 100%;
+  }
+}
+

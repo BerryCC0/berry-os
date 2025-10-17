@@ -1,0 +1,207 @@
+/**
+ * Enhanced MarkdownEditor Component Styles
+ * Mac OS 8 themed markdown editor with split view and upload support
+ */
+
+.container {
+  width: 100%;
+  border: 2px inset var(--theme-window-border, #888888);
+  background: var(--theme-window-background, #FFFFFF);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mode switcher bar */
+.modeBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: var(--theme-window-background, #DDDDDD);
+  border-bottom: 1px solid var(--theme-window-border, #000000);
+  padding: 4px;
+}
+
+.modeButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.modeButton {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 10px;
+  padding: 4px 8px;
+  border: 1px outset var(--theme-window-border, #000000);
+  background: var(--theme-button-background, #DDDDDD);
+  color: var(--theme-text, #000000);
+  cursor: pointer;
+}
+
+.modeButton:hover:not(:disabled) {
+  background: var(--theme-button-background-hover, #EEEEEE);
+}
+
+.modeButton.active {
+  border-style: inset;
+  background: var(--theme-button-background-active, #CCCCCC);
+}
+
+.modeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.walletWarning {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 9px;
+  color: #CC0000;
+  padding-right: 4px;
+}
+
+/* Editor area container */
+.editorArea {
+  position: relative;
+  background: #FFFFFF;
+  min-height: 400px;
+}
+
+/* Split mode layout */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--theme-window-border, #000000);
+}
+
+.editPane,
+.previewPane {
+  background: #FFFFFF;
+  overflow-y: auto;
+  min-height: 400px;
+}
+
+.editPane {
+  display: flex;
+  flex-direction: column;
+}
+
+.textarea {
+  flex: 1;
+  width: 100%;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 11px;
+  padding: 8px;
+  border: none;
+  background: #FFFFFF;
+  color: #000000;
+  resize: none;
+  outline: none;
+  min-height: 400px;
+}
+
+.previewPane {
+  padding: 0;
+}
+
+.emptyPreview {
+  color: #888888;
+  font-style: italic;
+  padding: 40px;
+  text-align: center;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 11px;
+}
+
+/* Drop overlay */
+.dropOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 102, 204, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.dropMessage {
+  font-family: var(--font-chicago, 'Chicago', monospace);
+  font-size: 16px;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Upload progress */
+.uploadProgress {
+  padding: 8px;
+  background: #E8F4FF;
+  border-top: 1px solid #0066CC;
+}
+
+.progressBar {
+  height: 20px;
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progressFill {
+  height: 100%;
+  background: #0066CC;
+  transition: width 0.3s;
+}
+
+.progressText {
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 9px;
+  color: #000000;
+  text-align: center;
+}
+
+/* Upload error */
+.uploadError {
+  padding: 8px;
+  background: #FFE8E8;
+  border-top: 1px solid #CC0000;
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 10px;
+  color: #CC0000;
+}
+
+/* Hint text */
+.hint {
+  padding: 4px 8px;
+  background: var(--theme-window-background, #DDDDDD);
+  border-top: 1px solid var(--theme-window-border, #000000);
+  font-family: var(--font-geneva, 'Geneva', sans-serif);
+  font-size: 9px;
+  color: #666666;
+}
+
+/* Mobile adaptations */
+@media (max-width: 768px) {
+  .modeBar {
+    padding: 2px;
+  }
+
+  .modeButton {
+    flex: 1;
+    padding: 6px 4px;
+    font-size: 9px;
+  }
+
+  .split {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .textarea {
+    font-size: 12px;
+  }
+
+  .walletWarning {
+    display: none;
+  }
+}

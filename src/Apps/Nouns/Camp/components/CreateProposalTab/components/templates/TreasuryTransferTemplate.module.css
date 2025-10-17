@@ -1,0 +1,108 @@
+/* TreasuryTransferTemplate - Mac OS 8 Style */
+
+.container {
+  margin-top: 8px;
+}
+
+.inputGroup {
+  margin-bottom: 12px;
+}
+
+.label {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 11px;
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.required {
+  color: #C00;
+}
+
+.select,
+.input {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 11px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #000;
+  background: #FFF;
+  box-shadow: inset 1px 1px 0 #888;
+  margin-bottom: 4px;
+}
+
+.select {
+  cursor: pointer;
+}
+
+.select:disabled,
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #EEE;
+}
+
+.helpText {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #666;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.error {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #C00;
+  margin-top: 2px;
+  font-weight: bold;
+}
+
+.loading {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #00C;
+  margin-top: 4px;
+}
+
+.tokenInfo {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #444;
+  margin-top: 4px;
+  padding: 4px 6px;
+  background: #F8F8F8;
+  border: 1px solid #CCC;
+}
+
+.balanceDisplay {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: #444;
+  margin-top: 4px;
+}
+
+.balanceAmount {
+  font-weight: bold;
+  color: #00C;
+}
+
+.warningBox {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 11px;
+  background: #FCC;
+  border: 1px solid #C00;
+  padding: 8px;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .select,
+  .input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+

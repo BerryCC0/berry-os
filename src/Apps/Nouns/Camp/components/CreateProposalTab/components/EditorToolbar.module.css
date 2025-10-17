@@ -1,0 +1,56 @@
+/* Toolbar styles */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  background: var(--theme-window-background, #DDDDDD);
+  border-bottom: 1px solid var(--theme-window-border, #000000);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toolGroup {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.toolButton {
+  font-family: var(--font-chicago);
+  font-size: 10px;
+  padding: 4px 6px;
+  border: 1px outset var(--theme-window-border);
+  background: var(--theme-button-background, #DDDDDD);
+  cursor: pointer;
+  min-width: 28px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolButton:hover:not(:disabled) {
+  background: var(--theme-button-background-hover, #FFFFFF);
+}
+
+.toolButton:active:not(:disabled) {
+  border-style: inset;
+}
+
+.toolButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uploadButton {
+  background: #E8F4FF;
+  border-color: #0066CC;
+  font-size: 11px;
+  padding: 4px 8px;
+  min-width: auto;
+}
+
+.uploadButton:hover:not(:disabled) {
+  background: #D0E8FF;
+}
+
