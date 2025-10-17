@@ -108,10 +108,106 @@
   padding: 2px 0;
 }
 
+/* Approval Section */
+.approvalSection {
+  margin: 20px 0;
+  padding: 16px;
+  border: 2px solid #000;
+  background: #F8F8F8;
+}
+
+.approvalHeader {
+  font-family: 'Chicago', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #000;
+}
+
+.approvalStatus {
+  font-family: 'Geneva', sans-serif;
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+}
+
+.approvalWarning {
+  background: #FFF3CD;
+  border: 1px solid #CC9A00;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.warningText {
+  font-family: 'Geneva', sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  color: #664D00;
+}
+
+.approvalButtons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.approveButton,
+.approveAllButton {
+  font-family: 'Geneva', sans-serif;
+  font-size: 11px;
+  padding: 6px 12px;
+  border: 1px solid #000;
+  background: #FFF;
+  cursor: pointer;
+  flex: 1;
+}
+
+.approveButton:hover:not(:disabled),
+.approveAllButton:hover:not(:disabled) {
+  background: #EEE;
+}
+
+.approveButton:disabled,
+.approveAllButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.approvalHelpText {
+  font-family: 'Geneva', sans-serif;
+  font-size: 10px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.approvalError {
+  margin-top: 8px;
+  padding: 8px;
+  background: #FFE0E0;
+  border: 1px solid #CC0000;
+  font-family: 'Geneva', sans-serif;
+  font-size: 10px;
+  color: #990000;
+}
+
+.approvalSuccess {
+  padding: 12px;
+  background: #E8F4E8;
+  border: 1px solid #00AA00;
+  font-family: 'Geneva', sans-serif;
+  font-size: 11px;
+  color: #006000;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .input {
     font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .approvalButtons {
+    flex-direction: column;
   }
 }
 

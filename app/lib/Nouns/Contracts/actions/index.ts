@@ -9,6 +9,7 @@ export * as GovernanceActions from './governance';
 export * as TokenActions from './token';
 export * as DataProxyActions from './dataproxy';
 export * as RewardsActions from './rewards';
+export * as NounsTokenActions from './nounstoken';
 
 // Validation utilities
 export * from './validation';

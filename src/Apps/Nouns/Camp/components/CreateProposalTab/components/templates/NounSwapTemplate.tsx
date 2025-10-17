@@ -10,6 +10,7 @@ import React, { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { ActionTemplate, TemplateFieldValues, ProposalAction, TREASURY_ADDRESS } from '@/src/Apps/Nouns/Camp/utils/actionTemplates';
 import { useNounSelector } from '@/src/Apps/Nouns/Camp/utils/hooks/useNounSelector';
+import { useNounApproval } from '@/src/Apps/Nouns/Camp/utils/hooks/useNounApproval';
 import { NounSelector } from './NounSelector';
 import { Select } from '@/src/OS/components/UI';
 import styles from './NounSwapTemplate.module.css';
@@ -50,6 +51,21 @@ export function NounSwapTemplate({
     nouns: treasuryNouns, 
     loading: treasuryNounsLoading 
   } = useNounSelector(TREASURY_ADDRESS);
+
+  // Check approval status for selected Noun
+  const {
+    isApproved,
+    isApprovedForAll,
+    isLoading: approvalLoading,
+    approveNoun,
+    approveAllNouns,
+    isPending: approvePending,
+    isConfirming: approveConfirming,
+    isConfirmed: approveConfirmed,
+    error: approvalError,
+  } = useNounApproval(fieldValues.userNounId);
+
+  const needsApproval = fieldValues.userNounId && !isApproved && !isApprovedForAll;
 
   // Auto-fill user address when wallet connects
   useEffect(() => {
@@ -128,6 +144,70 @@ export function NounSwapTemplate({
       {validationErrors.find(err => err.field === 'treasuryNounId') && (
         <div className={styles.error}>
           {validationErrors.find(err => err.field === 'treasuryNounId')?.message}
+        </div>
+      )}
+
+      {/* Approval Status & Actions */}
+      {fieldValues.userNounId && address && (
+        <div className={styles.approvalSection}>
+          <div className={styles.approvalHeader}>
+            {needsApproval ? '⚠️ Approval Required' : '✓ Approval Status'}
+          </div>
+          
+          {approvalLoading ? (
+            <div className={styles.approvalStatus}>Checking approval status...</div>
+          ) : needsApproval ? (
+            <div className={styles.approvalWarning}>
+              <div className={styles.warningText}>
+                The Treasury must be approved to transfer your Noun before creating this proposal.
+                This is a one-time transaction.
+              </div>
+              
+              <div className={styles.approvalButtons}>
+                <button
+                  type="button"
+                  className={styles.approveButton}
+                  onClick={approveNoun}
+                  disabled={approvePending || approveConfirming || disabled}
+                >
+                  {approvePending || approveConfirming 
+                    ? 'Approving...' 
+                    : `Approve Noun ${fieldValues.userNounId}`}
+                </button>
+                
+                <button
+                  type="button"
+                  className={styles.approveAllButton}
+                  onClick={approveAllNouns}
+                  disabled={approvePending || approveConfirming || disabled}
+                >
+                  {approvePending || approveConfirming 
+                    ? 'Approving...' 
+                    : 'Approve All Nouns'}
+                </button>
+              </div>
+              
+              <div className={styles.approvalHelpText}>
+                "Approve All" grants the Treasury permission to transfer any of your Nouns in future swaps.
+              </div>
+              
+              {approvalError && (
+                <div className={styles.approvalError}>
+                  Approval failed: {approvalError.message}
+                </div>
+              )}
+              
+              {approveConfirmed && (
+                <div className={styles.approvalSuccess}>
+                  ✓ Approval confirmed! You can now create the proposal.
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={styles.approvalSuccess}>
+              ✓ Treasury is approved to transfer {isApprovedForAll ? 'all your Nouns' : `Noun ${fieldValues.userNounId}`}
+            </div>
+          )}
         </div>
       )}
 

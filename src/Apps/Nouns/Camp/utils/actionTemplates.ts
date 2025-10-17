@@ -841,194 +841,138 @@ export function getTemplate(id: ActionTemplateType): ActionTemplate | undefined 
 /**
  * Encode ERC20 transfer function calldata
  * Function: transfer(address recipient, uint256 amount)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeERC20Transfer(recipient: Address, amount: bigint): `0x${string}` {
-  // Function selector for transfer(address,uint256) = 0xa9059cbb
-  const selector = 'a9059cbb';
-  
-  // Pad recipient address to 32 bytes
+  // Pad recipient address to 32 bytes (remove 0x prefix first)
   const recipientPadded = recipient.slice(2).padStart(64, '0');
   
   // Convert amount to hex and pad to 32 bytes
   const amountHex = amount.toString(16).padStart(64, '0');
   
-  return `0x${selector}${recipientPadded}${amountHex}`;
+  return `0x${recipientPadded}${amountHex}`;
 }
 
 /**
  * Encode transferFrom function calldata for ERC20/ERC721
  * Function: transferFrom(address from, address to, uint256 tokenIdOrAmount)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeTransferFrom(from: Address, to: Address, tokenIdOrAmount: bigint): `0x${string}` {
-  // Function selector for transferFrom(address,address,uint256) = 0x23b872dd
-  const selector = '23b872dd';
-  
   const fromPadded = from.slice(2).padStart(64, '0');
   const toPadded = to.slice(2).padStart(64, '0');
   const valuePadded = tokenIdOrAmount.toString(16).padStart(64, '0');
   
-  return `0x${selector}${fromPadded}${toPadded}${valuePadded}`;
+  return `0x${fromPadded}${toPadded}${valuePadded}`;
 }
 
 /**
  * Encode safeTransferFrom function calldata for ERC721
  * Function: safeTransferFrom(address from, address to, uint256 tokenId)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeSafeTransferFrom(from: Address, to: Address, tokenId: bigint): `0x${string}` {
-  // Function selector for safeTransferFrom(address,address,uint256) = 0x42842e0e
-  const selector = '42842e0e';
-  
   const fromPadded = from.slice(2).padStart(64, '0');
   const toPadded = to.slice(2).padStart(64, '0');
   const tokenIdPadded = tokenId.toString(16).padStart(64, '0');
   
-  return `0x${selector}${fromPadded}${toPadded}${tokenIdPadded}`;
+  return `0x${fromPadded}${toPadded}${tokenIdPadded}`;
 }
 
 /**
  * Encode delegate function calldata
  * Function: delegate(address delegatee)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeDelegate(delegatee: Address): `0x${string}` {
-  // Function selector for delegate(address) = 0x5c19a95c
-  const selector = '5c19a95c';
   const delegateePadded = delegatee.slice(2).padStart(64, '0');
   
-  return `0x${selector}${delegateePadded}`;
+  return `0x${delegateePadded}`;
 }
 
 /**
  * Encode sendETH function calldata for Treasury
  * Function: sendETH(address recipient, uint256 ethToSend)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeSendETH(recipient: Address, amount: bigint): `0x${string}` {
-  // Function selector for sendETH(address,uint256) = 0x7b34c7b6
-  const selector = '7b34c7b6';
-  
   const recipientPadded = recipient.slice(2).padStart(64, '0');
   const amountHex = amount.toString(16).padStart(64, '0');
   
-  return `0x${selector}${recipientPadded}${amountHex}`;
+  return `0x${recipientPadded}${amountHex}`;
 }
 
 /**
  * Encode sendERC20 function calldata for Treasury
  * Function: sendERC20(address recipient, address erc20Token, uint256 tokensToSend)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeSendERC20(recipient: Address, token: Address, amount: bigint): `0x${string}` {
-  // Function selector for sendERC20(address,address,uint256) = 0xa4a1e3e7
-  const selector = 'a4a1e3e7';
-  
   const recipientPadded = recipient.slice(2).padStart(64, '0');
   const tokenPadded = token.slice(2).padStart(64, '0');
   const amountHex = amount.toString(16).padStart(64, '0');
   
-  return `0x${selector}${recipientPadded}${tokenPadded}${amountHex}`;
+  return `0x${recipientPadded}${tokenPadded}${amountHex}`;
 }
 
 /**
  * Encode admin function calldata with single uint256 parameter
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeAdminUint256(functionSignature: string, value: bigint): `0x${string}` {
-  // Calculate function selector (first 4 bytes of keccak256)
-  // For simplicity, we'll use known selectors
-  const selectors: Record<string, string> = {
-    '_setVotingDelay(uint256)': '70b0f660',
-    '_setVotingPeriod(uint256)': 'c4d252f5',
-    '_setProposalThresholdBPS(uint256)': '7d42e4e3',
-    '_setForkPeriod(uint256)': 'be8e3542',
-    '_setForkThresholdBPS(uint256)': '4be52e07',
-    '_setDelay(uint256)': 'e177246e'
-  };
-  
-  const selector = selectors[functionSignature];
-  if (!selector) {
-    throw new Error(`Unknown function signature: ${functionSignature}`);
-  }
-  
+  // functionSignature parameter kept for API compatibility but unused
   const valuePadded = value.toString(16).padStart(64, '0');
-  return `0x${selector}${valuePadded}`;
+  return `0x${valuePadded}`;
 }
 
 /**
  * Encode admin function calldata with single uint32 parameter
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeAdminUint32(functionSignature: string, value: number): `0x${string}` {
-  const selectors: Record<string, string> = {
-    '_setLastMinuteWindowInBlocks(uint32)': 'a5c79db9',
-    '_setObjectionPeriodDurationInBlocks(uint32)': '9d6f12cf',
-    '_setProposalUpdatablePeriodInBlocks(uint32)': 'c9d2c8b6',
-    '_setQuorumCoefficient(uint32)': 'b0c60035'
-  };
-  
-  const selector = selectors[functionSignature];
-  if (!selector) {
-    throw new Error(`Unknown function signature: ${functionSignature}`);
-  }
-  
+  // functionSignature parameter kept for API compatibility but unused
   const valuePadded = value.toString(16).padStart(64, '0');
-  return `0x${selector}${valuePadded}`;
+  return `0x${valuePadded}`;
 }
 
 /**
  * Encode admin function calldata with single uint16 parameter
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeAdminUint16(functionSignature: string, value: number): `0x${string}` {
-  const selectors: Record<string, string> = {
-    '_setMinQuorumVotesBPS(uint16)': '638d9861',
-    '_setMaxQuorumVotesBPS(uint16)': '15b96f74'
-  };
-  
-  const selector = selectors[functionSignature];
-  if (!selector) {
-    throw new Error(`Unknown function signature: ${functionSignature}`);
-  }
-  
+  // functionSignature parameter kept for API compatibility but unused
   const valuePadded = value.toString(16).padStart(64, '0');
-  return `0x${selector}${valuePadded}`;
+  return `0x${valuePadded}`;
 }
 
 /**
  * Encode admin function calldata with single address parameter
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeAdminAddress(functionSignature: string, address: Address): `0x${string}` {
-  const selectors: Record<string, string> = {
-    '_setPendingAdmin(address)': '4dd18bf5',
-    '_setVetoer(address)': '64c40d0d',
-    '_setPendingVetoer(address)': '0dc3cdd5',
-    '_setForkDAODeployer(address)': '6b88e9c8',
-    '_setForkEscrow(address)': 'c92b2cf3'
-  };
-  
-  const selector = selectors[functionSignature];
-  if (!selector) {
-    throw new Error(`Unknown function signature: ${functionSignature}`);
-  }
-  
+  // functionSignature parameter kept for API compatibility but unused
   const addressPadded = address.slice(2).padStart(64, '0');
-  return `0x${selector}${addressPadded}`;
+  return `0x${addressPadded}`;
 }
 
 /**
  * Encode _setDynamicQuorumParams function
+ * Note: Returns only parameters, no function selector (signature field specifies function)
  */
 function encodeDynamicQuorumParams(minBps: number, maxBps: number, coefficient: number): `0x${string}` {
-  // Function selector for _setDynamicQuorumParams(uint16,uint16,uint32) = 0x07d1e0cf
-  const selector = '07d1e0cf';
-  
   const minBpsPadded = minBps.toString(16).padStart(64, '0');
   const maxBpsPadded = maxBps.toString(16).padStart(64, '0');
   const coefficientPadded = coefficient.toString(16).padStart(64, '0');
   
-  return `0x${selector}${minBpsPadded}${maxBpsPadded}${coefficientPadded}`;
+  return `0x${minBpsPadded}${maxBpsPadded}${coefficientPadded}`;
 }
 
 /**
  * Encode _burnVetoPower function (no parameters)
+ * Note: Returns empty calldata as function has no parameters
  */
 function encodeBurnVetoPower(): `0x${string}` {
-  // Function selector for _burnVetoPower() = 0x79f70d18
-  return '0x79f70d18';
+  return '0x';
 }
 
 // ============================================================================

@@ -551,10 +551,14 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
         BigInt(0) // proposalIdToUpdate - 0 for new proposal
       );
 
-      // Add value if fee is required
+      // Determine fee amount - explicitly set to 0 for Noun holders
+      const shouldPayFee = !hasVotingPower;
+      const feeAmount = shouldPayFee && candidateCost ? candidateCost : BigInt(0);
+
+      // Add value for fee (must be 0 if waived)
       const txConfig = {
         ...config,
-        value: !hasVotingPower && candidateCost ? candidateCost : undefined,
+        value: feeAmount,
       };
 
       setCandidateState('pending');

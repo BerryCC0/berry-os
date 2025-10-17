@@ -25,6 +25,7 @@ export {
   TokenActions,
   DataProxyActions,
   RewardsActions,
+  NounsTokenActions,
 } from './actions';
 
 // ============================================================================
