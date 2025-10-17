@@ -708,7 +708,7 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
               Candidates are draft proposals that can gather community support before formal submission.
               {!hasVotingPower && candidateCost && (
                 <span className={styles.feeNotice}>
-                  {' '}Fee: {(Number(candidateCost) / 1e18).toFixed(4)} ETH (waived for Noun holders/delegates)
+                  {' '}Fee: {(Number(candidateCost) / 1e18).toFixed(4)} ETH (waived for Noun owners and those with delegated votes)
                 </span>
               )}
             </div>
