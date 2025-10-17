@@ -276,14 +276,16 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
   };
 
   // Handle multi-action templates (e.g., Noun swap)
-  const handleActionsGenerated = (index: number, generatedActions: ProposalAction[]) => {
+  const handleActionsGenerated = React.useCallback((index: number, generatedActions: ProposalAction[]) => {
     if (generatedActions.length <= 1) return;
 
-    // Replace the action at index with multiple actions
-    const updatedActions = [...actions];
-    updatedActions.splice(index, 1, ...generatedActions);
-    setActions(updatedActions);
-  };
+    setActions(prevActions => {
+      // Replace the action at index with multiple actions
+      const updatedActions = [...prevActions];
+      updatedActions.splice(index, 1, ...generatedActions);
+      return updatedActions;
+    });
+  }, []);
 
   const validateForm = (requireKYC: boolean = true) => {
     if (!title.trim()) {

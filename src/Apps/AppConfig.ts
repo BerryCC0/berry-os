@@ -172,6 +172,7 @@ const BASE_APPS: AppConfig[] = [
     category: 'web3',
     description: 'View and interact with Nouns governance: proposals, candidates, and voters',
     version: '1.0.0',
+    disableWindowScroll: true, // Camp handles scrolling via Tabs component
     menus: {
       File: [
         { label: 'New Proposal', action: 'camp:new-proposal', shortcut: '⌘N' },

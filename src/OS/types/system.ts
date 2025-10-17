@@ -42,6 +42,7 @@ export interface AppConfig {
   version: string;
   showOnDesktop?: boolean; // Show as desktop icon (default: false)
   menus?: AppMenus; // Custom menus for this app
+  disableWindowScroll?: boolean; // App handles its own scrolling (default: false)
 }
 
 export interface RunningApp {

@@ -50,8 +50,20 @@ export function ActionTemplateEditor({
     updateField,
   } = useActionTemplate();
 
+  // Track previous generated actions to prevent infinite loop
+  const prevActionsRef = React.useRef<string>('');
+  
   // Update parent action when generated actions change
   React.useEffect(() => {
+    if (generatedActions.length === 0) return;
+    
+    // Serialize actions to compare with previous
+    const actionsKey = JSON.stringify(generatedActions);
+    
+    // Only update if actions actually changed
+    if (actionsKey === prevActionsRef.current) return;
+    prevActionsRef.current = actionsKey;
+    
     if (generatedActions.length === 1) {
       // Single action - update in place
       const generatedAction = generatedActions[0];

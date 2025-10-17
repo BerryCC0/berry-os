@@ -396,20 +396,26 @@ export default function Window({ windowId }: WindowProps) {
         </button>
       </div>
 
-      {/* Content Area with ScrollBar */}
+      {/* Content Area with optional ScrollBar */}
       <main 
         className={styles.content}
         role="main"
         aria-labelledby={`window-title-${windowId}`}
       >
-        <ScrollBar
-          showArrows={themeCustomization?.scrollbarArrowStyle !== 'none'}
-          direction="both"
-          autoHide={themeCustomization?.scrollbarAutoHide || false}
-          bottomOffset={window.isResizable && window.state === 'normal' ? 20 : 0}
-        >
-          {renderAppContent()}
-        </ScrollBar>
+        {app?.config.disableWindowScroll ? (
+          // App handles its own scrolling
+          renderAppContent()
+        ) : (
+          // Window provides scrolling
+          <ScrollBar
+            showArrows={themeCustomization?.scrollbarArrowStyle !== 'none'}
+            direction="both"
+            autoHide={themeCustomization?.scrollbarAutoHide || false}
+            bottomOffset={window.isResizable && window.state === 'normal' ? 20 : 0}
+          >
+            {renderAppContent()}
+          </ScrollBar>
+        )}
       </main>
 
       {/* Resize Handle (if resizable) */}

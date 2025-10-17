@@ -55,7 +55,7 @@ export default function Tabs({
 
   return (
     <div className={`${styles.tabsContainer} ${className}`}>
-      {/* Tab Headers */}
+      {/* Tab Headers - Fixed at top, outside scroll area */}
       <div className={styles.tabHeaders} role="tablist">
         {leftContent && <div className={styles.leftContent}>{leftContent}</div>}
         
@@ -114,38 +114,40 @@ export default function Tabs({
         )}
       </div>
 
-      {/* Tab Content */}
+      {/* Tab Content - Scrollable area */}
       {wrapContentInScrollBar ? (
         <ScrollBar direction="vertical" className={styles.tabContentScrollWrapper}>
-          {lazy ? (
-            // Lazy mode: Only render active tab
-            <div
-              className={styles.tabContent}
-              role="tabpanel"
-              aria-labelledby={`tab-${activeTab}`}
-              id={`tabpanel-${activeTab}`}
-            >
-              {activeTabData?.content}
-            </div>
-          ) : (
-            // Eager mode: Render all tabs but hide inactive ones
-            allTabs.map(tab => (
+          <div className={styles.tabContentInner}>
+            {lazy ? (
+              // Lazy mode: Only render active tab
               <div
-                key={tab.id}
                 className={styles.tabContent}
-                style={{ display: tab.id === activeTab ? 'block' : 'none' }}
                 role="tabpanel"
-                aria-labelledby={`tab-${tab.id}`}
-                id={`tabpanel-${tab.id}`}
+                aria-labelledby={`tab-${activeTab}`}
+                id={`tabpanel-${activeTab}`}
               >
-                {tab.content}
+                {activeTabData?.content}
               </div>
-            ))
-          )}
+            ) : (
+              // Eager mode: Render all tabs but hide inactive ones
+              allTabs.map(tab => (
+                <div
+                  key={tab.id}
+                  className={styles.tabContent}
+                  style={{ display: tab.id === activeTab ? 'block' : 'none' }}
+                  role="tabpanel"
+                  aria-labelledby={`tab-${tab.id}`}
+                  id={`tabpanel-${tab.id}`}
+                >
+                  {tab.content}
+                </div>
+              ))
+            )}
+          </div>
         </ScrollBar>
       ) : (
         // Without ScrollBar wrapper (original behavior)
-        <>
+        <div className={styles.tabContentInner}>
           {lazy ? (
             // Lazy mode: Only render active tab
             <div
@@ -171,7 +173,7 @@ export default function Tabs({
               </div>
             ))
           )}
-        </>
+        </div>
       )}
     </div>
   );

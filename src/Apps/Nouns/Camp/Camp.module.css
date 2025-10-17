@@ -11,7 +11,7 @@
   background: var(--theme-window-background, #FFFFFF);
   color: var(--theme-text, #000000);
   font-family: var(--font-geneva);
-  overflow: hidden;
+  overflow: hidden; /* Ensure no double scrollbars */
   
   /* CRITICAL: Allow resize corner to receive events */
   pointer-events: none;
