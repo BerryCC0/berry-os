@@ -531,7 +531,7 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
 
   // Note: We no longer need handleActionsGenerated - template states are updated directly via updateTemplateState
 
-  const validateForm = (requireKYC: boolean = true) => {
+  const validateForm = (requireKYC: boolean = false) => {
     if (!title.trim()) {
       setErrorMessage('Title is required');
       return false;
@@ -542,11 +542,9 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
       return false;
     }
 
-    // KYC only required for standard and timelock proposals
-    if (requireKYC && !kycVerified && proposalType !== 'candidate') {
-      setErrorMessage('Please complete KYC verification before creating a proposal');
-      return false;
-    }
+    // KYC is optional - warn but don't block submission
+    // Note: If proposal succeeds without KYC, it may not be executed
+    // (No validation needed - just a warning shown in UI)
 
     // Flatten and validate all actions from template states
     const allActions = flattenActionTemplates(actionTemplateStates);
@@ -972,13 +970,7 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
             }}
             disabled={
               isCreating || 
-              !isConnected || 
-              (proposalType !== 'candidate' && !kycVerified)
-            }
-            title={
-              proposalType !== 'candidate' && !kycVerified 
-                ? 'Please complete KYC verification first' 
-                : ''
+              !isConnected
             }
           >
             {isCreating 
@@ -990,6 +982,13 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
                   : '📋 Create Proposal'}
           </button>
         </div>
+
+        {/* KYC Warning for non-candidate proposals */}
+        {proposalType !== 'candidate' && !kycVerified && isConnected && (
+          <div className={styles.warning}>
+            ⚠️ <strong>KYC Not Completed:</strong> You can still submit this proposal, but if it succeeds and you haven't completed KYC, it may not be executed. Contact the Nouns DUNA Admins for more information.
+          </div>
+        )}
 
         {/* Error/Success Messages */}
         {errorMessage && (
