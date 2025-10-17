@@ -252,7 +252,7 @@ export function PersonaKYC({
       <div className={styles.section}>
         <label className={styles.label}>Identity Verification</label>
         <p className={styles.description}>
-          KYC is optional to submit proposals. If your proposal suceeds and you have not KYC'd, your proposal will not be executed.
+          KYC is optional to submit proposals. If your proposal succeeds and you have not KYC'd, your proposal may not be executed. Contact the Nouns DUNA Admins for more information.
         </p>
         
         <button
