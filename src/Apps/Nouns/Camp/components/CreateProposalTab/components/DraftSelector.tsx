@@ -110,7 +110,11 @@ export function DraftSelector({
                           {formatDate(draft.updated_at)}
                         </span>
                         <span className={styles.draftType}>
-                          {draft.proposal_type === 'timelock_v1' ? 'TimelockV1' : 'Standard'}
+                          {draft.proposal_type === 'timelock_v1' 
+                            ? 'TimelockV1' 
+                            : draft.proposal_type === 'candidate'
+                              ? 'Candidate'
+                              : 'Standard'}
                         </span>
                       </div>
                     </div>

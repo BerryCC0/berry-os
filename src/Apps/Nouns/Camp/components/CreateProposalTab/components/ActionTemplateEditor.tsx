@@ -55,27 +55,43 @@ export function ActionTemplateEditor({
   
   // Update parent action when generated actions change
   React.useEffect(() => {
-    if (generatedActions.length === 0) return;
+    console.log('[ActionTemplateEditor] Effect triggered');
     
     // Serialize actions to compare with previous
     const actionsKey = JSON.stringify(generatedActions);
     
     // Only update if actions actually changed
-    if (actionsKey === prevActionsRef.current) return;
+    if (actionsKey === prevActionsRef.current) {
+      console.log('[ActionTemplateEditor] Actions unchanged, skipping');
+      return;
+    }
     prevActionsRef.current = actionsKey;
     
-    if (generatedActions.length === 1) {
-      // Single action - update in place
+    console.log('[ActionTemplateEditor] Actions changed:', {
+      count: generatedActions.length,
+      isMultiAction: selectedTemplate && typeof selectedTemplate !== 'string' && selectedTemplate.isMultiAction,
+      template: selectedTemplate && typeof selectedTemplate !== 'string' ? selectedTemplate.id : selectedTemplate
+    });
+    
+    // Check if this is a multi-action template
+    const isMultiActionTemplate = selectedTemplate && typeof selectedTemplate !== 'string' && selectedTemplate.isMultiAction;
+    
+    if (isMultiActionTemplate && onActionsGenerated) {
+      // Multi-action template - always use parent handler
+      console.log('[ActionTemplateEditor] Calling onActionsGenerated with', generatedActions.length, 'actions');
+      onActionsGenerated(generatedActions);
+    } else if (generatedActions.length === 1) {
+      // Single action template - update in place
+      console.log('[ActionTemplateEditor] Updating single action in place');
       const generatedAction = generatedActions[0];
       onUpdate('target', generatedAction.target);
       onUpdate('value', generatedAction.value);
       onUpdate('signature', generatedAction.signature);
       onUpdate('calldata', generatedAction.calldata);
-    } else if (generatedActions.length > 1 && onActionsGenerated) {
-      // Multiple actions - notify parent
-      onActionsGenerated(generatedActions);
+    } else if (generatedActions.length === 0) {
+      console.log('[ActionTemplateEditor] No actions generated (incomplete form)');
     }
-  }, [generatedActions, onUpdate, onActionsGenerated]);
+  }, [generatedActions, selectedTemplate, onUpdate, onActionsGenerated]);
 
   const handleTemplateSelect = (templateId: string) => {
     if (templateId === '') {

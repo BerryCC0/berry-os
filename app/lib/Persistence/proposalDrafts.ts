@@ -19,6 +19,10 @@ export interface ProposalAction {
   value: string;
   signature: string;
   calldata: string;
+  // Multi-action metadata
+  isPartOfMultiAction?: boolean;
+  multiActionGroupId?: string;
+  multiActionIndex?: number;
 }
 
 export interface ProposalDraft {
@@ -28,7 +32,8 @@ export interface ProposalDraft {
   title: string;
   description: string;
   actions: ProposalAction[];
-  proposal_type: 'standard' | 'timelock_v1';
+  proposal_type: 'standard' | 'timelock_v1' | 'candidate';
+  candidate_slug?: string; // Auto-generated from title for candidates
   kyc_verified: boolean;
   kyc_inquiry_id?: string;
   created_at?: Date;

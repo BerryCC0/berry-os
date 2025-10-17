@@ -50,6 +50,10 @@ export interface ProposalAction {
   value: string;
   signature: string;
   calldata: string;
+  // Multi-action metadata
+  isPartOfMultiAction?: boolean;
+  multiActionGroupId?: string;
+  multiActionIndex?: number;
 }
 
 export interface ActionTemplate {
@@ -1119,6 +1123,7 @@ export function generateActionsFromTemplate(
 
     case 'noun-swap': {
       const actions: ProposalAction[] = [];
+      const groupId = `noun-swap-${Date.now()}`;
       
       // Action 1: User's Noun → Treasury
       actions.push({
@@ -1129,7 +1134,10 @@ export function generateActionsFromTemplate(
           fieldValues.userAddress as Address,
           TREASURY_ADDRESS,
           BigInt(fieldValues.userNounId || '0')
-        )
+        ),
+        isPartOfMultiAction: true,
+        multiActionGroupId: groupId,
+        multiActionIndex: 0
       });
       
       // Action 2: Optional Tip → Treasury (supports ETH/WETH/USDC)
@@ -1142,7 +1150,10 @@ export function generateActionsFromTemplate(
             target: TREASURY_ADDRESS,
             value: parseEther(fieldValues.tipAmount).toString(),
             signature: '',
-            calldata: '0x'
+            calldata: '0x',
+            isPartOfMultiAction: true,
+            multiActionGroupId: groupId,
+            multiActionIndex: actions.length
           });
         } else if (tipCurrency === 'weth') {
           // WETH tip
@@ -1154,7 +1165,10 @@ export function generateActionsFromTemplate(
               fieldValues.userAddress as Address,
               TREASURY_ADDRESS,
               parseEther(fieldValues.tipAmount)
-            )
+            ),
+            isPartOfMultiAction: true,
+            multiActionGroupId: groupId,
+            multiActionIndex: actions.length
           });
         } else if (tipCurrency === 'usdc') {
           // USDC tip
@@ -1166,7 +1180,10 @@ export function generateActionsFromTemplate(
               fieldValues.userAddress as Address,
               TREASURY_ADDRESS,
               parseUnits(fieldValues.tipAmount, 6)
-            )
+            ),
+            isPartOfMultiAction: true,
+            multiActionGroupId: groupId,
+            multiActionIndex: actions.length
           });
         }
       }
@@ -1180,7 +1197,10 @@ export function generateActionsFromTemplate(
           TREASURY_ADDRESS,
           fieldValues.userAddress as Address,
           BigInt(fieldValues.treasuryNounId || '0')
-        )
+        ),
+        isPartOfMultiAction: true,
+        multiActionGroupId: groupId,
+        multiActionIndex: actions.length
       });
       
       return actions;
