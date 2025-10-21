@@ -172,7 +172,7 @@ export default function MiniAppViewer({
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [url]);
+  }, [url, userFid, username, displayName, pfpUrl]);
 
   return (
     <div className={styles.viewer}>
