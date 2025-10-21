@@ -1,0 +1,203 @@
+/**
+ * MiniAppGrid Component Styles
+ * Mac OS 8 aesthetic for grid layout
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 4px;
+}
+
+/* Empty State */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.emptyTitle {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
+}
+
+.emptyMessage {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  margin: 0;
+  max-width: 400px;
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: var(--theme-window-background, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.skeletonIcon {
+  width: 64px;
+  height: 64px;
+  background: var(--theme-skeleton, var(--mac-gray-1));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  align-self: center;
+}
+
+.skeletonText {
+  height: 16px;
+  background: var(--theme-skeleton, var(--mac-gray-1));
+  width: 80%;
+}
+
+.skeletonTextShort {
+  height: 14px;
+  background: var(--theme-skeleton, var(--mac-gray-1));
+  width: 60%;
+}
+
+.skeletonButton {
+  height: 36px;
+  background: var(--theme-skeleton, var(--mac-gray-1));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  margin-top: 8px;
+}
+
+/* Load More */
+.loadMore {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.loadMoreButton {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  font-weight: bold;
+  padding: 12px 32px;
+  background: var(--theme-button-background, var(--mac-white));
+  border: 2px solid var(--theme-window-border, var(--mac-black));
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.1s ease;
+  min-width: 160px;
+}
+
+.loadMoreButton:hover:not(:disabled) {
+  background: var(--theme-button-hover, var(--mac-gray-1));
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.loadMoreButton:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.loadMoreButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loadingMore {
+  text-align: center;
+  padding: 16px;
+}
+
+.loadingText {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .empty {
+    min-height: 300px;
+    padding: 32px 16px;
+  }
+
+  .emptyIcon {
+    font-size: 48px;
+  }
+
+  .emptyTitle {
+    font-size: 16px;
+  }
+
+  .emptyMessage {
+    font-size: 12px;
+  }
+
+  .loadMoreButton {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .container {
+    gap: 16px;
+  }
+}
+

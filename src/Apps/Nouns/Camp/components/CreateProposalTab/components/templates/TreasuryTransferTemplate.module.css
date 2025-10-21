@@ -59,6 +59,13 @@
   font-weight: bold;
 }
 
+.warning {
+  font-family: 'Geneva', 'Helvetica', sans-serif;
+  font-size: 10px;
+  color: var(--theme-warning-color, #F90);
+  margin-top: 2px;
+}
+
 .loading {
   font-family: 'Geneva', 'Helvetica', sans-serif;
   font-size: 10px;

@@ -97,10 +97,31 @@ export function setupKeyboardShortcuts(): () => void {
     
     if (!cmd) return;
 
+    // Check if we're in a text input
+    const target = e.target as HTMLElement;
+    const isInput =
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.isContentEditable;
+
     const shortcut = `cmd+${key}`;
     const action = KEYBOARD_SHORTCUTS[shortcut];
 
     if (action) {
+      // For edit actions (copy/paste/cut/select-all), allow native browser behavior in inputs
+      const isEditAction = [
+        'edit:copy',
+        'edit:paste',
+        'edit:cut',
+        'edit:select-all'
+      ].includes(action);
+
+      // If it's an edit action and we're in an input, let browser handle it
+      if (isEditAction && isInput) {
+        return; // Don't prevent default, let native clipboard work
+      }
+
+      // For all other actions, or edit actions outside inputs, use custom behavior
       e.preventDefault();
       executeMenuAction(action);
     }

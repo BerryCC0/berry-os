@@ -94,10 +94,7 @@
   padding: 12px;
 }
 
-.candidateCard {
-  background: var(--theme-window-background, #DDDDDD);
-  border: 1px solid var(--theme-border, #000000);
-  padding: 12px;
+.candidateContainer {
   margin-bottom: 8px;
 }
 

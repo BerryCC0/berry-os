@@ -1,0 +1,118 @@
+/**
+ * CandidateFeedbackList Styles
+ */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feedbackItem {
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  padding: 12px;
+  font-family: var(--font-geneva);
+}
+
+.feedbackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.voter {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.support {
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.supportFor {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.supportAgainst {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.supportAbstain {
+  background: #F5F5F5;
+  color: #616161;
+}
+
+.reason {
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.timestamp {
+  font-size: 10px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+.loading {
+  padding: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--theme-text-secondary, #666666);
+  font-family: var(--font-geneva);
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-geneva);
+}
+
+.empty p {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+}
+
+.emptyHint {
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .feedbackItem {
+    padding: 16px;
+  }
+
+  .feedbackHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .voter {
+    font-size: 13px;
+  }
+
+  .reason {
+    font-size: 13px;
+  }
+}
+

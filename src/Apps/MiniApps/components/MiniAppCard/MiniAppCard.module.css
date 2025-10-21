@@ -1,0 +1,222 @@
+/**
+ * MiniAppCard Component Styles
+ * Mac OS 8 aesthetic for Mini App cards
+ */
+
+.card {
+  background: var(--theme-window-background, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Icon */
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-icon-background, var(--mac-gray-1));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  align-self: center;
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+/* Info Section */
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.name {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.description {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  line-height: 1.4;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Author */
+.author {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+}
+
+.authorPfp {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  object-fit: cover;
+}
+
+.authorName {
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge {
+  color: var(--theme-badge, #0066CC);
+  font-size: 12px;
+}
+
+/* Metadata */
+.metadata {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.category {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 10px;
+  padding: 3px 8px;
+  background: var(--theme-category-background, var(--mac-gray-1));
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  color: var(--theme-text, var(--mac-black));
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.networks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.network {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 9px;
+  padding: 2px 6px;
+  background: var(--theme-network-background, var(--mac-black));
+  color: var(--theme-network-text, var(--mac-white));
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.networkMore {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 9px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+}
+
+/* Launch Button */
+.launchButton {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  font-weight: bold;
+  padding: 8px 16px;
+  background: var(--theme-button-background, var(--mac-white));
+  border: 2px solid var(--theme-window-border, var(--mac-black));
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.1s ease;
+  width: 100%;
+}
+
+.launchButton:hover {
+  background: var(--theme-button-hover, var(--mac-gray-1));
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.launchButton:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .iconWrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .name {
+    font-size: 13px;
+  }
+
+  .description {
+    font-size: 10px;
+  }
+
+  .author,
+  .category,
+  .network {
+    font-size: 10px;
+  }
+
+  .authorPfp {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .name {
+    font-size: 12px;
+  }
+
+  .description {
+    font-size: 9px;
+    -webkit-line-clamp: 3;
+  }
+}
+

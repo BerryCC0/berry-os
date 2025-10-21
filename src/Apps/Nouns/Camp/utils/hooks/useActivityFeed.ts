@@ -163,6 +163,14 @@ function transformToActivityItems(
 
   // Add candidate signatures
   candidateSignatures.forEach(signature => {
+    // Content ID format: "0xPROPOSER-SLUG-vVERSION"
+    // We need to construct candidateId as "0xPROPOSER-SLUG"
+    // Extract by finding the proposer (first part) and removing the version suffix
+    const contentIdParts = signature.content.id.split('-');
+    // Remove the last part (version like "v1")
+    const candidateIdParts = contentIdParts.slice(0, -1);
+    const candidateId = candidateIdParts.join('-');
+    
     items.push({
       id: signature.id,
       type: ItemType.CANDIDATE_SIGNATURE,
@@ -170,7 +178,7 @@ function transformToActivityItems(
       voter: signature.signer.id,
       reason: signature.reason,
       supportDetailed: 1, // Signatures are always "for"
-      contextId: signature.content.id,
+      contextId: candidateId,
       contextTitle: signature.content.title,
       contextType: 'candidate',
       originalData: signature,
@@ -187,7 +195,7 @@ function transformToActivityItems(
       reason: feedback.reason,
       supportDetailed: feedback.supportDetailed,
       contextId: feedback.candidate.id,
-      contextTitle: feedback.candidate.slug,
+      contextTitle: feedback.candidate.latestVersion?.content?.title || feedback.candidate.slug,
       contextType: 'candidate',
       originalData: feedback,
     });
@@ -273,6 +281,9 @@ function transformToActivityItems(
 
   // Add candidate lifecycle events
   candidates.forEach(candidate => {
+    // Get title from latestVersion.content.title or fallback to slug
+    const candidateTitle = candidate.latestVersion?.content?.title || candidate.slug;
+    
     // Add candidate creation
     items.push({
       id: `candidate-created-${candidate.id}`,
@@ -281,7 +292,7 @@ function transformToActivityItems(
       voter: candidate.proposer, // proposer is a Bytes! (address string)
       supportDetailed: 1, // Neutral/informational
       contextId: candidate.id,
-      contextTitle: candidate.slug,
+      contextTitle: candidateTitle,
       contextType: 'candidate',
       originalData: candidate,
     });
@@ -298,7 +309,7 @@ function transformToActivityItems(
             voter: candidate.proposer, // proposer is a Bytes! (address string)
             supportDetailed: 1,
             contextId: candidate.id,
-            contextTitle: version.title || candidate.slug,
+            contextTitle: version.content?.title || candidateTitle,
             contextType: 'candidate',
             originalData: { ...candidate, currentVersion: version },
             updateMessage: version.updateMessage,

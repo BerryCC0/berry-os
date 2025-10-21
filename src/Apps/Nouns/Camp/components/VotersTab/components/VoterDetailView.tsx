@@ -104,7 +104,15 @@ export default function VoterDetailView({ address, onBack, showBackButton = true
   // Get Nouns
   const nounsOwned = account?.nouns || [];
   const nounsRepresented = delegate?.nounsRepresented || [];
-  const allNouns = [...new Set([...nounsOwned, ...nounsRepresented])];
+  
+  // Deduplicate by id (since nounsOwned and nounsRepresented may overlap)
+  const allNounsMap = new Map();
+  [...nounsOwned, ...nounsRepresented].forEach(noun => {
+    if (noun && noun.id) {
+      allNounsMap.set(noun.id, noun);
+    }
+  });
+  const allNouns = Array.from(allNounsMap.values());
 
   // Generate thumbnails
   const nounThumbnails = allNouns.length > 0

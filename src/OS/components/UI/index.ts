@@ -43,6 +43,9 @@ export type { SelectProps, SelectOption } from './Select/Select';
 export { default as GroupedSelect } from './Select/GroupedSelect';
 export type { GroupedSelectProps, SelectOptionGroup } from './Select/GroupedSelect';
 
+export { default as DatePicker } from './DatePicker/DatePicker';
+export type { DatePickerProps } from './DatePicker/DatePicker';
+
 export { default as Checkbox } from './Checkbox/Checkbox';
 export type { CheckboxProps } from './Checkbox/Checkbox';
 
@@ -106,3 +109,5 @@ export type { ClipboardViewerProps, ClipboardEntry } from './ClipboardViewer/Cli
 
 export { default as KeyboardViewer, DEFAULT_SHORTCUTS } from './KeyboardViewer/KeyboardViewer';
 export type { KeyboardViewerProps, ShortcutCategory } from './KeyboardViewer/KeyboardViewer';
+
+export { default as InfiniteScroll } from './InfiniteScroll/InfiniteScroll';

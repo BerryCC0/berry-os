@@ -1,0 +1,159 @@
+/**
+ * CandidateSignaturesList Styles
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.progress {
+  padding: 12px;
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border: 1px solid var(--theme-border, #000000);
+}
+
+.progressText {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  margin-bottom: 8px;
+  font-family: var(--font-geneva);
+}
+
+.progressBar {
+  height: 20px;
+  background: var(--theme-window-background, #EEEEEE);
+  border: 1px solid var(--theme-border, #000000);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.signatureItem {
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  padding: 12px;
+  font-family: var(--font-geneva);
+}
+
+.signatureItem.expired {
+  opacity: 0.6;
+  background: var(--theme-window-background-alt, #F5F5F5);
+}
+
+.signatureHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.signer {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.expiredBadge {
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: #FFEBEE;
+  color: #C62828;
+  flex-shrink: 0;
+}
+
+.reason {
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.metadata {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+.timestamp {
+  flex: 1;
+}
+
+.expiration {
+  flex-shrink: 0;
+}
+
+.loading {
+  padding: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--theme-text-secondary, #666666);
+  font-family: var(--font-geneva);
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-geneva);
+}
+
+.empty p {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: var(--theme-text, #000000);
+}
+
+.emptyHint {
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .signatureItem {
+    padding: 16px;
+  }
+
+  .signatureHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .signer {
+    font-size: 13px;
+  }
+
+  .reason {
+    font-size: 13px;
+  }
+
+  .metadata {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+

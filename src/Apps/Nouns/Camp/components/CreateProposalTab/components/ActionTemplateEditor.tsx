@@ -20,6 +20,7 @@ import { TreasuryTransferTemplate } from './templates/TreasuryTransferTemplate';
 import { NounTransferTemplate } from './templates/NounTransferTemplate';
 import { NounSwapTemplate } from './templates/NounSwapTemplate';
 import { AdminFunctionTemplate } from './templates/AdminFunctionTemplate';
+import { PaymentStreamTemplate } from './templates/PaymentStreamTemplate';
 import { SmartActionEditor } from './SmartActionEditor';
 import styles from './ActionTemplateEditor.module.css';
 
@@ -36,7 +37,6 @@ export function ActionTemplateEditor({
   onUpdateTemplateState,
   disabled = false,
 }: ActionTemplateEditorProps) {
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   
   const {
@@ -215,6 +215,19 @@ export function ActionTemplateEditor({
       );
     }
 
+    // Payment stream
+    if (selectedTemplate.id === 'payment-stream') {
+      return (
+        <PaymentStreamTemplate
+          template={selectedTemplate}
+          fieldValues={fieldValues}
+          onUpdateField={updateField}
+          validationErrors={validationErrors}
+          disabled={disabled}
+        />
+      );
+    }
+
     // Admin functions
     if (selectedTemplate.category === 'admin') {
       return (
@@ -263,14 +276,6 @@ export function ActionTemplateEditor({
     <div className={styles.container}>
       <div className={styles.header}>
         <span className={styles.actionLabel}>Action {index + 1}</span>
-        <button
-          type="button"
-          className={styles.toggleButton}
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          disabled={disabled}
-        >
-          {showAdvanced ? 'Simple' : 'Advanced'}
-        </button>
       </div>
 
       {/* Template Selection Dropdown */}
@@ -299,8 +304,8 @@ export function ActionTemplateEditor({
       {/* Template-specific form */}
       {renderTemplateForm()}
 
-      {/* Advanced Mode: Show generated values */}
-      {showAdvanced && selectedTemplate && selectedTemplate.id !== 'custom' && generatedActions.length > 0 && (
+      {/* Show generated transaction details for templates */}
+      {selectedTemplate && selectedTemplate.id !== 'custom' && generatedActions.length > 0 && (
         <div className={styles.advancedSection}>
           <div className={styles.advancedHeader}>Generated Transaction Details</div>
           

@@ -219,17 +219,6 @@ export function isValidDescription(description: string): boolean {
   return description.trim().length > 0 && description.length <= 10000;
 }
 
-/**
- * Check if candidate can be promoted to proposal
- * (placeholder - actual logic would check proposal threshold, signatures, etc.)
- */
-export function canPromoteToProposal(candidate: Candidate): boolean {
-  // Would need to check:
-  // - Has enough proposer signatures
-  // - Proposer has enough voting power
-  // - Not canceled
-  return !candidate.canceled;
-}
 
 // ============================================================================
 // Actions Count
@@ -276,11 +265,94 @@ export function getFeedbackSentiment(candidate: Candidate): {
 }
 
 /**
+ * Get feedback percentages from feedback array
+ */
+export function getFeedbackPercentages(feedbackList: any[]): {
+  for: number;
+  against: number;
+  abstain: number;
+  forFormatted: string;
+  againstFormatted: string;
+  abstainFormatted: string;
+} {
+  if (!feedbackList || feedbackList.length === 0) {
+    return {
+      for: 0,
+      against: 0,
+      abstain: 0,
+      forFormatted: '0%',
+      againstFormatted: '0%',
+      abstainFormatted: '0%',
+    };
+  }
+
+  const forCount = feedbackList.filter(f => f.supportDetailed === 1).length;
+  const againstCount = feedbackList.filter(f => f.supportDetailed === 0).length;
+  const abstainCount = feedbackList.filter(f => f.supportDetailed === 2).length;
+  const total = feedbackList.length;
+
+  const forPct = (forCount / total) * 100;
+  const againstPct = (againstCount / total) * 100;
+  const abstainPct = (abstainCount / total) * 100;
+
+  return {
+    for: forPct,
+    against: againstPct,
+    abstain: abstainPct,
+    forFormatted: `${forPct.toFixed(1)}%`,
+    againstFormatted: `${againstPct.toFixed(1)}%`,
+    abstainFormatted: `${abstainPct.toFixed(1)}%`,
+  };
+}
+
+/**
+ * Format feedback sentiment for display
+ */
+export function formatFeedbackSentiment(feedbackList: any[]): string {
+  if (!feedbackList || feedbackList.length === 0) {
+    return 'No feedback yet';
+  }
+
+  const forCount = feedbackList.filter(f => f.supportDetailed === 1).length;
+  const againstCount = feedbackList.filter(f => f.supportDetailed === 0).length;
+  const abstainCount = feedbackList.filter(f => f.supportDetailed === 2).length;
+
+  const parts = [];
+  if (forCount > 0) parts.push(`${forCount} for`);
+  if (againstCount > 0) parts.push(`${againstCount} against`);
+  if (abstainCount > 0) parts.push(`${abstainCount} abstain`);
+
+  return parts.join(', ');
+}
+
+/**
  * Format feedback count
  */
 export function formatFeedbackCount(count: number): string {
   if (count === 0) return 'No feedback';
   if (count === 1) return '1 comment';
   return `${count} comments`;
+}
+
+/**
+ * Check if address is the proposer
+ */
+export function isProposer(candidate: Candidate, address?: string): boolean {
+  if (!address) return false;
+  return candidate.proposer.toLowerCase() === address.toLowerCase();
+}
+
+/**
+ * Check if candidate can be promoted to proposal
+ * Enhanced version with signatures check
+ */
+export function canPromoteToProposal(candidate: Candidate, signatures?: any[]): boolean {
+  if (candidate.canceled) return false;
+  
+  // Check if we have enough signatures (placeholder - would need actual threshold)
+  const requiredSignatures = candidate.requiredSignatures || 0;
+  const signatureCount = signatures?.length || 0;
+  
+  return signatureCount >= requiredSignatures;
 }
 

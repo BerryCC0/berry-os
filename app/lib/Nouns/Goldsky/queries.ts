@@ -125,6 +125,27 @@ export const PROPOSAL_VERSION_FRAGMENT = gql`
   }
 `;
 
+export const PROPOSAL_CANDIDATE_VERSION_FRAGMENT = gql`
+  fragment ProposalCandidateVersionFields on ProposalCandidateVersion {
+    id
+    createdBlock
+    createdTimestamp
+    updateMessage
+    content {
+      id
+      title
+      description
+      targets
+      values
+      signatures
+      calldatas
+      proposer
+      proposalIdToUpdate
+      matchingProposalIds
+    }
+  }
+`;
+
 export const PROPOSAL_FRAGMENT = gql`
   ${ACCOUNT_FRAGMENT}
   ${DELEGATE_FRAGMENT}
@@ -653,7 +674,7 @@ export const GET_PROPOSAL_CANDIDATE = gql`
 `;
 
 export const GET_PROPOSAL_CANDIDATES = gql`
-  ${PROPOSAL_VERSION_FRAGMENT}
+  ${PROPOSAL_CANDIDATE_VERSION_FRAGMENT}
   query GetProposalCandidates(
     $first: Int = 10
     $skip: Int = 0
@@ -679,10 +700,10 @@ export const GET_PROPOSAL_CANDIDATES = gql`
       canceledBlock
       number
       latestVersion {
-        ...ProposalVersionFields
+        ...ProposalCandidateVersionFields
       }
       versions {
-        ...ProposalVersionFields
+        ...ProposalCandidateVersionFields
       }
     }
   }
@@ -897,6 +918,11 @@ export const GET_CANDIDATE_FEEDBACKS = gql`
       candidate {
         id
         slug
+        latestVersion {
+          content {
+            title
+          }
+        }
       }
     }
   }

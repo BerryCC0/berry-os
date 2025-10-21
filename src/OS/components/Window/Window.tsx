@@ -327,7 +327,7 @@ export default function Window({ windowId }: WindowProps) {
         }}
       >
         <Suspense fallback={<div className={styles.loading}>Loading...</div>}>
-          <AppComponent windowId={windowId} />
+          <AppComponent windowId={windowId} {...(window.initialState || {})} />
         </Suspense>
       </ErrorBoundary>
     );

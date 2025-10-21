@@ -1,50 +1,41 @@
 /**
  * Neynar Provider Component
- * Client-side context for Neynar functionality
+ * Wraps the app with Neynar React SDK authentication
  * 
- * Note: Direct SDK access via neynarClient is server-only.
- * For client components, use API routes to interact with Neynar.
+ * Uses Neynar's official React SDK for authentication:
+ * - Sign In With Neynar (SIWN)
+ * - useNeynarContext hook for auth state
+ * - Automatic session management
  */
 
 'use client';
 
-import { createContext, useContext, type ReactNode } from 'react';
-
-interface NeynarContextType {
-  // Add client-safe Neynar state/methods here
-  // For now, just a placeholder for future client-side Neynar features
-  isConfigured: boolean;
-}
-
-const NeynarContext = createContext<NeynarContextType | null>(null);
+import { NeynarContextProvider, Theme } from '@neynar/react';
+import type { ReactNode } from 'react';
 
 interface NeynarProviderProps {
   children: ReactNode;
 }
 
 export function NeynarProvider({ children }: NeynarProviderProps) {
-  // Client-safe context - no server-only imports
-  const value: NeynarContextType = {
-    isConfigured: !!process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID,
-  };
+  const clientId = process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID;
+
+  if (!clientId) {
+    console.warn('NEXT_PUBLIC_NEYNAR_CLIENT_ID not configured - Neynar features will be unavailable');
+    return <>{children}</>;
+  }
 
   return (
-    <NeynarContext.Provider value={value}>
+    <NeynarContextProvider
+      settings={{
+        clientId,
+        defaultTheme: Theme.Light,
+      }}
+    >
       {children}
-    </NeynarContext.Provider>
+    </NeynarContextProvider>
   );
 }
 
-/**
- * Hook to use Neynar context
- * For server-side Neynar operations, use API routes
- */
-export function useNeynar() {
-  const context = useContext(NeynarContext);
-  
-  if (!context) {
-    throw new Error('useNeynar must be used within NeynarProvider');
-  }
-  
-  return context;
-}
+// Re-export the hook from @neynar/react for convenience
+export { useNeynarContext } from '@neynar/react';

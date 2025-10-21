@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mac OS 8 style app icon for Mini Apps -->
+  
+  <!-- Background -->
+  <rect width="64" height="64" rx="8" fill="#DDDDDD"/>
+  
+  <!-- Border -->
+  <rect x="1" y="1" width="62" height="62" rx="7" stroke="#000000" stroke-width="2" fill="none"/>
+  
+  <!-- Grid of mini apps (3x3 grid representing app catalog) -->
+  <g transform="translate(12, 12)">
+    <!-- Row 1 -->
+    <rect x="0" y="0" width="10" height="10" rx="2" fill="#4A90E2" stroke="#000000" stroke-width="1"/>
+    <rect x="15" y="0" width="10" height="10" rx="2" fill="#E24A4A" stroke="#000000" stroke-width="1"/>
+    <rect x="30" y="0" width="10" height="10" rx="2" fill="#4AE264" stroke="#000000" stroke-width="1"/>
+    
+    <!-- Row 2 -->
+    <rect x="0" y="15" width="10" height="10" rx="2" fill="#E2C44A" stroke="#000000" stroke-width="1"/>
+    <rect x="15" y="15" width="10" height="10" rx="2" fill="#A44AE2" stroke="#000000" stroke-width="1"/>
+    <rect x="30" y="15" width="10" height="10" rx="2" fill="#4AE2E2" stroke="#000000" stroke-width="1"/>
+    
+    <!-- Row 3 -->
+    <rect x="0" y="30" width="10" height="10" rx="2" fill="#E2794A" stroke="#000000" stroke-width="1"/>
+    <rect x="15" y="30" width="10" height="10" rx="2" fill="#794AE2" stroke="#000000" stroke-width="1"/>
+    <rect x="30" y="30" width="10" height="10" rx="2" fill="#4AE279" stroke="#000000" stroke-width="1"/>
+  </g>
+</svg>
+

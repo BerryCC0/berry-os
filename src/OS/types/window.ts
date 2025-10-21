@@ -36,6 +36,7 @@ export interface Window {
   minSize?: WindowSize;
   maxSize?: WindowSize;
   metadata?: WindowMetadata;
+  initialState?: unknown; // Initial state to pass to app component
 }
 
 export interface WindowConfig {
@@ -46,5 +47,6 @@ export interface WindowConfig {
   maxSize?: WindowSize;
   resizable: boolean;
   initialPosition?: WindowPosition;
+  initialState?: unknown; // Initial state to pass to app component
 }
 

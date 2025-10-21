@@ -1,0 +1,172 @@
+/**
+ * MiniAppFilters Component Styles
+ * Mac OS 8 aesthetic for filter controls
+ */
+
+.filters {
+  background: var(--theme-window-background, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.section {
+  margin-bottom: 16px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  display: block;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* Search Input */
+.searchInput {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  background: var(--theme-input-background, var(--mac-white));
+  color: var(--theme-text, var(--mac-black));
+  box-sizing: border-box;
+}
+
+.searchInput:focus {
+  outline: 2px solid var(--theme-highlight, var(--mac-black));
+  outline-offset: -2px;
+}
+
+/* Button Group (for time windows) */
+.buttonGroup {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.filterButton {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  padding: 6px 12px;
+  background: var(--theme-button-background, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.filterButton:hover {
+  background: var(--theme-button-hover, var(--mac-gray-1));
+}
+
+.filterButton.active {
+  background: var(--theme-button-active, var(--mac-black));
+  color: var(--theme-button-active-text, var(--mac-white));
+  font-weight: bold;
+}
+
+/* Chip Group (for categories and networks) */
+.chipGroup {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  padding: 6px 12px;
+  background: var(--theme-chip-background, var(--mac-gray-1));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  transition: all 0.1s ease;
+  text-transform: capitalize;
+}
+
+.chip:hover {
+  background: var(--theme-chip-hover, var(--mac-gray-2));
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.chip.chipActive {
+  background: var(--theme-chip-active, var(--mac-black));
+  color: var(--theme-chip-active-text, var(--mac-white));
+  font-weight: bold;
+}
+
+/* Clear Button */
+.clearButton {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  padding: 8px 16px;
+  background: var(--theme-button-background, var(--mac-white));
+  border: 2px solid var(--theme-window-border, var(--mac-black));
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.1s ease;
+  width: 100%;
+}
+
+.clearButton:hover {
+  background: var(--theme-button-hover, var(--mac-gray-1));
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.clearButton:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .filters {
+    padding: 12px;
+  }
+
+  .section {
+    margin-bottom: 12px;
+  }
+
+  .label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .searchInput {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .filterButton,
+  .chip {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+
+  .chipGroup,
+  .buttonGroup {
+    gap: 6px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .filterButton,
+  .chip {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+}
+

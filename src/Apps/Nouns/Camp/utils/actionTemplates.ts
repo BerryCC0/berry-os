@@ -85,6 +85,7 @@ export interface TokenInfo {
   address: Address;
   decimals: number;
   balance?: bigint;
+  name?: string;
 }
 
 // ============================================================================
@@ -97,11 +98,15 @@ export const COMMON_TOKENS: TokenInfo[] = [
   { symbol: 'DAI', address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', decimals: 18 },
   { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
   { symbol: 'stETH', address: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84', decimals: 18 },
+  { symbol: 'wstETH', address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0', decimals: 18 },
+  { symbol: 'rETH', address: '0xae78736Cd615f374D3085123A210448E74Fc6393', decimals: 18 },
+  { symbol: 'mETH', address: '0xd5F7838F5C461fefF7FE49ea5eBAf7728bB0ADfa', decimals: 18 },
 ];
 
 export const TREASURY_ADDRESS = NOUNS_CONTRACTS.NounsTreasury.proxy as Address;
 export const NOUNS_TOKEN_ADDRESS = NOUNS_CONTRACTS.NounsToken.address as Address;
 export const DAO_PROXY_ADDRESS = NOUNS_CONTRACTS.NounsDAOProxy.proxy as Address;
+export const STREAM_FACTORY_ADDRESS = NOUNS_CONTRACTS.StreamFactory.address as Address;
 
 // ============================================================================
 // ACTION TEMPLATE REGISTRY
@@ -371,28 +376,37 @@ export const ACTION_TEMPLATES: Record<ActionTemplateType, ActionTemplate> = {
         name: 'recipient',
         label: 'Recipient Address',
         type: 'address',
-        placeholder: '0x... or ENS name',
+        placeholder: '0x...',
         required: true
       },
       {
-        name: 'amount',
-        label: 'Total Amount (USDC)',
-        type: 'amount',
-        placeholder: '0.0',
+        name: 'tokenAddress',
+        label: 'Token',
+        type: 'token-select',
         required: true,
-        validation: { min: 0, decimals: 6 }
+        helpText: 'Select token from Nouns Treasury'
+      },
+      {
+        name: 'amount',
+        label: 'Total Amount',
+        type: 'amount',
+        placeholder: '1000',
+        required: true,
+        helpText: 'Total amount to stream (will be paid out gradually)'
       },
       {
         name: 'startDate',
         label: 'Start Date',
         type: 'date',
-        required: true
+        required: true,
+        helpText: 'When the stream begins'
       },
       {
         name: 'endDate',
         label: 'End Date',
         type: 'date',
-        required: true
+        required: true,
+        helpText: 'When the stream ends'
       }
     ]
   },
@@ -975,6 +989,27 @@ function encodeBurnVetoPower(): `0x${string}` {
   return '0x';
 }
 
+/**
+ * Encode createStream function calldata for StreamFactory
+ * Function: createStream(address recipient, uint256 tokenAmount, address tokenAddress, uint256 startTime, uint256 stopTime)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
+ */
+function encodeCreateStream(
+  recipient: Address,
+  tokenAmount: bigint,
+  tokenAddress: Address,
+  startTime: bigint,
+  stopTime: bigint
+): `0x${string}` {
+  const recipientPadded = recipient.slice(2).padStart(64, '0');
+  const tokenAmountHex = tokenAmount.toString(16).padStart(64, '0');
+  const tokenAddressPadded = tokenAddress.slice(2).padStart(64, '0');
+  const startTimeHex = startTime.toString(16).padStart(64, '0');
+  const stopTimeHex = stopTime.toString(16).padStart(64, '0');
+  
+  return `0x${recipientPadded}${tokenAmountHex}${tokenAddressPadded}${startTimeHex}${stopTimeHex}`;
+}
+
 // ============================================================================
 // ACTION GENERATION FUNCTIONS
 // ============================================================================
@@ -1157,6 +1192,35 @@ export function generateActionsFromTemplate(
         signature: 'delegate(address)',
         calldata: encodeDelegate(fieldValues.delegatee as Address)
       }];
+
+    // Payment Streams
+    case 'payment-stream': {
+      // Convert dates to Unix timestamps (seconds since epoch)
+      const startTimestamp = fieldValues.startDate 
+        ? BigInt(Math.floor(new Date(fieldValues.startDate).getTime() / 1000))
+        : BigInt(0);
+      const endTimestamp = fieldValues.endDate
+        ? BigInt(Math.floor(new Date(fieldValues.endDate).getTime() / 1000))
+        : BigInt(0);
+
+      // Get token decimals
+      const tokenAddress = fieldValues.tokenAddress as Address;
+      const token = COMMON_TOKENS.find(t => t.address.toLowerCase() === tokenAddress.toLowerCase());
+      const decimals = token?.decimals || 18;
+
+      return [{
+        target: STREAM_FACTORY_ADDRESS,
+        value: '0',
+        signature: 'createStream(address,uint256,address,uint256,uint256)',
+        calldata: encodeCreateStream(
+          fieldValues.recipient as Address,
+          parseUnits(fieldValues.amount || '0', decimals),
+          tokenAddress,
+          startTimestamp,
+          endTimestamp
+        )
+      }];
+    }
 
     // Admin Functions - Voting
     case 'admin-voting-delay':

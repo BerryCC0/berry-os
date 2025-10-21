@@ -29,6 +29,9 @@ const Camp = lazy(() => import('./Nouns/Camp/Camp'));
 const Auction = lazy(() => import('./Nouns/Auction/Auction'));
 const Tabs = lazy(() => import('./Nouns/Tabs/Tabs'));
 
+// Mini Apps
+const MiniApps = lazy(() => import('./MiniApps/MiniApps'));
+
 /**
  * Application Registry
  * All apps must be registered in this array
@@ -212,6 +215,23 @@ const BASE_APPS: AppConfig[] = [
     category: 'web3',
     description: 'Interact with all Nouns DAO smart contracts',
     version: '1.0.0',
+  },
+  {
+    id: 'miniapps',
+    name: 'Mini Apps',
+    component: MiniApps,
+    icon: '/icons/apps/miniapps.svg',
+    defaultWindowSize: { width: 1000, height: 700 },
+    minWindowSize: { width: 800, height: 600 },
+    // No maxWindowSize - allow full screen resizing
+    resizable: true,
+    web3Required: false, // Auth happens inside the app
+    mobileSupport: 'full',
+    mobileLayout: 'fullscreen',
+    category: 'web3',
+    description: 'Browse and launch Farcaster Mini Apps',
+    version: '1.0.0',
+    showOnDesktop: true,
   },
 ];
 

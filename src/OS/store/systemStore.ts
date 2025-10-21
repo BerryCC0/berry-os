@@ -32,6 +32,7 @@ interface SystemActions {
   
   // Process Management
   launchApp: (appConfig: AppConfig) => void;
+  launchMiniApp: (miniApp: unknown, launchData: unknown) => void;
   terminateApp: (appId: string) => void;
   suspendApp: (appId: string) => void;
   resumeApp: (appId: string) => void;
@@ -209,6 +210,7 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
       isResizable: config.resizable,
       minSize: config.minSize,
       maxSize: config.maxSize,
+      initialState: config.initialState,
     };
 
     // Clamp window position to viewport bounds to prevent windows opening off-screen
@@ -549,6 +551,72 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     addAppToURL(appConfig.id);
 
     eventBus.publish('APP_LAUNCH', { appId: appConfig.id });
+  },
+
+  launchMiniApp: (miniApp: unknown, launchData: unknown) => {
+    // Dynamically import MiniAppViewer component
+    const { lazy } = require('react');
+    const MiniAppViewer = lazy(() => import('../../Apps/MiniApps/components/MiniAppViewer/MiniAppViewer'));
+    
+    // Extract launch data
+    const data = launchData as { url: string; name: string; icon: string };
+    
+    // Create unique app ID for this Mini App instance
+    const miniAppId = `miniapp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    
+    // Create dynamic app config for Mini App viewer
+    const miniAppConfig: AppConfig = {
+      id: miniAppId,
+      name: data.name,
+      component: MiniAppViewer as React.ComponentType<{ windowId: string }>,
+      icon: data.icon,
+      defaultWindowSize: { width: 800, height: 700 },
+      minWindowSize: { width: 600, height: 500 },
+      resizable: true,
+      web3Required: false,
+      mobileSupport: 'full',
+      mobileLayout: 'fullscreen',
+      category: 'web3',
+      description: 'Farcaster Mini App',
+      version: '1.0.0',
+    };
+    
+    // Create running app entry
+    const runningApp: RunningApp = {
+      id: miniAppId,
+      config: miniAppConfig,
+      windows: [],
+      state: 'running',
+      launchedAt: Date.now(),
+    };
+
+    set((state) => ({
+      runningApps: { ...state.runningApps, [miniAppId]: runningApp },
+    }));
+
+    // Open Mini App window with initial state
+    const windowId = get().openWindow({
+      appId: miniAppId,
+      title: data.name,
+      defaultSize: miniAppConfig.defaultWindowSize,
+      minSize: miniAppConfig.minWindowSize,
+      maxSize: miniAppConfig.maxWindowSize,
+      resizable: miniAppConfig.resizable,
+      initialState: launchData, // Pass launch data to window
+    });
+
+    // Add window to app
+    set((state) => ({
+      runningApps: {
+        ...state.runningApps,
+        [miniAppId]: {
+          ...state.runningApps[miniAppId],
+          windows: [windowId],
+        },
+      },
+    }));
+
+    eventBus.publish('APP_LAUNCH', { appId: miniAppId });
   },
 
   terminateApp: (appId: string) => {

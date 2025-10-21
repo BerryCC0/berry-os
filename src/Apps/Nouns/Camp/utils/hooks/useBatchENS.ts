@@ -112,10 +112,20 @@ export function useBatchENS(
   // Track which addresses we've started resolving
   const resolvedAddresses = useRef<Set<string>>(new Set());
   
-  // Stable reference for addresses array to prevent infinite loops
+  // Track previous addresses to detect changes
+  const prevAddressesRef = useRef<string>('');
   const addressesKey = JSON.stringify([...new Set(addresses.map(a => a.toLowerCase()))].sort());
   
+  // Only trigger effect if addresses actually changed
+  const addressesChanged = prevAddressesRef.current !== addressesKey;
+  if (addressesChanged) {
+    prevAddressesRef.current = addressesKey;
+  }
+  
   useEffect(() => {
+    if (!addressesChanged) {
+      return;
+    }
     if (!enabled || !publicClient || addresses.length === 0) {
       setIsLoading(false);
       setProgress(1);

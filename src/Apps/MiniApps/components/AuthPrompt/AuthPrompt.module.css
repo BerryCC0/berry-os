@@ -1,0 +1,194 @@
+/**
+ * AuthPrompt Component Styles
+ * Mac OS 8 aesthetic for authentication UI
+ */
+
+.authPrompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  padding: 40px 20px;
+  background: var(--theme-window-background, var(--mac-gray-1));
+}
+
+.card {
+  background: var(--theme-window-background, var(--mac-white));
+  border: 1px solid var(--theme-window-border, var(--mac-black));
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.title {
+  font-family: var(--font-chicago, 'Chicago', 'Courier New', monospace);
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--theme-text, var(--mac-black));
+  margin: 0 0 16px 0;
+  letter-spacing: 0.5px;
+}
+
+.message {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  color: var(--theme-text, var(--mac-black));
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+}
+
+.error {
+  background: #FFEBEE;
+  border: 1px solid #C62828;
+  padding: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: #C62828;
+}
+
+.errorIcon {
+  font-size: 16px;
+}
+
+.button {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 13px;
+  font-weight: bold;
+  padding: 12px 32px;
+  background: var(--theme-button-background, var(--mac-white));
+  border: 2px solid var(--theme-window-border, var(--mac-black));
+  color: var(--theme-text, var(--mac-black));
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.1s ease;
+  min-width: 200px;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--theme-button-hover, var(--mac-gray-1));
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.button:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--theme-window-border, var(--mac-gray-2));
+}
+
+.footerText {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 11px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  margin: 0;
+}
+
+.link {
+  color: var(--theme-link, #0000EE);
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: var(--theme-link-hover, #551A8B);
+}
+
+.code {
+  font-family: 'Courier New', monospace;
+  background: var(--theme-code-background, var(--mac-gray-1));
+  padding: 2px 6px;
+  border: 1px solid var(--theme-window-border, var(--mac-gray-2));
+  font-size: 12px;
+}
+
+.hint {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif);
+  font-size: 12px;
+  color: var(--theme-text-secondary, var(--mac-gray-3));
+  margin-top: 12px;
+}
+
+.siwnContainer {
+  margin: 24px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Override Neynar button styles to match Mac OS 8 aesthetic */
+.siwnContainer :global(button) {
+  font-family: var(--font-geneva, 'Geneva', 'Helvetica', sans-serif) !important;
+  font-size: 13px !important;
+  font-weight: bold !important;
+  padding: 12px 32px !important;
+  background: var(--theme-button-background, var(--mac-white)) !important;
+  border: 2px solid var(--theme-window-border, var(--mac-black)) !important;
+  color: var(--theme-text, var(--mac-black)) !important;
+  cursor: pointer !important;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.1s ease !important;
+  border-radius: 0 !important;
+  min-width: 200px !important;
+}
+
+.siwnContainer :global(button:hover) {
+  background: var(--theme-button-hover, var(--mac-gray-1)) !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+.siwnContainer :global(button:active) {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .authPrompt {
+    padding: 20px 16px;
+    min-height: 400px;
+  }
+
+  .card {
+    padding: 32px 24px;
+  }
+
+  .icon {
+    font-size: 48px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .message {
+    font-size: 12px;
+  }
+
+  .button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+

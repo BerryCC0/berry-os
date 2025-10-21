@@ -61,7 +61,6 @@ export function SmartActionEditor({
   const [functionInputs, setFunctionInputs] = useState<{ [key: string]: string }>({});
   const [isLoadingABI, setIsLoadingABI] = useState(false);
   const [abiError, setAbiError] = useState<string | null>(null);
-  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const fetchContractABI = useCallback(async (address: string) => {
     setIsLoadingABI(true);
@@ -460,14 +459,6 @@ export function SmartActionEditor({
     <div className={styles.container}>
       <div className={styles.header}>
         <span className={styles.actionLabel}>Action {index + 1}</span>
-        <button
-          type="button"
-          className={styles.toggleButton}
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          disabled={disabled}
-        >
-          {showAdvanced ? 'Simple' : 'Advanced'}
-        </button>
       </div>
 
       <div className={styles.inputGroup}>
@@ -511,110 +502,107 @@ export function SmartActionEditor({
         />
       </div>
 
-      {!showAdvanced ? (
-        // SIMPLE MODE - ABI-based function selection
-        contractABI && contractABI.functions.length > 0 ? (
-          <>
-            <div className={styles.modeIndicator}>
-              <span className={styles.modeLabel}>
-                Smart Mode: Using contract ABI
-                {contractABI.isProxy && (
-                  <span className={styles.proxyIndicator}> (Proxy + Implementation)</span>
-                )}
-              </span>
-            </div>
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>Function to call</label>
-              <select
-                className={styles.select}
-                value={selectedFunction ? (() => {
-                  const inputTypes = selectedFunction.inputs && Array.isArray(selectedFunction.inputs)
-                    ? selectedFunction.inputs.map((i: ABIInput) => i.type || '').join(',')
-                    : '';
-                  return `${selectedFunction.name}(${inputTypes})`;
-                })() : ''}
-                onChange={(e) => handleFunctionSelect(e.target.value)}
-                disabled={disabled}
-              >
-                <option value="">Select function...</option>
-                {contractABI.functions.map((func) => {
-                  if (!func || !func.name) {
-                    return null;
-                  }
-
-                  const inputsDisplay = func.inputs && Array.isArray(func.inputs)
-                    ? func.inputs
-                      .filter(i => i && i.type && i.name)
-                      .map(i => `${i.type} ${i.name}`)
-                      .join(', ')
-                    : '';
-
-                  const inputTypes = func.inputs && Array.isArray(func.inputs)
-                    ? func.inputs.map((i: ABIInput) => i.type || '').join(',')
-                    : '';
-                  const uniqueKey = `${func.name}(${inputTypes})`;
-
-                  return (
-                    <option key={uniqueKey} value={uniqueKey}>
-                      {func.name}({inputsDisplay})
-                    </option>
-                  );
-                }).filter(Boolean)}
-              </select>
-            </div>
-
-            {selectedFunction && selectedFunction.inputs && selectedFunction.inputs.length > 0 && (
-              <div className={styles.parametersSection}>
-                <label className={styles.label}>Arguments</label>
-                {selectedFunction.inputs
-                  .filter(input => input && input.name && input.type)
-                  .map((input, idx) => (
-                    <div key={input.name || idx} className={styles.parameterGroup}>
-                      <label className={styles.parameterLabel}>
-                        {input.type} {input.name}
-                      </label>
-                      {renderParameterInput(input)}
-                    </div>
-                  ))
-                }
-              </div>
-            )}
-
-            {selectedFunction && (
-              <div className={styles.generatedInfo}>
-                <div className={styles.generatedLabel}>Generated from ABI:</div>
-                <div className={styles.generatedValue}>
-                  <strong>Signature:</strong> {signature}
-                </div>
-                <div className={styles.generatedValue}>
-                  <strong>Calldata:</strong> {calldata.slice(0, 20)}...
-                </div>
-              </div>
-            )}
-          </>
-        ) : contractABI ? (
-          <div className={styles.noFunctionsMessage}>
-            <div className={styles.modeIndicator}>
-              <span className={styles.modeLabel}>No state-changing functions available</span>
-            </div>
-            <p>
-              This contract only has view/pure functions. Switch to Advanced mode to manually specify the function call.
-            </p>
-          </div>
-        ) : target && !isLoadingABI ? (
-          <div className={styles.noAbiMessage}>
-            <div className={styles.modeIndicator}>
-              <span className={styles.modeLabel}>Contract not verified or invalid address</span>
-            </div>
-            <p>Unable to fetch ABI. Switch to Advanced mode for manual input.</p>
-          </div>
-        ) : null
-      ) : (
-        // ADVANCED MODE - Manual input
+      {/* ABI-based function selection (when available) */}
+      {contractABI && contractABI.functions.length > 0 ? (
         <>
           <div className={styles.modeIndicator}>
-            <span className={styles.modeLabel}>Advanced Mode: Manual input</span>
+            <span className={styles.modeLabel}>
+              Smart Mode: Using contract ABI
+              {contractABI.isProxy && (
+                <span className={styles.proxyIndicator}> (Proxy + Implementation)</span>
+              )}
+            </span>
           </div>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Function to call</label>
+            <select
+              className={styles.select}
+              value={selectedFunction ? (() => {
+                const inputTypes = selectedFunction.inputs && Array.isArray(selectedFunction.inputs)
+                  ? selectedFunction.inputs.map((i: ABIInput) => i.type || '').join(',')
+                  : '';
+                return `${selectedFunction.name}(${inputTypes})`;
+              })() : ''}
+              onChange={(e) => handleFunctionSelect(e.target.value)}
+              disabled={disabled}
+            >
+              <option value="">Select function...</option>
+              {contractABI.functions.map((func) => {
+                if (!func || !func.name) {
+                  return null;
+                }
+
+                const inputsDisplay = func.inputs && Array.isArray(func.inputs)
+                  ? func.inputs
+                    .filter(i => i && i.type && i.name)
+                    .map(i => `${i.type} ${i.name}`)
+                    .join(', ')
+                  : '';
+
+                const inputTypes = func.inputs && Array.isArray(func.inputs)
+                  ? func.inputs.map((i: ABIInput) => i.type || '').join(',')
+                  : '';
+                const uniqueKey = `${func.name}(${inputTypes})`;
+
+                return (
+                  <option key={uniqueKey} value={uniqueKey}>
+                    {func.name}({inputsDisplay})
+                  </option>
+                );
+              }).filter(Boolean)}
+            </select>
+          </div>
+
+          {selectedFunction && selectedFunction.inputs && selectedFunction.inputs.length > 0 && (
+            <div className={styles.parametersSection}>
+              <label className={styles.label}>Arguments</label>
+              {selectedFunction.inputs
+                .filter(input => input && input.name && input.type)
+                .map((input, idx) => (
+                  <div key={input.name || idx} className={styles.parameterGroup}>
+                    <label className={styles.parameterLabel}>
+                      {input.type} {input.name}
+                    </label>
+                    {renderParameterInput(input)}
+                  </div>
+                ))
+              }
+            </div>
+          )}
+
+          {selectedFunction && (
+            <div className={styles.generatedInfo}>
+              <div className={styles.generatedLabel}>Generated from ABI:</div>
+              <div className={styles.generatedValue}>
+                <strong>Signature:</strong> {signature}
+              </div>
+              <div className={styles.generatedValue}>
+                <strong>Calldata:</strong> {calldata.slice(0, 20)}...
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        /* Manual input fallback (when ABI unavailable or no state-changing functions) */
+        <>
+          {contractABI && contractABI.functions.length === 0 ? (
+            <div className={styles.noFunctionsMessage}>
+              <div className={styles.modeIndicator}>
+                <span className={styles.modeLabel}>No state-changing functions available</span>
+              </div>
+              <p>
+                This contract only has view/pure functions. Please enter the function signature and calldata manually below.
+              </p>
+            </div>
+          ) : target && !isLoadingABI && abiError ? (
+            <div className={styles.noAbiMessage}>
+              <div className={styles.modeIndicator}>
+                <span className={styles.modeLabel}>Contract not verified or invalid address</span>
+              </div>
+              <p>Unable to fetch ABI. Please enter the function signature and calldata manually below.</p>
+            </div>
+          ) : null}
+
           <div className={styles.inputGroup}>
             <label className={styles.label}>Function Signature</label>
             <input

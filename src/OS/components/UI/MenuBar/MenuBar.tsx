@@ -16,6 +16,7 @@ import styles from './MenuBar.module.css';
 
 export default function MenuBar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [isAnyMenuOpen, setIsAnyMenuOpen] = useState(false);
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [showSystemPreferences, setShowSystemPreferences] = useState(false);
   const menuBarRef = useRef<HTMLDivElement>(null);
@@ -40,6 +41,7 @@ export default function MenuBar() {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuBarRef.current && !menuBarRef.current.contains(e.target as Node)) {
         setActiveMenu(null);
+        setIsAnyMenuOpen(false);
       }
     };
 
@@ -50,7 +52,15 @@ export default function MenuBar() {
   }, [activeMenu]);
 
   const toggleMenu = (menuId: string) => {
-    setActiveMenu(activeMenu === menuId ? null : menuId);
+    const newActiveMenu = activeMenu === menuId ? null : menuId;
+    setActiveMenu(newActiveMenu);
+    setIsAnyMenuOpen(newActiveMenu !== null);
+  };
+
+  const handleMenuHover = (menuId: string) => {
+    if (isAnyMenuOpen && activeMenu !== menuId) {
+      setActiveMenu(menuId);
+    }
   };
 
   const handleAppLaunch = (appId: string) => {
@@ -101,6 +111,7 @@ export default function MenuBar() {
         <button
           className={`${styles.menuItem} ${styles.appleMenu} ${activeMenu === 'apple' ? styles.active : ''}`}
           onClick={() => toggleMenu('apple')}
+          onMouseEnter={() => handleMenuHover('apple')}
           aria-label="Berry menu"
         >
           <img 
@@ -172,6 +183,7 @@ export default function MenuBar() {
             <button
               className={`${styles.menuItem} ${activeMenu === menuName.toLowerCase() ? styles.active : ''}`}
               onClick={() => toggleMenu(menuName.toLowerCase())}
+              onMouseEnter={() => handleMenuHover(menuName.toLowerCase())}
             >
               {menuName}
             </button>
@@ -190,6 +202,7 @@ export default function MenuBar() {
             <button
               className={`${styles.menuItem} ${activeMenu === 'file' ? styles.active : ''}`}
               onClick={() => toggleMenu('file')}
+              onMouseEnter={() => handleMenuHover('file')}
             >
               File
             </button>
@@ -208,6 +221,7 @@ export default function MenuBar() {
             <button
               className={`${styles.menuItem} ${activeMenu === 'special' ? styles.active : ''}`}
               onClick={() => toggleMenu('special')}
+              onMouseEnter={() => handleMenuHover('special')}
             >
               Special
             </button>
@@ -229,13 +243,6 @@ export default function MenuBar() {
 
       {/* Spacer */}
       <div className={styles.spacer} />
-
-      {/* System Info */}
-      <div className={styles.systemInfo}>
-        <span className={styles.infoText}>
-          {Object.keys(runningApps).length} app{Object.keys(runningApps).length !== 1 ? 's' : ''} running
-        </span>
-      </div>
 
       {/* System Tray (Wallet + Time) */}
       <SystemTray />

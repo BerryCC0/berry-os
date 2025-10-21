@@ -1,0 +1,97 @@
+/* Candidate Actions - Mac OS 8 Style */
+/* Identical to ProposalActions styling but for candidates */
+
+.actionsContainer {
+  margin-top: 16px;
+  border: 1px solid var(--theme-border, #000000);
+  background: var(--theme-window-background, #FFFFFF);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border-bottom: 1px solid var(--theme-border, #000000);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--theme-text, #000000);
+}
+
+.count {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--theme-highlight, #000080);
+  color: #FFFFFF;
+  font-family: var(--font-chicago);
+  font-size: 10px;
+  border-radius: 2px;
+}
+
+.ensProgress {
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--theme-text-secondary, #666666);
+  font-style: italic;
+}
+
+/* Actions List */
+.actionsList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Footer */
+.footer {
+  padding: 10px 12px;
+  background: var(--theme-window-background-alt, #FFFFCC);
+  border-top: 1px solid var(--theme-border, #CCCC99);
+}
+
+.footerText {
+  margin: 0;
+  font-family: var(--font-geneva);
+  font-size: 10px;
+  color: var(--theme-text, #000000);
+  line-height: 1.4;
+}
+
+/* Empty State */
+.empty {
+  padding: 20px 12px;
+  text-align: center;
+}
+
+.empty p {
+  margin: 0;
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 8px 10px;
+  }
+
+  .title {
+    font-size: 11px;
+  }
+
+  .count {
+    font-size: 9px;
+  }
+
+  .footerText {
+    font-size: 9px;
+  }
+}
+

@@ -299,7 +299,7 @@ function ActivityItem({ activity, isExpanded = false, onClick }: ActivityItemPro
     ? `Proposal ${activity.contextId}`
     : `Candidate: ${activity.contextTitle}`;
 
-  const isClickable = onClick && activity.contextType === 'proposal';
+  const isClickable = onClick && (activity.contextType === 'proposal' || activity.contextType === 'candidate');
 
   return (
     <div 

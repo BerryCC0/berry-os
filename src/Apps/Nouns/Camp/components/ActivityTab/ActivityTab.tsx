@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { useActivityFeed } from '../../utils/hooks/useActivityFeed';
 import ActivityItem from './components/ActivityItem';
 import ProposalDetailsWrapper from './components/ProposalDetailsWrapper';
+import CandidateDetailsWrapper from './components/CandidateDetailsWrapper';
 import styles from './ActivityTab.module.css';
 
 interface ActivityTabProps {
@@ -34,24 +35,43 @@ export default function ActivityTab({ onVote }: ActivityTabProps) {
 
   // Memoize activity items to prevent unnecessary re-renders
   const activityItems = useMemo(() => {
-    return activities.map(activity => (
-      <div key={activity.id}>
-        <ActivityItem 
-          activity={activity}
-          isExpanded={expandedActivityId === activity.id}
-          onClick={() => setExpandedActivityId(
-            expandedActivityId === activity.id ? null : activity.id
-          )}
-        />
-        {expandedActivityId === activity.id && activity.contextType === 'proposal' && (
-          <ProposalDetailsWrapper 
-            proposalId={activity.contextId}
-            onClose={() => setExpandedActivityId(null)}
-            onVote={(support, reason) => onVote?.(activity.contextId, support, reason)}
+    return activities.map(activity => {
+      const isExpanded = expandedActivityId === activity.id;
+      
+      return (
+        <div key={activity.id}>
+          <ActivityItem 
+            activity={activity}
+            isExpanded={isExpanded}
+            onClick={() => setExpandedActivityId(
+              isExpanded ? null : activity.id
+            )}
           />
-        )}
-      </div>
-    ));
+          {isExpanded && activity.contextType === 'proposal' && (
+            <ProposalDetailsWrapper 
+              proposalId={activity.contextId}
+              onClose={() => setExpandedActivityId(null)}
+              onVote={(support, reason) => onVote?.(activity.contextId, support, reason)}
+            />
+          )}
+          {isExpanded && activity.contextType === 'candidate' && (() => {
+            // contextId format: "0xADDRESS-slug-with-possible-dashes"
+            // Split only on first dash to separate proposer from slug
+            const firstDashIndex = activity.contextId.indexOf('-');
+            const proposer = activity.contextId.substring(0, firstDashIndex);
+            const slug = activity.contextId.substring(firstDashIndex + 1);
+            
+            return (
+              <CandidateDetailsWrapper 
+                proposer={proposer}
+                slug={slug}
+                onClose={() => setExpandedActivityId(null)}
+              />
+            );
+          })()}
+        </div>
+      );
+    });
   }, [activities, expandedActivityId, onVote]);
 
   // Infinite scroll with IntersectionObserver

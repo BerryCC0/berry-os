@@ -57,10 +57,30 @@ export interface Candidate {
   createdTimestamp: number;
   lastUpdatedTimestamp: number;
   canceled: boolean;
+  requiredSignatures?: number;
   // UI state
   isExpanded?: boolean;
   isLoading?: boolean;
   feedbackCount?: number;
+  feedbackSentiment?: {
+    for: number;
+    against: number;
+    abstain: number;
+  };
+  signaturesList?: CandidateSignature[];
+  canPromote?: boolean;
+}
+
+/**
+ * Candidate Signature
+ */
+export interface CandidateSignature {
+  id: string;
+  signer: string;
+  sig: string;
+  reason: string;
+  expirationTimestamp: number;
+  createdTimestamp: number;
 }
 
 /**

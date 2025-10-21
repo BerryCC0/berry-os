@@ -21,7 +21,6 @@
   z-index: var(--z-menubar);
   /* Phase 7.2: Menu bar customization */
   opacity: var(--theme-menu-opacity, 1.0);
-  backdrop-filter: var(--theme-menu-opacity) == 0.95 ? blur(10px) : none;
 }
 
 .menuSection {
@@ -123,19 +122,6 @@
   flex: 1;
 }
 
-.systemInfo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 8px;
-}
-
-.infoText {
-  font-family: var(--font-geneva);
-  font-size: 10px;
-  color: var(--mac-gray-3);
-}
-
 /* ==================== Mobile Adaptations ==================== */
 
 @media (max-width: 768px) {
@@ -154,11 +140,6 @@
   .appName {
     font-size: 13px;
     padding: 4px 8px;
-  }
-
-  /* Hide system info on mobile to save space */
-  .systemInfo {
-    display: none;
   }
 
   /* Position dropdowns from top of menu bar */

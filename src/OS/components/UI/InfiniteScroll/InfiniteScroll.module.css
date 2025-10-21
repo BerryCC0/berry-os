@@ -1,0 +1,27 @@
+/**
+ * InfiniteScroll Styles
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.sentinel {
+  min-height: 1px;
+  padding: 20px 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 16px;
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  color: var(--theme-text-secondary, #666666);
+}
+
+.loading p {
+  margin: 0;
+}
+
