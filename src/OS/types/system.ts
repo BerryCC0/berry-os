@@ -28,7 +28,7 @@ export interface AppMenus {
 export interface AppConfig {
   id: string;
   name: string;
-  component: React.ComponentType<{ windowId: string }>;
+  component: React.ComponentType<{ windowId: string; [key: string]: any }>;
   icon: string;
   defaultWindowSize: { width: number; height: number };
   minWindowSize?: { width: number; height: number };

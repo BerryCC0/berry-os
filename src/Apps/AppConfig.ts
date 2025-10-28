@@ -31,6 +31,10 @@ const Tabs = lazy(() => import('./Nouns/Tabs/Tabs'));
 
 // Mini Apps
 const MiniApps = lazy(() => import('./MiniApps/MiniApps'));
+const MiniAppViewer = lazy(() => import('./MiniApps/components/MiniAppViewer/MiniAppViewer'));
+
+// Export MiniAppViewer for dynamic Mini App launching
+export { MiniAppViewer };
 
 /**
  * Application Registry

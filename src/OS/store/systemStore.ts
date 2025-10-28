@@ -18,6 +18,7 @@ import * as screenReader from '../lib/screenReader';
 import * as windowManager from '../lib/windowManager';
 import type { UserPreferences } from '../../../app/lib/Persistence/persistence';
 import { initializeApplicationsFolder } from '../lib/filesystem';
+import { MiniAppViewer } from '../../Apps/AppConfig';
 
 interface SystemActions {
   // Window Management
@@ -554,10 +555,6 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
   },
 
   launchMiniApp: (miniApp: unknown, launchData: unknown) => {
-    // Dynamically import MiniAppViewer component
-    const { lazy } = require('react');
-    const MiniAppViewer = lazy(() => import('../../Apps/MiniApps/components/MiniAppViewer/MiniAppViewer'));
-    
     // Extract launch data
     const data = launchData as { url: string; name: string; icon: string };
     
@@ -568,7 +565,7 @@ export const useSystemStore = create<SystemStore>((set, get) => ({
     const miniAppConfig: AppConfig = {
       id: miniAppId,
       name: data.name,
-      component: MiniAppViewer as React.ComponentType<{ windowId: string }>,
+      component: MiniAppViewer,
       icon: data.icon,
       defaultWindowSize: { width: 800, height: 700 },
       minWindowSize: { width: 600, height: 500 },
