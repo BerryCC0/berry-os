@@ -1,0 +1,86 @@
+/**
+ * RichTextContent Styles
+ * Mac OS 8 styled content display with GIF support
+ */
+
+.richTextContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.textBlock {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-geneva);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--theme-text, #000000);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.gifBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 8px 0;
+  max-width: 100%;
+}
+
+.gifImage {
+  max-width: 100%;
+  max-height: 400px;
+  height: auto;
+  border: 1px solid var(--theme-border, #000000);
+  border-radius: 0;
+  background: var(--theme-window-background-alt, #F5F5F5);
+  display: block;
+  image-rendering: auto;
+  object-fit: contain;
+}
+
+.gifImage.loading {
+  opacity: 0.5;
+}
+
+.gifLoading {
+  padding: 4px 8px;
+  font-family: var(--font-chicago);
+  font-size: 11px;
+  color: var(--theme-text-secondary, #666666);
+  background: var(--theme-window-background-alt, #F5F5F5);
+  border: 1px solid var(--theme-border, #000000);
+  margin-bottom: 4px;
+}
+
+.gifLink {
+  font-family: var(--font-geneva);
+  font-size: 11px;
+  color: var(--theme-link, #0000FF);
+  text-decoration: underline;
+  word-break: break-all;
+  padding: 4px 0;
+}
+
+.gifLink:hover {
+  color: var(--theme-link-hover, #000080);
+}
+
+.gifLink:visited {
+  color: var(--theme-link-visited, #800080);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .gifImage {
+    max-height: 300px;
+  }
+
+  .textBlock {
+    font-size: 13px;
+  }
+}
+

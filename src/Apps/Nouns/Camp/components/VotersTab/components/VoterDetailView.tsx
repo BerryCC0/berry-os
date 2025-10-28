@@ -22,6 +22,7 @@ import {
   formatAddress,
 } from '../../../utils/helpers/voterHelpers';
 import { getNounThumbnails } from '../../../utils/helpers/nounImageHelper';
+import RichTextContent from '../../shared/RichTextContent/RichTextContent';
 import Tabs from '@/src/OS/components/UI/Tabs/Tabs';
 import ScrollBar from '@/src/OS/components/UI/ScrollBar/ScrollBar';
 import styles from './VoterDetailView.module.css';
@@ -316,7 +317,7 @@ export default function VoterDetailView({ address, onBack, showBackButton = true
                 </div>
                 {vote.reason && (
                   <div className={styles.voteReason}>
-                    <p>{vote.reason}</p>
+                    <RichTextContent content={vote.reason} />
                   </div>
                 )}
               </div>

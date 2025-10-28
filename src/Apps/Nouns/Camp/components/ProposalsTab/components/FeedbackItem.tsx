@@ -9,6 +9,7 @@ import { memo } from 'react';
 import type { ProposalFeedback } from '@/app/lib/Nouns/Goldsky/utils/types';
 import { formatRelativeTime, getSupportLabel } from '../../../utils/helpers/voterHelpers';
 import { useENS, formatAddressWithENS } from '../../../utils/hooks/useENS';
+import RichTextContent from '../../shared/RichTextContent/RichTextContent';
 import styles from './FeedbackList.module.css';
 
 interface FeedbackItemProps {
@@ -37,7 +38,7 @@ function FeedbackItem({ feedback }: FeedbackItemProps) {
         </div>
         {feedback.reason && (
           <div className={styles.reason}>
-            {feedback.reason}
+            <RichTextContent content={feedback.reason} />
           </div>
         )}
       </div>

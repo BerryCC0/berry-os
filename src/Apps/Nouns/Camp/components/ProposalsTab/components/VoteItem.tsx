@@ -17,6 +17,7 @@ import {
 } from '../../../utils/helpers/voterHelpers';
 import { getNounThumbnails } from '../../../utils/helpers/nounImageHelper';
 import { useENS, formatAddressWithENS } from '../../../utils/hooks/useENS';
+import RichTextContent from '../../shared/RichTextContent/RichTextContent';
 import styles from './VoteItem.module.css';
 
 interface VoteItemProps {
@@ -88,9 +89,7 @@ function VoteItem({ vote }: VoteItemProps) {
 
         {vote.reason && (
           <div className={styles.reason}>
-            <p className={styles.reasonText}>
-              {vote.reason}
-            </p>
+            <RichTextContent content={vote.reason} className={styles.reasonText} />
           </div>
         )}
       </div>

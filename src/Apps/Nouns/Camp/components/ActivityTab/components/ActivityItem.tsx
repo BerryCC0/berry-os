@@ -18,6 +18,7 @@ import {
 } from '../../../utils/helpers/voterHelpers';
 import { getNounThumbnails } from '../../../utils/helpers/nounImageHelper';
 import { useENS, formatAddressWithENS } from '../../../utils/hooks/useENS';
+import RichTextContent from '../../shared/RichTextContent/RichTextContent';
 import ScrollBar from '@/src/OS/components/UI/ScrollBar/ScrollBar';
 import styles from './ActivityItem.module.css';
 
@@ -395,16 +396,12 @@ function ActivityItem({ activity, isExpanded = false, onClick }: ActivityItemPro
                 </div>
                 {/* Reply content */}
                 {messageInfo.replyContent && (
-                  <p className={styles.reasonText}>
-                    {messageInfo.replyContent}
-                  </p>
+                  <RichTextContent content={messageInfo.replyContent} className={styles.reasonText} />
                 )}
                 {/* Quoted content */}
                 {messageInfo.quotedContent && (
                   <div className={styles.quotedContent}>
-                    <p className={styles.quotedText}>
-                      {messageInfo.quotedContent}
-                    </p>
+                    <RichTextContent content={messageInfo.quotedContent} className={styles.quotedText} />
                   </div>
                 )}
               </>
@@ -412,9 +409,7 @@ function ActivityItem({ activity, isExpanded = false, onClick }: ActivityItemPro
               <>
                 {/* Content before repost (if any) */}
                 {messageInfo.replyContent && (
-                  <p className={styles.reasonText}>
-                    {messageInfo.replyContent}
-                  </p>
+                  <RichTextContent content={messageInfo.replyContent} className={styles.reasonText} />
                 )}
                 {/* Repost indicator */}
                 <div className={styles.repostIndicator}>
@@ -424,16 +419,12 @@ function ActivityItem({ activity, isExpanded = false, onClick }: ActivityItemPro
                 {/* Quoted content */}
                 {messageInfo.quotedContent && (
                   <div className={styles.quotedContent}>
-                    <p className={styles.quotedText}>
-                      {messageInfo.quotedContent}
-                    </p>
+                    <RichTextContent content={messageInfo.quotedContent} className={styles.quotedText} />
                   </div>
                 )}
               </>
             ) : (
-              <p className={styles.reasonText}>
-                {activity.reason}
-              </p>
+              <RichTextContent content={activity.reason} className={styles.reasonText} />
             )}
           </div>
         )}

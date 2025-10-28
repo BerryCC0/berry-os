@@ -7,6 +7,7 @@
 
 import { useENS, formatAddressWithENS } from '../../../utils/hooks/useENS';
 import { formatAbsoluteTime } from '../../../utils/helpers/candidateHelpers';
+import RichTextContent from '../../shared/RichTextContent/RichTextContent';
 import styles from './CandidateFeedbackList.module.css';
 
 interface FeedbackItemProps {
@@ -38,7 +39,7 @@ function FeedbackItem({ feedback }: FeedbackItemProps) {
       
       {feedback.reason && (
         <div className={styles.reason}>
-          {feedback.reason}
+          <RichTextContent content={feedback.reason} />
         </div>
       )}
       
