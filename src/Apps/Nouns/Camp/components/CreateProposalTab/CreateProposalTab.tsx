@@ -23,11 +23,14 @@ import { eventBus } from '@/src/OS/lib/eventBus';
 import { NOUNS_CONTRACTS, EXTERNAL_CONTRACTS } from '@/app/lib/Nouns/Contracts/utils/addresses';
 import { DataProxyABI } from '@/app/lib/Nouns/Contracts/abis';
 import { useNounHolderStatus } from '../../utils/hooks/useNounHolderStatus';
+import { useProposal } from '../../utils/hooks/useProposals';
+import { useGovernanceActions } from '@/app/lib/Nouns/Contracts/hooks/useGovernanceActions';
 import { generateSlugFromTitle, makeSlugUnique } from '../../utils/slugGenerator';
 import styles from './CreateProposalTab.module.css';
 
 interface CreateProposalTabProps {
   onBack?: () => void;
+  editProposalId?: string; // If provided, loads and edits this proposal
 }
 
 type ProposalState = 'idle' | 'confirming' | 'pending' | 'error' | 'success';
@@ -170,10 +173,18 @@ function formatRelativeTime(date: Date | undefined): string {
   return new Date(date).toLocaleDateString();
 }
 
-export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
+export default function CreateProposalTab({ onBack, editProposalId }: CreateProposalTabProps) {
   const { address, isConnected } = useAccount();
   const { writeContractAsync, isPending } = useWriteContract();
+  const { updateProposal } = useGovernanceActions();
 
+  // Edit mode: Load proposal if editing
+  const { proposal: existingProposal, loading: loadingProposal } = useProposal(editProposalId || '');
+  const isEditMode = !!editProposalId;
+
+  // Edit mode state
+  const [updateMessage, setUpdateMessage] = useState(''); // Message explaining the update
+  
   // Form state - NEW: Using template states instead of raw actions
   const [draftSlug, setDraftSlug] = useState('');
   const [draftTitle, setDraftTitle] = useState(''); // NEW: Draft name (separate from proposal title)
@@ -210,21 +221,52 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved' | 'error'>('unsaved');
 
-  // Load drafts on mount and select the most recent one
+  // Load proposal data when in edit mode
   useEffect(() => {
-    if (address) {
+    if (isEditMode && existingProposal && !loadingProposal) {
+      // Extract title from description (format: "# Title\n\nDescription")
+      const descLines = existingProposal.description?.split('\n') || [];
+      const titleLine = descLines[0]?.trim();
+      const proposalTitle = titleLine?.startsWith('#') ? titleLine.slice(1).trim() : '';
+      const proposalDesc = descLines.slice(2).join('\n').trim();
+
+      // Set form data from existing proposal
+      setTitle(proposalTitle);
+      setDescription(proposalDesc);
+      
+      // Convert proposal actions to custom template states
+      const actions: ProposalAction[] = existingProposal.targets.map((target, i) => ({
+        target,
+        value: existingProposal.values[i],
+        signature: existingProposal.signatures[i],
+        calldata: existingProposal.calldatas[i],
+      }));
+      
+      setActionTemplateStates([{
+        templateId: 'custom',
+        fieldValues: {},
+        generatedActions: actions,
+      }]);
+
+      setDraftTitle(`Edit Proposal #${editProposalId}`);
+    }
+  }, [isEditMode, existingProposal, loadingProposal, editProposalId]);
+
+  // Load drafts on mount and select the most recent one (skip in edit mode)
+  useEffect(() => {
+    if (address && !isEditMode) {
       loadUserDrafts();
     }
-  }, [address]);
+  }, [address, isEditMode]);
 
-  // Auto-load most recent draft when drafts are loaded
+  // Auto-load most recent draft when drafts are loaded (skip in edit mode)
   useEffect(() => {
-    if (drafts.length > 0 && !draftSlug && address) {
+    if (drafts.length > 0 && !draftSlug && address && !isEditMode) {
       // Load the most recent draft (first in list, sorted by updated_at DESC)
       const mostRecent = drafts[0];
       handleLoadDraft(mostRecent);
     }
-  }, [drafts.length, address]);
+  }, [drafts.length, address, isEditMode]);
 
   // Auto-save draft as user types (debounced)
   useEffect(() => {
@@ -643,7 +685,74 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
     }
   };
 
+  const handleUpdateProposal = async () => {
+    if (!validateForm() || !editProposalId || !updateMessage.trim()) {
+      if (!updateMessage.trim()) {
+        setErrorMessage('Please provide an update message explaining your changes');
+      }
+      return;
+    }
+
+    setErrorMessage(null);
+    setProposalState('confirming');
+
+    try {
+      // Prepare proposal data
+      const allActions = flattenActionTemplates(actionTemplateStates);
+      const targets = allActions.map(action => action.target as `0x${string}`);
+      const values = allActions.map(action => BigInt(action.value));
+      const signatures = allActions.map(action => action.signature);
+      const calldatas = allActions.map(action => {
+        const data = action.calldata;
+        return (data.startsWith('0x') ? data : `0x${data}`) as `0x${string}`;
+      });
+      const fullDescription = `# ${title}\n\n${description}`;
+
+      setProposalState('pending');
+      
+      // Call updateProposal from the governance actions hook
+      await updateProposal(
+        BigInt(editProposalId),
+        targets,
+        values,
+        signatures,
+        calldatas,
+        fullDescription,
+        updateMessage
+      );
+
+      setProposalState('success');
+      setErrorMessage(null);
+
+      // Navigate back after success
+      setTimeout(() => {
+        if (onBack) {
+          onBack();
+        }
+      }, 2000);
+    } catch (err: unknown) {
+      setProposalState('error');
+
+      if (err instanceof Error) {
+        if (err.message.includes('user rejected')) {
+          setErrorMessage('Transaction was rejected');
+        } else if (err.message.includes('insufficient funds')) {
+          setErrorMessage('Insufficient funds for transaction');
+        } else {
+          setErrorMessage(err.message);
+        }
+      } else {
+        setErrorMessage('Failed to update proposal. Please try again.');
+      }
+    }
+  };
+
   const handleSubmitProposal = async (isTimelockV1: boolean = false) => {
+    // If in edit mode, call update instead
+    if (isEditMode) {
+      return handleUpdateProposal();
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -708,7 +817,7 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
 
       <div className={styles.header}>
         <div className={styles.headerTop}>
-          <h2 className={styles.title}>Create Proposal</h2>
+          <h2 className={styles.title}>{isEditMode ? `Edit Proposal #${editProposalId}` : 'Create Proposal'}</h2>
           {draftTitle && (
             <div className={styles.draftIndicator}>
               <span className={styles.draftName}>Draft: {draftTitle}</span>
@@ -819,6 +928,25 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
                 rows={10}
               />
             </div>
+
+            {/* Update Message (Edit Mode Only) */}
+            {isEditMode && (
+              <div className={styles.section}>
+                <label className={styles.label}>
+                  Update Message * 
+                  <span className={styles.hint}>Explain what changed in this update</span>
+                </label>
+                <textarea
+                  className={styles.textarea}
+                  value={updateMessage}
+                  onChange={(e) => setUpdateMessage(e.target.value)}
+                  placeholder="Example: Updated target address to reflect new treasury contract..."
+                  disabled={isCreating}
+                  rows={3}
+                  required
+                />
+              </div>
+            )}
           </div>
 
           {/* Right Column: Actions + KYC */}
@@ -974,12 +1102,14 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
             }
           >
             {isCreating 
-              ? 'Creating...' 
-              : proposalType === 'candidate'
-                ? '📝 Create Candidate'
-                : proposalType === 'timelock_v1' 
-                  ? '📜 Propose on TimelockV1' 
-                  : '📋 Create Proposal'}
+              ? (isEditMode ? 'Updating...' : 'Creating...') 
+              : isEditMode
+                ? '✏️ Update Proposal'
+                : proposalType === 'candidate'
+                  ? '📝 Create Candidate'
+                  : proposalType === 'timelock_v1' 
+                    ? '📜 Propose on TimelockV1' 
+                    : '📋 Create Proposal'}
           </button>
         </div>
 
@@ -999,7 +1129,9 @@ export default function CreateProposalTab({ onBack }: CreateProposalTabProps) {
 
         {proposalState === 'success' && (
           <div className={styles.success}>
-            Your proposal has been successfully created! It will appear in the proposals list once confirmed on-chain.
+            {isEditMode 
+              ? 'Your proposal has been successfully updated! The changes will appear once confirmed on-chain.'
+              : 'Your proposal has been successfully created! It will appear in the proposals list once confirmed on-chain.'}
           </div>
         )}
 

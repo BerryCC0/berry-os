@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { encodeAbiParameters, parseAbiParameters } from 'viem';
 import styles from './SmartActionEditor.module.css';
 
 interface ABIInput {
@@ -67,7 +68,7 @@ export function SmartActionEditor({
     setAbiError(null);
 
     try {
-      // Fetch main contract ABI from Etherscan
+      // Fetch main contract ABI from Etherscan (new API format)
       const response = await fetch(`/api/etherscan/contract?address=${address}`);
       const data = await response.json();
 
@@ -75,29 +76,18 @@ export function SmartActionEditor({
         throw new Error(data.error);
       }
 
-      if (data.status === '0') {
-        throw new Error(data.message || 'Contract not verified on Etherscan');
+      // Handle new API response format
+      if (!data.isVerified || !data.abi) {
+        throw new Error('Contract not verified on Etherscan');
       }
 
-      const mainAbi = JSON.parse(data.result);
+      const mainAbi = data.abi;
+      let contractName = data.name || '';
 
       // Check if this is a proxy contract
       const proxyInfo = await detectProxyImplementation(address, mainAbi);
 
       let allFunctions = mainAbi.filter((item: ABIItem) => item.type === 'function');
-      let contractName = '';
-
-      // Get contract name
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Rate limiting delay
-        const nameResponse = await fetch(`/api/etherscan/contract?address=${address}&action=getsourcecode`);
-        const nameData = await nameResponse.json();
-        if (nameData.status === '1' && nameData.result?.[0]?.ContractName) {
-          contractName = nameData.result[0].ContractName;
-        }
-      } catch {
-        // Could not fetch contract name
-      }
 
       // If proxy, fetch implementation ABI
       if (proxyInfo.isProxy && proxyInfo.implementationAddress) {
@@ -106,8 +96,8 @@ export function SmartActionEditor({
           const implResponse = await fetch(`/api/etherscan/contract?address=${proxyInfo.implementationAddress}`);
           const implData = await implResponse.json();
 
-          if (implData.status === '1') {
-            const implAbi = JSON.parse(implData.result);
+          if (implData.isVerified && implData.abi) {
+            const implAbi = implData.abi;
             const implFunctions = implAbi.filter((item: ABIItem) => item.type === 'function');
 
             // Deduplicate functions
@@ -130,18 +120,12 @@ export function SmartActionEditor({
 
             allFunctions = [...allFunctions, ...newFunctions];
 
-            // Get implementation name
-            try {
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              const implNameResponse = await fetch(`/api/etherscan/contract?address=${proxyInfo.implementationAddress}&action=getsourcecode`);
-              const implNameData = await implNameResponse.json();
-              if (implNameData.status === '1' && implNameData.result?.[0]?.ContractName) {
-                contractName = contractName
-                  ? `${contractName} (Proxy → ${implNameData.result[0].ContractName})`
-                  : `Proxy → ${implNameData.result[0].ContractName}`;
-              }
-            } catch {
-              // Could not fetch implementation name
+            // Get implementation name from response
+            const implName = implData.name;
+            if (implName && implName !== 'Unknown') {
+              contractName = contractName
+                ? `${contractName} (Proxy → ${implName})`
+                : `Proxy → ${implName}`;
             }
           }
         } catch {
@@ -330,8 +314,17 @@ export function SmartActionEditor({
         return '0x';
       }
 
-      // For Nouns governance, encode only parameters, not function selector
-      const types = func.inputs.map(input => input.type);
+      // If no inputs, return empty calldata
+      if (func.inputs.length === 0) {
+        return '0x';
+      }
+
+      // Build ABI parameter string for viem
+      const abiParamString = func.inputs
+        .map(input => `${input.type} ${input.name}`)
+        .join(', ');
+      
+      // Parse values according to their types
       const values = func.inputs.map(input => {
         if (!input || !input.name || !input.type) {
           return '';
@@ -340,41 +333,81 @@ export function SmartActionEditor({
         return parseInputValue(value, input.type);
       });
 
-      if (types.length === 0) {
-        return '0x';
-      }
-
-      // Use basic encoding without ethers - manual encoding
-      // For now, return empty calldata and let user fill manually in advanced mode
-      return '0x';
-    } catch {
+      // Encode using viem
+      const abiParams = parseAbiParameters(abiParamString);
+      const encoded = encodeAbiParameters(abiParams, values);
+      
+      return encoded;
+    } catch (error) {
+      console.error('Error encoding calldata:', error);
       return '0x';
     }
   };
 
-  const parseInputValue = (value: string, type: string): unknown => {
-    if (!value) return getDefaultValueForType(type);
+  const parseInputValue = (value: string, type: string): any => {
+    if (!value || value.trim() === '') {
+      // Return appropriate default for empty values
+      if (type === 'bool') return false;
+      if (type.startsWith('uint') || type.startsWith('int')) return BigInt(0);
+      if (type === 'address') return '0x0000000000000000000000000000000000000000';
+      if (type === 'string') return '';
+      if (type.includes('[]')) return [];
+      return '0x';
+    }
 
     try {
       if (type === 'bool') {
         return value.toLowerCase() === 'true';
       }
       if (type.startsWith('uint') || type.startsWith('int')) {
-        return BigInt(value);
+        // Handle both decimal and hex input
+        const cleanValue = value.trim();
+        if (cleanValue.startsWith('0x')) {
+          return BigInt(cleanValue);
+        }
+        return BigInt(cleanValue);
       }
       if (type === 'address') {
-        // Basic address validation
-        if (!/^0x[a-fA-F0-9]{40}$/.test(value)) {
-          throw new Error('Invalid address');
+        // Basic address validation and checksum
+        const addr = value.trim();
+        if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
+          throw new Error('Invalid address format');
         }
-        return value.toLowerCase();
+        return addr as `0x${string}`;
+      }
+      if (type === 'bytes' || type.startsWith('bytes')) {
+        // Ensure proper hex format
+        const hex = value.trim();
+        if (!hex.startsWith('0x')) {
+          return `0x${hex}` as `0x${string}`;
+        }
+        return hex as `0x${string}`;
       }
       if (type.includes('[]')) {
-        return JSON.parse(value);
+        // Parse JSON array
+        const parsed = JSON.parse(value);
+        if (!Array.isArray(parsed)) {
+          throw new Error('Array type requires JSON array');
+        }
+        // Recursively parse array elements
+        const elementType = type.replace('[]', '');
+        return parsed.map(item => 
+          typeof item === 'string' ? parseInputValue(item, elementType) : item
+        );
       }
+      if (type === 'string') {
+        return value;
+      }
+      // Default: return as-is
       return value;
-    } catch {
-      return getDefaultValueForType(type);
+    } catch (error) {
+      console.error(`Error parsing value "${value}" as type "${type}":`, error);
+      // Return safe default on error
+      if (type === 'bool') return false;
+      if (type.startsWith('uint') || type.startsWith('int')) return BigInt(0);
+      if (type === 'address') return '0x0000000000000000000000000000000000000000';
+      if (type.includes('[]')) return [];
+      return '';
     }
   };
 
@@ -577,7 +610,13 @@ export function SmartActionEditor({
                 <strong>Signature:</strong> {signature}
               </div>
               <div className={styles.generatedValue}>
-                <strong>Calldata:</strong> {calldata.slice(0, 20)}...
+                <strong>Calldata:</strong>
+                <div className={styles.calldataPreview} title={calldata}>
+                  {calldata}
+                </div>
+              </div>
+              <div className={styles.generatedHint}>
+                ℹ️ This calldata will be submitted with your proposal. Hover or scroll to see full value.
               </div>
             </div>
           )}

@@ -42,6 +42,34 @@ export function getStatusColor(status: string): string {
 }
 
 /**
+ * Check if proposal is updatable by the given address
+ * A proposal is updatable if:
+ * 1. The proposal is in PENDING status
+ * 2. The current block is before updatePeriodEndBlock
+ * 3. The user is the proposer
+ */
+export function isProposalUpdatable(
+  proposal: UIProposal,
+  userAddress?: string
+): boolean {
+  if (!userAddress) return false;
+  
+  // Check if user is the proposer
+  const proposerAddress = proposalUtils.getProposer(proposal);
+  if (proposerAddress.toLowerCase() !== userAddress.toLowerCase()) return false;
+  
+  // Check if proposal has updatePeriodEndBlock (V3 feature)
+  if (!proposal.updatePeriodEndBlock) return false;
+  
+  // Check if proposal is in PENDING status (updatable period is during pending)
+  if (proposal.status !== ProposalStatus.PENDING) return false;
+  
+  // TODO: Check if current block is before updatePeriodEndBlock
+  // For now, allow updates during PENDING status
+  return true;
+}
+
+/**
  * Get vote bar color
  */
 export function getVoteColor(support: 'for' | 'against' | 'abstain'): string {

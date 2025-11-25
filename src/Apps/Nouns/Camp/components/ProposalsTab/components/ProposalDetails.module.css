@@ -12,6 +12,43 @@
   color: var(--theme-text, #000000);
 }
 
+/* Edit Section (for updatable proposals) */
+.editSection {
+  background: #FFF8E8;
+  border: 1px solid var(--theme-border, #000000);
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editButton {
+  padding: 8px 16px;
+  background: var(--theme-window-background, #FFFFFF);
+  border: 1px solid var(--theme-border, #000000);
+  font-family: var(--font-chicago);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.editButton:hover {
+  background: var(--theme-window-background-hover, #EEEEEE);
+}
+
+.editButton:active {
+  background: var(--theme-highlight-light, #E8E8FF);
+}
+
+.editHint {
+  margin: 0;
+  font-size: 11px;
+  color: #555555;
+  font-family: var(--font-geneva);
+}
+
 /* Vote Summary & Transactions Section */
 .summarySection {
   border: 1px solid var(--theme-border, #000000);

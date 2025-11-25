@@ -53,6 +53,7 @@ function CampContent({ windowId }: CampProps) {
   };
 
   const [activeTab, setActiveTab] = useState('activity');
+  const [editingProposalId, setEditingProposalId] = useState<string | null>(null);
 
   // Handle menu actions
   useEffect(() => {
@@ -74,6 +75,12 @@ function CampContent({ windowId }: CampProps) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Handle edit proposal navigation
+  const handleEditProposal = (proposalId: string) => {
+    setEditingProposalId(proposalId);
+    setActiveTab('create');
+  };
+
   const tabs = [
     {
       id: 'activity',
@@ -83,7 +90,7 @@ function CampContent({ windowId }: CampProps) {
     {
       id: 'proposals',
       label: 'Proposals',
-      content: <ProposalsTab onVote={handleVote} />,
+      content: <ProposalsTab onVote={handleVote} onEditProposal={handleEditProposal} />,
     },
     {
       id: 'candidates',
@@ -100,8 +107,16 @@ function CampContent({ windowId }: CampProps) {
   // Create tab (pinned, only visible when wallet connected)
   const createTab = isConnected ? {
     id: 'create',
-    label: 'Create',
-    content: <CreateProposalTab />,
+    label: editingProposalId ? 'Edit' : 'Create',
+    content: (
+      <CreateProposalTab 
+        editProposalId={editingProposalId || undefined}
+        onBack={() => {
+          setEditingProposalId(null);
+          setActiveTab('proposals');
+        }}
+      />
+    ),
   } : null;
 
   // Account tab (pinned to the right)

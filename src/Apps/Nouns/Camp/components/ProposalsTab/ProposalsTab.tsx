@@ -14,9 +14,10 @@ import styles from './ProposalsTab.module.css';
 
 interface ProposalsTabProps {
   onVote?: (proposalId: string, support: number, reason?: string) => void;
+  onEditProposal?: (proposalId: string) => void;
 }
 
-export default function ProposalsTab({ onVote }: ProposalsTabProps) {
+export default function ProposalsTab({ onVote, onEditProposal }: ProposalsTabProps) {
   const [filter, setFilter] = useState<ProposalFilter>(ProposalFilter.ALL);
   const [sort, setSort] = useState<ProposalSort>(ProposalSort.NEWEST);
   const [expandedProposalId, setExpandedProposalId] = useState<string | null>(null);
@@ -109,6 +110,7 @@ export default function ProposalsTab({ onVote }: ProposalsTabProps) {
                     proposal={proposal}
                     onClose={() => setExpandedProposalId(null)}
                     onVote={(support, reason) => handleVote(proposal.id, support, reason)}
+                    onEdit={onEditProposal}
                   />
                 )}
               </div>

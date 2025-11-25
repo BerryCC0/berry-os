@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
-const ETHERSCAN_API_URL = 'https://api.etherscan.io/api';
+const ETHERSCAN_API_URL = 'https://api.etherscan.io/v2/api';
 
 // In-memory cache for contract info (consider Redis for production)
 const contractCache = new Map<string, ContractInfo>();
@@ -15,8 +15,11 @@ interface ContractInfo {
 /**
  * GET /api/etherscan/contract?address=0x...
  * 
- * Fetches contract source code and ABI from Etherscan
+ * Fetches contract source code and ABI from Etherscan V2 API
  * Server-side only to keep API key secure
+ * 
+ * Note: Uses Etherscan API V2 (requires chainid parameter)
+ * Migration: https://docs.etherscan.io/v2-migration
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -63,12 +66,11 @@ export async function GET(request: NextRequest) {
   }
   
   try {
-    const response = await fetch(
-      `${ETHERSCAN_API_URL}?module=contract&action=getsourcecode&address=${address}&apikey=${ETHERSCAN_API_KEY}`,
-      {
-        next: { revalidate: 3600 }, // Cache for 1 hour
-      }
-    );
+    const url = `${ETHERSCAN_API_URL}?chainid=1&module=contract&action=getsourcecode&address=${address}&apikey=${ETHERSCAN_API_KEY}`;
+    
+    const response = await fetch(url, {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    });
     
     if (!response.ok) {
       throw new Error(`Etherscan API returned ${response.status}`);

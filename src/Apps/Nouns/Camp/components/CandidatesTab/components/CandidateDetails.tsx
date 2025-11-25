@@ -20,8 +20,14 @@ import {
 import { useCandidateFeedback } from '../../../utils/hooks/useCandidateFeedback';
 import { useCandidateSignatures } from '../../../utils/hooks/useCandidateSignatures';
 import { useCandidateActions } from '../../../utils/hooks/useCandidateActions';
+import { usePromoteCandidate } from '../../../utils/hooks/usePromoteCandidate';
 import { useENS, formatAddressWithENS } from '../../../utils/hooks/useENS';
 import { getFeedbackPercentages } from '../../../utils/helpers/candidateHelpers';
+import { 
+  getValidSignatures, 
+  formatSignatureForContract,
+  calculateTotalVotingPower 
+} from '../../../utils/helpers/candidateSignatures';
 import CandidateFeedbackList from './CandidateFeedbackList';
 import CandidateSignaturesList from './CandidateSignaturesList';
 import CandidateActions from './CandidateActions';
@@ -63,6 +69,16 @@ export default function CandidateDetails({ candidate, onClose }: CandidateDetail
     isConfirmed,
   } = useCandidateActions();
 
+  // Promote candidate hook
+  const {
+    promoteCandidate,
+    isLoading: isPromoting,
+    isSuccess: promoteSuccess,
+    isError: promoteError,
+    error: promoteErrorMessage,
+    proposalId: newProposalId,
+  } = usePromoteCandidate();
+
   const title = getCandidateTitle(candidate);
   const status = getCandidateStatus(candidate);
   const statusColor = getStatusColor(status);
@@ -74,6 +90,10 @@ export default function CandidateDetails({ candidate, onClose }: CandidateDetail
   
   const isOwner = isProposer(candidate, address);
   const canPromote = canPromoteToProposal(candidate, signatures);
+  
+  // Get valid signatures for promotion
+  const validSignatures = getValidSignatures(candidate.signaturesList || []);
+  const totalVotingPower = calculateTotalVotingPower(validSignatures);
 
   // Feedback percentages
   const feedbackPercentages = getFeedbackPercentages(feedback);
@@ -114,8 +134,74 @@ export default function CandidateDetails({ candidate, onClose }: CandidateDetail
     }
   };
 
+  const handlePromoteCandidate = async () => {
+    if (!canPromote || !isOwner) return;
+    
+    try {
+      // Format signatures for contract
+      const formattedSignatures = validSignatures.map(formatSignatureForContract);
+      
+      // Convert candidate data to proper types
+      const targets = candidate.targets as `0x${string}`[];
+      const values = candidate.values.map(v => BigInt(v));
+      const calldatas = candidate.calldatas as `0x${string}`[];
+      const proposalIdToUpdate = parseInt(candidate.proposalIdToUpdate) || 0;
+      
+      await promoteCandidate(
+        candidate.proposer as `0x${string}`,
+        targets,
+        values,
+        candidate.signatures,
+        calldatas,
+        candidate.description,
+        candidate.slug,
+        proposalIdToUpdate,
+        formattedSignatures
+      );
+    } catch (error) {
+      console.error('Failed to promote candidate:', error);
+    }
+  };
+
   return (
     <div className={styles.details}>
+      {/* Promote to Proposal Section - Only visible to candidate owner when ready */}
+      {isConnected && isOwner && canPromote && !candidate.canceled && (
+        <div className={styles.promoteSection}>
+          <div className={styles.promoteHeader}>
+            <h3 className={styles.promoteTitle}>✨ Ready to Promote</h3>
+            <span className={styles.promoteBadge}>
+              {totalVotingPower} votes collected
+            </span>
+          </div>
+          
+          <p className={styles.promoteDescription}>
+            Your candidate has received enough signatures to be promoted to a full proposal.
+            {validSignatures.length > 0 && ` ${validSignatures.length} sponsor${validSignatures.length !== 1 ? 's' : ''} with ${totalVotingPower} total voting power.`}
+          </p>
+          
+          <button
+            className={styles.promoteButton}
+            onClick={handlePromoteCandidate}
+            disabled={isPromoting}
+          >
+            {isPromoting ? '🔄 Promoting...' : '🚀 Promote to Proposal'}
+          </button>
+          
+          {promoteSuccess && newProposalId && (
+            <div className={styles.promoteSuccess}>
+              ✓ Successfully promoted to Proposal #{newProposalId}!
+            </div>
+          )}
+          
+          {promoteError && (
+            <div className={styles.promoteError}>
+              ✗ Failed to promote: {promoteErrorMessage?.message || 'Unknown error'}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Collapsible Summary Section */}
       <div className={styles.summarySection}>
         <button

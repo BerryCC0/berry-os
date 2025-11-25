@@ -19,6 +19,7 @@ import {
   formatProposer,
   formatTimestamp,
   estimateBlockTimestamp,
+  isProposalUpdatable,
 } from '../../../utils/helpers/proposalHelpers';
 import { useHasVoted, useProposalVotes } from '../../../utils/hooks/useProposals';
 import { useProposalFeedback } from '../../../utils/hooks/useProposalFeedback';
@@ -38,12 +39,16 @@ interface ProposalDetailsProps {
   proposal: UIProposal;
   onClose?: () => void;
   onVote?: (support: number, reason?: string) => void;
+  onEdit?: (proposalId: string) => void;
   defaultSummaryCollapsed?: boolean; // Control initial collapsed state
 }
 
-export default function ProposalDetails({ proposal, onClose, onVote, defaultSummaryCollapsed = false }: ProposalDetailsProps) {
+export default function ProposalDetails({ proposal, onClose, onVote, onEdit, defaultSummaryCollapsed = false }: ProposalDetailsProps) {
   const { address, isConnected } = useAccount();
   const { hasVoted, voteSupport } = useHasVoted(proposal.id, address);
+  
+  // Check if user can edit this proposal
+  const canEdit = isProposalUpdatable(proposal, address);
   
   const [voteReason, setVoteReason] = useState('');
   const [selectedSupport, setSelectedSupport] = useState<number | null>(null);
@@ -115,6 +120,22 @@ export default function ProposalDetails({ proposal, onClose, onVote, defaultSumm
 
   return (
     <div className={styles.details}>
+      {/* Edit Button (if updatable by user) */}
+      {canEdit && onEdit && (
+        <div className={styles.editSection}>
+          <button
+            className={styles.editButton}
+            onClick={() => onEdit(proposal.id)}
+            title="Edit this proposal during the updatable period"
+          >
+            ✏️ Edit Proposal
+          </button>
+          <p className={styles.editHint}>
+            This proposal is in the updatable period. You can edit the transactions and description.
+          </p>
+        </div>
+      )}
+
       {/* Collapsible Vote Summary & Transactions Section */}
       <div className={styles.summarySection}>
         {/* Summary Header with Toggle */}
