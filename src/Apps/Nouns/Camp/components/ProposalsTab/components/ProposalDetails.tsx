@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 import type { UIProposal } from '../../../utils/types/camp';
 import {
   getProposalTitle,
@@ -20,6 +20,8 @@ import {
   formatTimestamp,
   estimateBlockTimestamp,
   isProposalUpdatable,
+  contractStateToStatus,
+  canVoteOnState,
 } from '../../../utils/helpers/proposalHelpers';
 import { useHasVoted, useProposalVotes } from '../../../utils/hooks/useProposals';
 import { useProposalFeedback } from '../../../utils/hooks/useProposalFeedback';
@@ -27,6 +29,7 @@ import { useProposalVersions } from '../../../utils/hooks/useProposalVersions';
 import { useENS, formatAddressWithENS } from '../../../utils/hooks/useENS';
 import { filterVotesBySupport } from '../../../utils/helpers/voterHelpers';
 import * as proposalUtils from '@/app/lib/Nouns/Goldsky/utils/proposal';
+import { GovernanceActions } from '@/app/lib/Nouns/Contracts';
 import VotesList from './VotesList';
 import FeedbackList from './FeedbackList';
 import ProposalVersionHistory from './ProposalVersionHistory';
@@ -46,6 +49,15 @@ interface ProposalDetailsProps {
 export default function ProposalDetails({ proposal, onClose, onVote, onEdit, defaultSummaryCollapsed = false }: ProposalDetailsProps) {
   const { address, isConnected } = useAccount();
   const { hasVoted, voteSupport } = useHasVoted(proposal.id, address);
+  
+  // Fetch real-time proposal state from contract (subgraph can be delayed)
+  const { data: contractState } = useReadContract({
+    ...GovernanceActions.state(BigInt(proposal.id)),
+    query: {
+      // Refetch every 12 seconds (roughly 1 block)
+      refetchInterval: 12000,
+    },
+  });
   
   // Check if user can edit this proposal
   const canEdit = isProposalUpdatable(proposal, address);
@@ -67,9 +79,24 @@ export default function ProposalDetails({ proposal, onClose, onVote, onEdit, def
   // Fetch proposal versions (V3 governance - updatable proposals)
   const { versions, hasVersions } = useProposalVersions(proposal.id);
 
+  // Determine if voting is allowed using real-time contract state
+  // This is critical because subgraph indexing can be delayed by several minutes
+  const realTimeState = contractState !== undefined ? Number(contractState) : null;
+  const isVotingActive = realTimeState !== null 
+    ? canVoteOnState(realTimeState)
+    // Fallback to subgraph status if contract state not yet loaded
+    : proposal.status === 'ACTIVE';
+  const canVote = isConnected && !hasVoted && isVotingActive;
+  
+  // Get the most accurate status for display
+  const displayStatus = realTimeState !== null 
+    ? contractStateToStatus(realTimeState) 
+    : proposal.status;
+
   const title = getProposalTitle(proposal);
-  const statusColor = getStatusColor(proposal.status);
-  const status = formatStatus(proposal);
+  // Use real-time status for accurate display (subgraph can be delayed)
+  const statusColor = getStatusColor(displayStatus);
+  const status = displayStatus;
   const votePercentages = getVotePercentages(proposal);
   const quorumStatus = getQuorumStatus(proposal);
   const actionsCount = getActionCount(proposal);
@@ -91,8 +118,6 @@ export default function ProposalDetails({ proposal, onClose, onVote, onEdit, def
     proposal.createdBlock,
     proposal.createdTimestamp
   );
-
-  const canVote = isConnected && !hasVoted && proposal.status === 'ACTIVE';
 
   const handleVote = (support: number) => {
     setSelectedSupport(support);
@@ -330,7 +355,7 @@ export default function ProposalDetails({ proposal, onClose, onVote, onEdit, def
             </div>
           )}
 
-          {!isConnected && proposal.status === 'ACTIVE' && (
+          {!isConnected && isVotingActive && (
             <div className={styles.connectPrompt}>
               Connect your wallet to vote on this proposal
             </div>

@@ -369,8 +369,8 @@ export const ACTION_TEMPLATES: Record<ActionTemplateType, ActionTemplate> = {
     id: 'payment-stream',
     category: 'payments',
     name: 'Create Payment Stream',
-    description: 'Set up a streaming payment via StreamFactory',
-    isMultiAction: false,
+    description: 'Set up a streaming payment via StreamFactory (creates stream + funds it)',
+    isMultiAction: true, // Stream creation requires create + fund actions
     fields: [
       {
         name: 'recipient',
@@ -407,6 +407,14 @@ export const ACTION_TEMPLATES: Record<ActionTemplateType, ActionTemplate> = {
         type: 'date',
         required: true,
         helpText: 'When the stream ends'
+      },
+      {
+        name: 'streamAddress',
+        label: 'Predicted Stream Address',
+        type: 'address',
+        placeholder: '0x... (computed automatically)',
+        required: true,
+        helpText: 'The deterministic address where the stream contract will be created'
       }
     ]
   },
@@ -881,6 +889,19 @@ function encodeTransferFrom(from: Address, to: Address, tokenIdOrAmount: bigint)
 }
 
 /**
+ * Encode transfer function calldata for ERC20
+ * Function: transfer(address to, uint256 amount)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
+ * Used for funding streams - Treasury calls token.transfer() directly
+ */
+function encodeTransfer(to: Address, amount: bigint): `0x${string}` {
+  const toPadded = to.slice(2).padStart(64, '0');
+  const amountPadded = amount.toString(16).padStart(64, '0');
+  
+  return `0x${toPadded}${amountPadded}`;
+}
+
+/**
  * Encode safeTransferFrom function calldata for ERC721
  * Function: safeTransferFrom(address from, address to, uint256 tokenId)
  * Note: Returns only parameters, no function selector (signature field specifies function)
@@ -990,7 +1011,7 @@ function encodeBurnVetoPower(): `0x${string}` {
 }
 
 /**
- * Encode createStream function calldata for StreamFactory
+ * Encode createStream function calldata for StreamFactory (5-param version)
  * Function: createStream(address recipient, uint256 tokenAmount, address tokenAddress, uint256 startTime, uint256 stopTime)
  * Note: Returns only parameters, no function selector (signature field specifies function)
  */
@@ -1008,6 +1029,31 @@ function encodeCreateStream(
   const stopTimeHex = stopTime.toString(16).padStart(64, '0');
   
   return `0x${recipientPadded}${tokenAmountHex}${tokenAddressPadded}${startTimeHex}${stopTimeHex}`;
+}
+
+/**
+ * Encode createStream function calldata for StreamFactory (7-param version with nonce and predicted address)
+ * Function: createStream(address recipient, uint256 tokenAmount, address tokenAddress, uint256 startTime, uint256 stopTime, uint8 nonce, address predictedStreamAddress)
+ * Note: Returns only parameters, no function selector (signature field specifies function)
+ */
+function encodeCreateStreamWithPredictedAddress(
+  recipient: Address,
+  tokenAmount: bigint,
+  tokenAddress: Address,
+  startTime: bigint,
+  stopTime: bigint,
+  nonce: number,
+  predictedStreamAddress: Address
+): `0x${string}` {
+  const recipientPadded = recipient.slice(2).padStart(64, '0');
+  const tokenAmountHex = tokenAmount.toString(16).padStart(64, '0');
+  const tokenAddressPadded = tokenAddress.slice(2).padStart(64, '0');
+  const startTimeHex = startTime.toString(16).padStart(64, '0');
+  const stopTimeHex = stopTime.toString(16).padStart(64, '0');
+  const noncePadded = nonce.toString(16).padStart(64, '0');
+  const predictedAddressPadded = predictedStreamAddress.slice(2).padStart(64, '0');
+  
+  return `0x${recipientPadded}${tokenAmountHex}${tokenAddressPadded}${startTimeHex}${stopTimeHex}${noncePadded}${predictedAddressPadded}`;
 }
 
 // ============================================================================
@@ -1193,8 +1239,11 @@ export function generateActionsFromTemplate(
         calldata: encodeDelegate(fieldValues.delegatee as Address)
       }];
 
-    // Payment Streams
+    // Payment Streams - Multi-action: create stream + fund stream
     case 'payment-stream': {
+      const actions: ProposalAction[] = [];
+      const groupId = `payment-stream-${Date.now()}`;
+
       // Convert dates to Unix timestamps (seconds since epoch)
       const startTimestamp = fieldValues.startDate 
         ? BigInt(Math.floor(new Date(fieldValues.startDate).getTime() / 1000))
@@ -1207,19 +1256,47 @@ export function generateActionsFromTemplate(
       const tokenAddress = fieldValues.tokenAddress as Address;
       const token = COMMON_TOKENS.find(t => t.address.toLowerCase() === tokenAddress.toLowerCase());
       const decimals = token?.decimals || 18;
+      const tokenAmount = parseUnits(fieldValues.amount || '0', decimals);
 
-      return [{
+      // Predicted stream address (must be computed via RPC call to predictStreamAddress)
+      const predictedStreamAddress = fieldValues.streamAddress as Address;
+      
+      // Action 1: Create the stream with predicted address and nonce
+      actions.push({
         target: STREAM_FACTORY_ADDRESS,
         value: '0',
-        signature: 'createStream(address,uint256,address,uint256,uint256)',
-        calldata: encodeCreateStream(
+        signature: 'createStream(address,uint256,address,uint256,uint256,uint8,address)',
+        calldata: encodeCreateStreamWithPredictedAddress(
           fieldValues.recipient as Address,
-          parseUnits(fieldValues.amount || '0', decimals),
+          tokenAmount,
           tokenAddress,
           startTimestamp,
-          endTimestamp
-        )
-      }];
+          endTimestamp,
+          0, // nonce = 0 for first stream with these params
+          predictedStreamAddress
+        ),
+        isPartOfMultiAction: true,
+        multiActionGroupId: groupId,
+        multiActionIndex: 0
+      });
+
+      // Action 2: Fund the stream by transferring tokens from Treasury to the stream address
+      // Note: We call transfer() directly on the token contract, not sendERC20() on Treasury
+      // When executed, Treasury calls token.transfer() with msg.sender = Treasury
+      actions.push({
+        target: tokenAddress,
+        value: '0',
+        signature: 'transfer(address,uint256)',
+        calldata: encodeTransfer(
+          predictedStreamAddress,
+          tokenAmount
+        ),
+        isPartOfMultiAction: true,
+        multiActionGroupId: groupId,
+        multiActionIndex: 1
+      });
+
+      return actions;
     }
 
     // Admin Functions - Voting

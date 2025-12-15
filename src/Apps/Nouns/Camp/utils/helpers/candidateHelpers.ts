@@ -214,9 +214,10 @@ export function isValidSlug(slug: string): boolean {
 
 /**
  * Validate candidate description
+ * Note: No max length limit - on-chain proposals can be arbitrarily long
  */
 export function isValidDescription(description: string): boolean {
-  return description.trim().length > 0 && description.length <= 10000;
+  return description.trim().length > 0;
 }
 
 

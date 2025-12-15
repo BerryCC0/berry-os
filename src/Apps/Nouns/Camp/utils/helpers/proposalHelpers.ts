@@ -7,6 +7,7 @@
 import * as proposalUtils from '@/app/lib/Nouns/Goldsky/utils/proposal';
 import type { Proposal } from '@/app/lib/Nouns/Goldsky/utils/types';
 import { ProposalStatus } from '@/app/lib/Nouns/Goldsky/utils/types';
+import { PROPOSAL_STATES } from '@/app/lib/Nouns/Contracts/utils/constants';
 import type { UIProposal, ProposalFilter, ProposalSort } from '../types/camp';
 
 // ============================================================================
@@ -39,6 +40,47 @@ export function getStatusColor(status: string): string {
     default:
       return '#000000'; // Black
   }
+}
+
+/**
+ * Convert contract state number to status string
+ * Contract states: 0=Pending, 1=Active, 2=Canceled, 3=Defeated, 4=Succeeded,
+ *                  5=Queued, 6=Expired, 7=Executed, 8=Vetoed, 9=ObjectionPeriod, 10=Updatable
+ */
+export function contractStateToStatus(state: number): ProposalStatus {
+  switch (state) {
+    case PROPOSAL_STATES.PENDING:
+      return ProposalStatus.PENDING;
+    case PROPOSAL_STATES.ACTIVE:
+      return ProposalStatus.ACTIVE;
+    case PROPOSAL_STATES.CANCELED:
+      return ProposalStatus.CANCELLED;
+    case PROPOSAL_STATES.DEFEATED:
+      return ProposalStatus.DEFEATED;
+    case PROPOSAL_STATES.SUCCEEDED:
+      return ProposalStatus.SUCCEEDED;
+    case PROPOSAL_STATES.QUEUED:
+      return ProposalStatus.QUEUED;
+    case PROPOSAL_STATES.EXPIRED:
+      return ProposalStatus.EXPIRED;
+    case PROPOSAL_STATES.EXECUTED:
+      return ProposalStatus.EXECUTED;
+    case PROPOSAL_STATES.VETOED:
+      return ProposalStatus.VETOED;
+    case PROPOSAL_STATES.OBJECTION_PERIOD:
+      return ProposalStatus.ACTIVE; // Objection period is still votable
+    case PROPOSAL_STATES.UPDATABLE:
+      return ProposalStatus.PENDING; // Updatable is before voting starts
+    default:
+      return ProposalStatus.PENDING;
+  }
+}
+
+/**
+ * Check if contract state allows voting
+ */
+export function canVoteOnState(state: number): boolean {
+  return state === PROPOSAL_STATES.ACTIVE || state === PROPOSAL_STATES.OBJECTION_PERIOD;
 }
 
 /**

@@ -198,10 +198,8 @@ export function validateString(
  */
 export function validateProposalDescription(description: string): void {
   validateString(description, 'Proposal description', 10);
-  
-  if (description.length > 10000) {
-    throw new Error('Proposal description is too long (max 10,000 characters)');
-  }
+  // Note: No max length limit - on-chain proposals can be arbitrarily long
+  // The contract itself doesn't impose a length limit on descriptions
 }
 
 /**

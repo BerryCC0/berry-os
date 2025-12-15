@@ -6,6 +6,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useReadContract } from 'wagmi';
 import type { UIProposal } from '../../../utils/types/camp';
 import {
   getProposalTitle,
@@ -15,8 +16,10 @@ import {
   formatVoteCount,
   getTimeRemaining,
   formatStatus,
+  contractStateToStatus,
 } from '../../../utils/helpers/proposalHelpers';
 import { useENS, formatAddressWithENS } from '../../../utils/hooks/useENS';
+import { GovernanceActions } from '@/app/lib/Nouns/Contracts';
 import * as proposalUtils from '@/app/lib/Nouns/Goldsky/utils/proposal';
 import styles from './ProposalCard.module.css';
 
@@ -27,9 +30,26 @@ interface ProposalCardProps {
 }
 
 export default function ProposalCard({ proposal, isExpanded = false, onClick }: ProposalCardProps) {
+  // Fetch real-time state from contract for PENDING proposals (subgraph can be delayed)
+  // Only fetch for PENDING proposals to minimize RPC calls
+  const shouldFetchRealTimeState = proposal.status === 'PENDING';
+  const { data: contractState } = useReadContract({
+    ...GovernanceActions.state(BigInt(proposal.id)),
+    query: {
+      enabled: shouldFetchRealTimeState,
+      refetchInterval: 12000, // Refetch every 12 seconds
+    },
+  });
+
+  // Use real-time status if available, otherwise fall back to subgraph
+  const realTimeState = contractState !== undefined ? Number(contractState) : null;
+  const displayStatus = (shouldFetchRealTimeState && realTimeState !== null)
+    ? contractStateToStatus(realTimeState)
+    : proposal.status;
+
   const title = getProposalTitle(proposal);
-  const statusColor = getStatusColor(proposal.status);
-  const status = formatStatus(proposal);
+  const statusColor = getStatusColor(displayStatus);
+  const status = displayStatus;
   const proposerAddress = proposalUtils.getProposer(proposal);
   const { ensName: proposerENS } = useENS(proposerAddress);
   const proposer = formatAddressWithENS(proposerAddress, proposerENS);
